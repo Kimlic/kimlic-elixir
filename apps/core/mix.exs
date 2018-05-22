@@ -1,18 +1,22 @@
 defmodule Core.Mixfile do
   use Mix.Project
 
+  @version "0.0.1"
+
   def project do
     [
-      app: :kimlic_core,
-      version: "0.0.1",
+      app: :core,
+      version: @version,
       build_path: "../../_build",
       config_path: "../../config/config.exs",
       deps_path: "../../deps",
       lockfile: "../../mix.lock",
-      elixir: "~> 1.4",
+      elixir: "~> 1.6",
       elixirc_paths: elixirc_paths(Mix.env()),
       compilers: [:phoenix] ++ Mix.compilers(),
+      build_embedded: Mix.env() == :prod,
       start_permanent: Mix.env() == :prod,
+      preferred_cli_env: [coveralls: :test],
       deps: deps()
     ]
   end
@@ -36,7 +40,6 @@ defmodule Core.Mixfile do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
-      {:distillery, "~> 1.5", runtime: false},
       {:phoenix, "~> 1.3.2"},
       {:cowboy, "~> 1.1"},
       {:quorum, in_umbrella: true}

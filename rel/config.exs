@@ -15,12 +15,9 @@ environment :default do
   )
 end
 
-release :kimlic_core do
-  set(version: current_version(:kimlic_core))
-
-  set(
-    applications: [
-      kimlic_core: :permanent
-    ]
-  )
+release :core do
+  set(version: current_version(:core))
+  set applications: [
+        core: :permanent
+      ]
 end

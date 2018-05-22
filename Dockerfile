@@ -1,5 +1,4 @@
-#FROM nebo15/alpine-elixir:1.6.4 as builder
-FROM edenlabllc/elixir:1.5.2 as builder
+FROM nebo15/alpine-elixir:1.6.4 as builder
 
 ARG APP_NAME
 ARG APP_VERSION
@@ -13,11 +12,9 @@ ENV MIX_ENV=prod
 RUN mix do \
       local.hex --force, \
       local.rebar --force, \
-      deps.get
-
-RUN mix deps.compile
-RUN mix release
-
+      deps.get, \
+      deps.compile, \
+      release
 
 FROM alpine:edge
 
