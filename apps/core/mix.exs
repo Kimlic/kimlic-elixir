@@ -17,9 +17,6 @@ defmodule Core.Mixfile do
     ]
   end
 
-  # Configuration for the OTP application.
-  #
-  # Type `mix help compile.app` for more information.
   def application do
     [
       mod: {Core.Application, []},
@@ -27,13 +24,9 @@ defmodule Core.Mixfile do
     ]
   end
 
-  # Specifies which paths to compile per environment.
   defp elixirc_paths(:test), do: ["lib", "test/support"]
   defp elixirc_paths(_), do: ["lib"]
 
-  # Specifies your project dependencies.
-  #
-  # Type `mix help deps` for examples and options.
   defp deps do
     [
       {:quorum, in_umbrella: true},
@@ -42,9 +35,11 @@ defmodule Core.Mixfile do
       {:swoosh, "~> 0.14"},
       {:redix, ">= 0.0.0"},
       {:jsonrpc2, "~> 1.0"},
-      {:shackle, "~> 0.5"}, # tcp client for jsonrps2
-
-      {:distillery, "~> 1.5", runtime: false}
+      # tcp client for jsonrps2
+      {:shackle, "~> 0.5"},
+      {:distillery, "~> 1.5", runtime: false},
+      {:dialyxir, "~> 0.5", only: [:dev], runtime: false},
+      {:mox, "~> 0.3", only: :test}
     ]
   end
 end

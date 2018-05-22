@@ -6,5 +6,14 @@ config :core, CoreWeb.Endpoint,
   http: [port: 4001],
   server: false
 
+config :core,
+  clients: [
+    redis: RedisMock
+  ]
+
 # Print only warnings and errors during test
 config :logger, level: :warn
+
+config :core, Redix,
+  host: "127.0.0.1",
+  port: 6379
