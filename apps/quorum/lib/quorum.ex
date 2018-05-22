@@ -3,7 +3,6 @@ defmodule Quorum do
   Documentation for Quorum.
   """
 
-
   def authenticated?(_token) do
     true
   end

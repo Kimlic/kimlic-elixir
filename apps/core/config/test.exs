@@ -8,3 +8,8 @@ config :core, CoreWeb.Endpoint,
 
 # Print only warnings and errors during test
 config :logger, level: :warn
+
+config :core, Redix,
+  host: "127.0.0.1",
+  port: 6379,
+  database: 1
