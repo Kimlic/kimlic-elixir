@@ -32,11 +32,7 @@ defmodule Core.Mixfile do
       {:quorum, in_umbrella: true},
       {:phoenix, "~> 1.3.2"},
       {:cowboy, "~> 1.1"},
-      {:swoosh, "~> 0.14"},
       {:redix, ">= 0.0.0"},
-      {:jsonrpc2, "~> 1.0"},
-      # tcp client for jsonrps2
-      {:shackle, "~> 0.5"},
       {:distillery, "~> 1.5", runtime: false}
     ]
   end
