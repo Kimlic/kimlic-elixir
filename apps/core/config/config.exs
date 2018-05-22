@@ -3,11 +3,6 @@ use Mix.Config
 # General application configuration
 config :core, namespace: Core
 
-config :core,
-  clients: [
-    redis: Core.Foundation.Clients.Redis
-  ]
-
 # Configures the endpoint
 config :core, CoreWeb.Endpoint,
   url: [host: "localhost"],

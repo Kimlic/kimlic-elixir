@@ -37,9 +37,7 @@ defmodule Core.Mixfile do
       {:jsonrpc2, "~> 1.0"},
       # tcp client for jsonrps2
       {:shackle, "~> 0.5"},
-      {:distillery, "~> 1.5", runtime: false},
-      {:dialyxir, "~> 0.5", only: [:dev], runtime: false},
-      {:mox, "~> 0.3", only: :test}
+      {:distillery, "~> 1.5", runtime: false}
     ]
   end
 end
