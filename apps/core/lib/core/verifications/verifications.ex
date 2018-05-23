@@ -1,2 +1,2 @@
-defmodule Verifications do
+defmodule Core.Verifications do
 end

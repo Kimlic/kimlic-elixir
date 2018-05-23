@@ -1,4 +1,4 @@
-defmodule Core.Foundation.Redis do
+defmodule Core.Clients.Redis do
   @moduledoc false
 
   @spec get(binary) :: {:ok, term} | {:error, binary}

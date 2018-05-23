@@ -1,4 +1,4 @@
-defmodule Core.Business.Auth.Mails.CreateProfileEmail do
+defmodule Core.Email.Templates.CreateProfileEmail do
   @moduledoc false
 
   import Swoosh.Email

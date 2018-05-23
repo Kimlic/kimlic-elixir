@@ -1,4 +1,4 @@
-defmodule Core.Business.Auth.Schemas.Verification do
+defmodule Core.Verifications.Verification do
   @moduledoc false
 
   use Ecto.Schema
