@@ -33,6 +33,10 @@ defmodule Core.Mixfile do
       {:phoenix, "~> 1.3.2"},
       {:cowboy, "~> 1.1"},
       {:redix, ">= 0.0.0"},
+      {:rbmq, "~> 0.4"},
+      {:ranch, "~> 1.5", override: true},
+      {:ranch_proxy_protocol, "~> 1.5", override: true},
+      {:exjsx, "~> 4.0", override: true},
       {:distillery, "~> 1.5", runtime: false}
     ]
   end
