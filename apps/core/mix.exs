@@ -10,6 +10,8 @@ defmodule Core.MixProject do
       deps_path: "../../deps",
       lockfile: "../../mix.lock",
       elixir: "~> 1.6",
+      elixirc_paths: elixirc_paths(Mix.env()),
+      compilers: [:phoenix] ++ Mix.compilers(),
       start_permanent: Mix.env() == :prod,
       deps: deps()
     ]
@@ -17,9 +19,13 @@ defmodule Core.MixProject do
 
   def application do
     [
-      extra_applications: [:logger]
+      mod: {Core.Application, []},
+      extra_applications: [:logger, :runtime_tools]
     ]
   end
+
+  defp elixirc_paths(:test), do: ["lib", "test/support"]
+  defp elixirc_paths(_), do: ["lib"]
 
   defp deps do
     [
@@ -27,7 +33,8 @@ defmodule Core.MixProject do
       {:redix, ">= 0.0.0"},
       {:ecto, "~> 2.1"},
       {:swoosh, "~> 0.14"},
-      {:gen_smtp, "~> 0.12.0"}
+      {:gen_smtp, "~> 0.12.0"},
+      {:distillery, "~> 1.5", runtime: false}
     ]
   end
 end
