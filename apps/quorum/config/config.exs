@@ -1,30 +1,35 @@
-# This file is responsible for configuring your application
-# and its dependencies with the aid of the Mix.Config module.
 use Mix.Config
 
-# This configuration is loaded before any dependency and is restricted
-# to this project. If another project depends on this project, this
-# file won't be loaded nor affect the parent project. For this reason,
-# if you want to provide default values for your application for
-# 3rd-party users, it should be done in your "mix.exs" file.
+config :quorum, Quorum.AMQP.Connection,
+  host: {:system, "EXTERNAL_MQ_HOST", "localhost"},
+  port: {:system, :integer, "EXTERNAL_MQ_PORT", 5672},
+  username: {:system, "EXTERNAL_MQ_USER", "guest"},
+  password: {:system, "EXTERNAL_MQ_PASSWORD", "guest"},
+  virtual_host: {:system, "EXTERNAL_MQ_VHOST", "/"},
+  connection_timeout: {:system, :integer, "EXTERNAL_MQ_TIMEOUT", 15_000}
 
-# You can configure your application as:
-#
-#     config :quorum, key: :value
-#
-# and access this configuration in your application as:
-#
-#     Application.get_env(:quorum, :key)
-#
-# You can also configure a 3rd-party app:
-#
-#     config :logger, level: :info
-#
+# RabbitMQ Consumers
+config :quorum, Quorum.AMQP.Transaction.Consumer,
+  queue: [
+    name: {:system, "TRANSACTION_IN_QUEUE_NAME", "Transaction.In"},
+    error_name: {:system, "TRANSACTION_IN_ERROR_QUEUE_NAME", "Transaction.In.Errors"},
+    durable: {:system, :boolean, "TRANSACTION_IN_QUEUE_DURABLE", false}
+  ],
+  qos: [
+    prefetch_count: {:system, :integer, "TRANSACTION_IN_QUEUE_PREFETCH_COUNT", 100}
+  ]
 
-# It is also possible to import configuration files, relative to this
-# directory. For example, you can emulate configuration per environment
-# by uncommenting the line below and defining dev.exs, test.exs and such.
-# Configuration from the imported file will override the ones defined
-# here (which is why it is important to import them last).
-#
-#     import_config "#{Mix.env}.exs"
+# RabbitMQ Producers
+config :quorum, Quorum.AMQP.Transaction.Producer,
+  idle: {:system, :boolean, "TRANSACTION_OUT_IDLE", false},
+  queue: [
+    name: {:system, "TRANSACTION_OUT_QUEUE_NAME", "Transaction.Out"},
+    error_name: {:system, "TRANSACTION_OUT_ERROR_QUEUE_NAME", "Transaction.Out.Errors"},
+    routing_key: {:system, "TRANSACTION_OUT_ROUTING_KEY", ""},
+    durable: {:system, :boolean, "TRANSACTION_OUT_QUEUE_DURABLE", false}
+  ],
+  exchange: [
+    name: {:system, "TRANSACTION_OUT_EXCHANGE_NAME", "Transaction.Out"},
+    type: :direct,
+    durable: {:system, :boolean, "TRANSACTION_OUT_QUEUE_DURABLE", false}
+  ]

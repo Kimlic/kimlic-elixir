@@ -6,4 +6,7 @@ defmodule Quorum do
   def authenticated?(_token) do
     true
   end
+
+  def create_user_account do
+  end
 end
