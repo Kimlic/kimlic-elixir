@@ -20,8 +20,8 @@ if [[ "${GITHUB_TOKEN}" != "" ]]; then
 fi;
 
 if [[ "${TRAVIS_PULL_REQUEST}" == "false" ]]; then
-  # Commit incremented version and release_notes
-  git add apps/core/mix.exs;
+  # ToDo: Hardcoded build application
+  git add apps/mobile_api/mix.exs;
   git commit -m "Increment version [ci skip]";
 
   echo "Current branch: ${TRAVIS_BRANCH}"
