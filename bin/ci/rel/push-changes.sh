@@ -15,6 +15,7 @@ git config --global push.default upstream;
 
 # When you use Travis-CI with public repos, you need to add user token so Travis will be able to push tags bag to repo.
 if [[ "${GITHUB_TOKEN}" != "" ]]; then
+  echo "Use GITHUB_TOKEN for ${TRAVIS_REPO_SLUG}.git";
   REPO_URL="https://${GITHUB_TOKEN}@github.com/${TRAVIS_REPO_SLUG}.git";
   git remote add upstream ${REPO_URL} &> /dev/null
 fi;
@@ -33,9 +34,10 @@ if [[ "${TRAVIS_PULL_REQUEST}" == "false" ]]; then
 #    ${DIR}/../release/push-container.sh -a $DOCKER_HUB_ACCOUNT -t $TRAVIS_BRANCH -l;
 
     if [[ "${GITHUB_TOKEN}" != "" ]]; then
-      echo "Done. Pushing changes back to origin repo.";
+      echo "Pushing changes back to origin repo.";
       git push upstream HEAD:$TRAVIS_BRANCH &> /dev/null;
       git push upstream HEAD:$TRAVIS_BRANCH --tags &> /dev/null;
+      echo "Done.";
     else
       echo "Done. Pushing changes back to upstream repo.";
       git push origin HEAD:$TRAVIS_BRANCH;
