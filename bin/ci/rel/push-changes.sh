@@ -30,7 +30,7 @@ if [[ "${TRAVIS_PULL_REQUEST}" == "false" ]]; then
   echo "Maintenance branch: ${MAINTENANCE_BRANCH}"
 
   if [[ "${TRAVIS_BRANCH}" == "${TRUNK_BRANCH}" && "${BUILD_REQUIRES_MAINTENANCE}" == "0" || "${TRAVIS_BRANCH}" == "${MAINTENANCE_BRANCH}" ]]; then
-    ${DIR}/../release/push-container.sh -a $DOCKER_HUB_ACCOUNT -t $TRAVIS_BRANCH -l;
+#    ${DIR}/../release/push-container.sh -a $DOCKER_HUB_ACCOUNT -t $TRAVIS_BRANCH -l;
 
     if [[ "${GITHUB_TOKEN}" != "" ]]; then
       echo "Done. Pushing changes back to origin repo.";
