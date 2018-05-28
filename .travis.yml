@@ -18,11 +18,11 @@ elixir:
   - 1.6.5
 otp_release:
   - 20.3.6
-notifications:
-  slack:
-    rooms:
-      - secure: "gsGwHnxV7k/MoNGG/J2N5DJ8WxMkQLoCMWdUQ7TdPN7GQnjuSNoQ7dQQZCvfE01gD5pkg8JH4yQW8vcOFQqmnNfSknrxh8kRCC7nugxwei93F3uyHzTBSL4gHbWb3ThxPXCJ3pMfD/jt2oodH2KdqCotWJSLQSq+asVmSloPUkuRNEqXO+jPzoToSCb+PCwUeeDQXv0buZYSYEAkSoXCJp8q8O8Mzb7NWlc+R0x8ehFWA5xYr6gnahXxdWYjLUdJ7GH0HmdH6q7y+NXiSSkRJ8XQCO0/Eb9PtHl51gf6GpmZgMm/UrlKQ2H48C0gIbv5YMFeQqmQbxtUpqq2YGzo2dMxugEsct/wzTn6K5571HLm0KmfSTpMvVfGHU4p+17jj/dRYkQjB45+1CeWyn4MQYv7L7zaqsFWHpkOZO6xtwrfu0/kk4ZVZ3zxHdhDhzjuEQFUIPr0GqYsgVeIzkWq75EEh96G33om364jio8p86HPkNLLKQzrvNa20ElgJvMvxCy0AR0Md/9f7+X14gqC2LQe7umXcOE7nSmnDWQITGIl9MnNJgnazmksboSipswLH6rVg2os4TXZRXqfo2SPMHZrfn4ImE89pdvVB80E/kUhPeyq/ztPnUvIZlaIoBkfeZnwlk0YUH+pilM/QN78GV3/kixHIqxGDDR2mBQaO88="
-    on_success: always
+#notifications:
+#  slack:
+#    rooms:
+#      - secure: "asd"
+#    on_success: always
 env:
   global:
     - Chart=kimlic-core
@@ -30,6 +30,8 @@ env:
     - REQUIRE_VERSION_TAGS="true"
     - DOCKER_HUB_ACCOUNT=kimlictr
     - TRUNK_BRANCH="docker"
+    - secure: "gsGwHnxV7k/MoNGG/J2N5DJ8WxMkQLoCMWdUQ7TdPN7GQnjuSNoQ7dQQZCvfE01gD5pkg8JH4yQW8vcOFQqmnNfSknrxh8kRCC7nugxwei93F3uyHzTBSL4gHbWb3ThxPXCJ3pMfD/jt2oodH2KdqCotWJSLQSq+asVmSloPUkuRNEqXO+jPzoToSCb+PCwUeeDQXv0buZYSYEAkSoXCJp8q8O8Mzb7NWlc+R0x8ehFWA5xYr6gnahXxdWYjLUdJ7GH0HmdH6q7y+NXiSSkRJ8XQCO0/Eb9PtHl51gf6GpmZgMm/UrlKQ2H48C0gIbv5YMFeQqmQbxtUpqq2YGzo2dMxugEsct/wzTn6K5571HLm0KmfSTpMvVfGHU4p+17jj/dRYkQjB45+1CeWyn4MQYv7L7zaqsFWHpkOZO6xtwrfu0/kk4ZVZ3zxHdhDhzjuEQFUIPr0GqYsgVeIzkWq75EEh96G33om364jio8p86HPkNLLKQzrvNa20ElgJvMvxCy0AR0Md/9f7+X14gqC2LQe7umXcOE7nSmnDWQITGIl9MnNJgnazmksboSipswLH6rVg2os4TXZRXqfo2SPMHZrfn4ImE89pdvVB80E/kUhPeyq/ztPnUvIZlaIoBkfeZnwlk0YUH+pilM/QN78GV3/kixHIqxGDDR2mBQaO88="
+    - secure: "QrzlM1nANFmNbRucZymBaZd24VEhIFuKyNhVEfcDvVDjzBrdC+cajeCAMjU3viqVtEiUzmlV5sutb2pZHEoBpxVP5xFFq8sWrwUhr05kaB2GNCd3KHCyZ0xvmGUp1Z3AEDHoHqhICCz27baK6Op68G3IiIzcQdxXhdmk7984mWY2zu0wys0+aaEM4MSAxFLy8QtflxaRWUPrBSiLL1Fy92csWmV608ZCJl/LA+s3GsVfvqlkqMFQB7jP3pb271C6At1sXgvVCtTzEjOEGJbMNjWo4p5wJCJl8DJraSAzd4d0QDNabUxDr7Z5hKuaMAhlU/rHiGcUMH0ekwzCVQknq5BV47KLhQvhebBt7NSixrEwegFk7upVNd8VDL7fXh2EW7B4tAnNBvCwYF8qctIMugl4Vs/6U7GRDq2soFughhJqUe4aoJCmYnnVPhwS58kcAheRuQILU8hGL3Pqv+eKbN+/JnoGbftXIyEL7uKbX80+KiwpAYw8fAFihs7uoErl4LguXg03ELKZaf61unqzmnMYQi2nh6dnlcRhB87o414h4tElngd+i0sHQcxkT7/runeGtGfKxHJvsTTdsj8xZlg4TiHmsE/EljlZdWPYD8y3VvPkktYYhD5nGjT4IqMjTQVjsp/0gW9lcpNrSjxJ+6Jl0Wx9DhEeqs2lnFBr/y0="
 branches:
   except:
     - /[0-9]*\.[0-9]*\.[0-9]*/
