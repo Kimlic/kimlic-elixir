@@ -3,64 +3,58 @@ git:
   depth: 1000
 cache:
   directories:
-    - _build
-    - deps
+  - _build
+  - deps
 services:
-  - docker
-  - redis-server
-  - rabbitmq
+- docker
+- redis-server
+- rabbitmq
 addons:
   apt:
     update: true
     packages:
-      - docker-ce
+    - docker-ce
 elixir:
-  - 1.6.5
+- 1.6.5
 otp_release:
-  - 20.3.6
-#notifications:
-#  slack:
-#    rooms:
-#      - secure: "asd"
-#    on_success: always
+- 20.3.6
 env:
   global:
-    - Chart=kimlic-core
-    - MIX_ENV=test
-    - REQUIRE_VERSION_TAGS="true"
-    - DOCKER_HUB_ACCOUNT=kimlictr
-    - TRUNK_BRANCH="docker"
-    - secure: "gsGwHnxV7k/MoNGG/J2N5DJ8WxMkQLoCMWdUQ7TdPN7GQnjuSNoQ7dQQZCvfE01gD5pkg8JH4yQW8vcOFQqmnNfSknrxh8kRCC7nugxwei93F3uyHzTBSL4gHbWb3ThxPXCJ3pMfD/jt2oodH2KdqCotWJSLQSq+asVmSloPUkuRNEqXO+jPzoToSCb+PCwUeeDQXv0buZYSYEAkSoXCJp8q8O8Mzb7NWlc+R0x8ehFWA5xYr6gnahXxdWYjLUdJ7GH0HmdH6q7y+NXiSSkRJ8XQCO0/Eb9PtHl51gf6GpmZgMm/UrlKQ2H48C0gIbv5YMFeQqmQbxtUpqq2YGzo2dMxugEsct/wzTn6K5571HLm0KmfSTpMvVfGHU4p+17jj/dRYkQjB45+1CeWyn4MQYv7L7zaqsFWHpkOZO6xtwrfu0/kk4ZVZ3zxHdhDhzjuEQFUIPr0GqYsgVeIzkWq75EEh96G33om364jio8p86HPkNLLKQzrvNa20ElgJvMvxCy0AR0Md/9f7+X14gqC2LQe7umXcOE7nSmnDWQITGIl9MnNJgnazmksboSipswLH6rVg2os4TXZRXqfo2SPMHZrfn4ImE89pdvVB80E/kUhPeyq/ztPnUvIZlaIoBkfeZnwlk0YUH+pilM/QN78GV3/kixHIqxGDDR2mBQaO88="
-    - secure: "QrzlM1nANFmNbRucZymBaZd24VEhIFuKyNhVEfcDvVDjzBrdC+cajeCAMjU3viqVtEiUzmlV5sutb2pZHEoBpxVP5xFFq8sWrwUhr05kaB2GNCd3KHCyZ0xvmGUp1Z3AEDHoHqhICCz27baK6Op68G3IiIzcQdxXhdmk7984mWY2zu0wys0+aaEM4MSAxFLy8QtflxaRWUPrBSiLL1Fy92csWmV608ZCJl/LA+s3GsVfvqlkqMFQB7jP3pb271C6At1sXgvVCtTzEjOEGJbMNjWo4p5wJCJl8DJraSAzd4d0QDNabUxDr7Z5hKuaMAhlU/rHiGcUMH0ekwzCVQknq5BV47KLhQvhebBt7NSixrEwegFk7upVNd8VDL7fXh2EW7B4tAnNBvCwYF8qctIMugl4Vs/6U7GRDq2soFughhJqUe4aoJCmYnnVPhwS58kcAheRuQILU8hGL3Pqv+eKbN+/JnoGbftXIyEL7uKbX80+KiwpAYw8fAFihs7uoErl4LguXg03ELKZaf61unqzmnMYQi2nh6dnlcRhB87o414h4tElngd+i0sHQcxkT7/runeGtGfKxHJvsTTdsj8xZlg4TiHmsE/EljlZdWPYD8y3VvPkktYYhD5nGjT4IqMjTQVjsp/0gW9lcpNrSjxJ+6Jl0Wx9DhEeqs2lnFBr/y0="
+  - Chart=kimlic-core
+  - MIX_ENV=test
+  - REQUIRE_VERSION_TAGS="true"
+  - DOCKER_HUB_ACCOUNT=kimlictr
+  - TRUNK_BRANCH="docker"
+  - secure: KiUGSC6ZP2hEBd0Qx9gEh1AdQM36rnnYZmkCgjXoPPjjxjFrb2lNJ95sRAMGbrjX6DmeCcSmW46Kjd8MnNQDjVeOysOQCNyx8tZKUHUJYotZ6tLmebbxUDF6XW1Ux1tFkacY4gFW9F/xKnzSLvKJ6JCPX1iMNff9Afab4vUnlwpSxpliPeBX9/3Cbjg4KGjWw08YpN6FrarkCycvymS40dSDbjgBdEKmqBqlFI+M2jJYrR5oS/GNfvpBPFDBCkjoLLaHOVCLK7S82sKSGQCeAaA2Gu8QRvHsAcI9APqOIuwJhTq9y3y4KsoFbj7mvwzhva8l6zztSup3PZ3FGK5lsz8yCpIauwDWp3m0Xzs0n4DKrSpihPgIfutG2WqDHou02ynluqjlo3zmkA6DV3u+IkOcM1dVJqgGyO398dQjublMguzuGKA0w8nYLQH4Bvcr2Xg/osn3MJ7OZzSPhMIZ1SidG7PCxU5rELivvby8rkV4EDNySPq4JSd9who2VptUA4RXIzGNu56PaEmcPv0SKIfII9qLLREy1oV13lMc6ctYszUbztAq57KM02GTkd82wqEOBLv338XfG+80JP5x06EJPpXrA4sPjKlX0Wwq0YDdyZsN02YavtHgzOx0k1zZ+MGHyFZSzv2CuKgz5YCNyUBMs3smT6YyCDg997qFMXg=
 branches:
   except:
-    - /[0-9]*\.[0-9]*\.[0-9]*/
+  - "/[0-9]*\\.[0-9]*\\.[0-9]*/"
 before_install:
-  # Expose RabbitMQ to Docker container
-  - sudo ./bin/ci/init-rabbitmq.sh
+# Expose RabbitMQ to Docker container
+- sudo ./bin/ci/init-rabbitmq.sh
 before_script:
-  # Create test user for rabbitMQ
+# Create test user for rabbitMQ
 #  - rabbitmqctl add_user test test
 #  - rabbitmqctl set_permissions -p / test ".*" ".*" ".*"
-  # Extract project name and version from mix.exs
-  - source ./bin/ci/rel/fetch-project-environment.sh
-  # Load information about new version
-  - source ./bin/ci/release/fetch-source-version.sh
+# Extract project name and version from mix.exs
+- source ./bin/ci/rel/fetch-project-environment.sh
+# Load information about new version
+- source ./bin/ci/release/fetch-source-version.sh
 script:
-  # Check for versioning error
-  - ./bin/ci/release/check-version-error.sh || travis_terminate 1
-  # Increment version in mix.exs
-  - ./bin/ci/release/put-source-version.sh || travis_terminate 1
-  # Run all tests except pending ones
-  - ./bin/mix_tests.sh || travis_terminate 1
-  # Build Docker container
-  - ./bin/ci/rel/build-container.sh || travis_terminate 1
-  # Run Docker container
-  - sudo ./bin/ci/rel/start-container.sh
-  # Check that Docker container started
-  - sudo ./bin/ci/release/check-container.sh || travis_terminate 1
-  # Submit Docker container to Docker Hub and create GitHub Release by pushing tag with changelog
-  - ./bin/ci/rel/push-changes.sh || travis_terminate 1
+# Check for versioning error
+- ./bin/ci/release/check-version-error.sh || travis_terminate 1
+# Increment version in mix.exs
+- ./bin/ci/release/put-source-version.sh || travis_terminate 1
+# Run all tests except pending ones
+- ./bin/mix_tests.sh || travis_terminate 1
+# Build Docker container
+- ./bin/ci/rel/build-container.sh || travis_terminate 1
+# Run Docker container
+- sudo ./bin/ci/rel/start-container.sh
+# Check that Docker container started
+- sudo ./bin/ci/release/check-container.sh || travis_terminate 1
+# Submit Docker container to Docker Hub and create GitHub Release by pushing tag with changelog
+- ./bin/ci/rel/push-changes.sh || travis_terminate 1
 #  - echo "Decrypting deploy key..."
 #  - openssl aes-256-cbc -K $encrypted_c996ec964e08_key -iv $encrypted_c996ec964e08_iv -in eHealth-8110bd102a69.json.enc -out eHealth-8110bd102a69.json -d
 #  - sudo ./bin/deploy.sh || travis_terminate 1
