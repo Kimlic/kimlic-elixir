@@ -9,7 +9,6 @@ defmodule MobileApi.ErrorViewTest do
   end
 
   test "renders 500.json" do
-    assert render(MobileApi.ErrorView, "500.json", []) ==
-             %{errors: %{detail: "Internal Server Error"}}
+    assert render(MobileApi.ErrorView, "500.json", []) == %{errors: %{detail: "Internal Server Error"}}
   end
 end
