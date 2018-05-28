@@ -1,12 +1,14 @@
 use Mix.Config
 
-config :core, CoreWeb.Endpoint,
-  load_from_system_env: true,
-  url: [
-    host: "localhost",
-    port: 4000
-  ],
-  debug_errors: false,
-  code_reloader: false
-
+# Do not print debug messages in production
 config :logger, level: :info
+
+config :core, Redix,
+  host: "${REDIS_HOST}",
+  port: "${REDIS_PORT}"
+
+config :core, Core.Foundation.Mailer,
+  adapter: Swoosh.Adapters.AmazonSES,
+  region: "${AMAZON_SES_REGION_ENDPOINT}",
+  access_key: "${AMAZON_SES_ACCESS_KEY}",
+  secret: "${AMAZON_SES_SECRET_KEY}"

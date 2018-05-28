@@ -1,4 +1,4 @@
-defmodule Core.Mixfile do
+defmodule Core.MixProject do
   use Mix.Project
 
   @version "0.0.1"
@@ -21,9 +21,6 @@ defmodule Core.Mixfile do
     ]
   end
 
-  # Configuration for the OTP application.
-  #
-  # Type `mix help compile.app` for more information.
   def application do
     [
       mod: {Core.Application, []},
@@ -31,18 +28,17 @@ defmodule Core.Mixfile do
     ]
   end
 
-  # Specifies which paths to compile per environment.
   defp elixirc_paths(:test), do: ["lib", "test/support"]
   defp elixirc_paths(_), do: ["lib"]
 
-  # Specifies your project dependencies.
-  #
-  # Type `mix help deps` for examples and options.
   defp deps do
     [
-      {:phoenix, "~> 1.3.2"},
-      {:cowboy, "~> 1.1"},
-      {:quorum, in_umbrella: true}
+      {:quorum, in_umbrella: true},
+      {:redix, ">= 0.0.0"},
+      {:ecto, "~> 2.1"},
+      {:swoosh, "~> 0.14"},
+      {:gen_smtp, "~> 0.12.0"},
+      {:distillery, "~> 1.5", runtime: false}
     ]
   end
 end
