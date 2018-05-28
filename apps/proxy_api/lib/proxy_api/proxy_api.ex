@@ -22,14 +22,14 @@ defmodule ProxyApi do
       use Phoenix.Controller, namespace: ProxyApi
       import Plug.Conn
       import ProxyApi.Router.Helpers
-
     end
   end
 
   def view do
     quote do
-      use Phoenix.View, root: "lib/proxy_api_web/templates",
-                        namespace: ProxyApi
+      use Phoenix.View,
+        root: "lib/proxy_api_web/templates",
+        namespace: ProxyApi
 
       # Import convenience functions from controllers
       import Phoenix.Controller, only: [get_flash: 2, view_module: 1]
@@ -49,7 +49,6 @@ defmodule ProxyApi do
   def channel do
     quote do
       use Phoenix.Channel
-
     end
   end
 

@@ -22,20 +22,19 @@ defmodule PublicApi do
       use Phoenix.Controller, namespace: PublicApi
       import Plug.Conn
       import PublicApi.Router.Helpers
-
     end
   end
 
   def view do
     quote do
-      use Phoenix.View, root: "lib/public_api_web/templates",
-                        namespace: PublicApi
+      use Phoenix.View,
+        root: "lib/public_api_web/templates",
+        namespace: PublicApi
 
       # Import convenience functions from controllers
       import Phoenix.Controller, only: [get_flash: 2, view_module: 1]
 
       import PublicApi.Router.Helpers
-
     end
   end
 
@@ -50,7 +49,6 @@ defmodule PublicApi do
   def channel do
     quote do
       use Phoenix.Channel
-
     end
   end
 
