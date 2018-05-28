@@ -4,17 +4,16 @@ defmodule Core.Verifications.Verification do
   use Ecto.Schema
   import Ecto.Changeset
 
-  @entity_type_new "NEW"
+  @entity_type_phone "PHONE"
   @entity_type_email "EMAIL"
 
-  def entity_type(:new), do: @entity_type_new
+  def entity_type(:phone), do: @entity_type_phone
   def entity_type(:email), do: @entity_type_email
 
   @primary_key false
   embedded_schema do
-    field(:account_id, :string)
+    field(:account_address, :string)
     field(:entity_type, :string)
-    field(:entity_hash, :string)
     field(:token, :string)
   end
 

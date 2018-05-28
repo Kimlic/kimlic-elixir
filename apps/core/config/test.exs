@@ -8,4 +8,4 @@ config :core, Redix,
   port: 6379,
   database: 1
 
-config :core, Core.Foundation.Mailer, adapter: Swoosh.Adapters.Test
+config :core, Core.Clients.Mailer, adapter: Swoosh.Adapters.Test
