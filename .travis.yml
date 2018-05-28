@@ -37,6 +37,9 @@ before_install:
   # Expose RabbitMQ to Docker container
   - sudo ./bin/ci/init-rabbitmq.sh
 before_script:
+  # Create test user for rabbitMQ
+  - rabbitmqctl add_user test test
+  - rabbitmqctl set_permissions -p / test ".*" ".*" ".*"
   # Extract project name and version from mix.exs
   - source ./bin/ci/rel/fetch-project-environment.sh
   # Load information about new version
