@@ -5,12 +5,7 @@ alias Core.Jobs.{CreateUserAccount, CreateVerificationContract}
 config :task_bunny,
   hosts: [
     default: [
-      connect_options: [
-        host: "localhost",
-        port: 5672
-        #        host: {:system, "REBBITMQ_HOST", "localhost"},
-        #        port: {:system, :integer, "REBBITMQ_PORT", 15672}
-      ]
+      connect_options: "amqp://localhost?heartbeat=30"
     ]
   ]
 

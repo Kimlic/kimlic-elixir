@@ -1,10 +1,12 @@
 defmodule Core.MixProject do
   use Mix.Project
 
+  @version "0.0.1"
+
   def project do
     [
       app: :core,
-      version: "0.1.0",
+      version: @version,
       build_path: "../../_build",
       config_path: "../../config/config.exs",
       deps_path: "../../deps",
@@ -12,7 +14,9 @@ defmodule Core.MixProject do
       elixir: "~> 1.6",
       elixirc_paths: elixirc_paths(Mix.env()),
       compilers: [:phoenix] ++ Mix.compilers(),
+      build_embedded: Mix.env() == :prod,
       start_permanent: Mix.env() == :prod,
+      preferred_cli_env: [coveralls: :test],
       deps: deps()
     ]
   end
@@ -33,8 +37,7 @@ defmodule Core.MixProject do
       {:redix, ">= 0.0.0"},
       {:ecto, "~> 2.1"},
       {:swoosh, "~> 0.14"},
-      {:gen_smtp, "~> 0.12.0"},
-      {:distillery, "~> 1.5", runtime: false}
+      {:gen_smtp, "~> 0.12.0"}
     ]
   end
 end

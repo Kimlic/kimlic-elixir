@@ -14,7 +14,6 @@ defmodule Kimlic.MixProject do
 
   defp deps do
     [
-      {:jason, "~> 1.0"},
       {:distillery, "~> 1.5", runtime: false},
       {:excoveralls, "~> 0.8.1", only: [:dev, :test]},
       {:credo, "~> 0.9.1", only: [:dev, :test], runtime: false},

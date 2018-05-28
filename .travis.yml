@@ -1,0 +1,60 @@
+language: elixir
+git:
+  depth: 1000
+cache:
+  directories:
+  - _build
+  - deps
+services:
+- docker
+- redis-server
+- rabbitmq
+addons:
+  apt:
+    update: true
+    packages:
+    - docker-ce
+elixir:
+- 1.6.5
+otp_release:
+- 20.3.6
+env:
+  global:
+  - Chart=kimlic-core
+  - MIX_ENV=test
+  - REQUIRE_VERSION_TAGS="true"
+  - DOCKER_HUB_ACCOUNT=kimlictr
+  - TRUNK_BRANCH="docker"
+  - secure: KiUGSC6ZP2hEBd0Qx9gEh1AdQM36rnnYZmkCgjXoPPjjxjFrb2lNJ95sRAMGbrjX6DmeCcSmW46Kjd8MnNQDjVeOysOQCNyx8tZKUHUJYotZ6tLmebbxUDF6XW1Ux1tFkacY4gFW9F/xKnzSLvKJ6JCPX1iMNff9Afab4vUnlwpSxpliPeBX9/3Cbjg4KGjWw08YpN6FrarkCycvymS40dSDbjgBdEKmqBqlFI+M2jJYrR5oS/GNfvpBPFDBCkjoLLaHOVCLK7S82sKSGQCeAaA2Gu8QRvHsAcI9APqOIuwJhTq9y3y4KsoFbj7mvwzhva8l6zztSup3PZ3FGK5lsz8yCpIauwDWp3m0Xzs0n4DKrSpihPgIfutG2WqDHou02ynluqjlo3zmkA6DV3u+IkOcM1dVJqgGyO398dQjublMguzuGKA0w8nYLQH4Bvcr2Xg/osn3MJ7OZzSPhMIZ1SidG7PCxU5rELivvby8rkV4EDNySPq4JSd9who2VptUA4RXIzGNu56PaEmcPv0SKIfII9qLLREy1oV13lMc6ctYszUbztAq57KM02GTkd82wqEOBLv338XfG+80JP5x06EJPpXrA4sPjKlX0Wwq0YDdyZsN02YavtHgzOx0k1zZ+MGHyFZSzv2CuKgz5YCNyUBMs3smT6YyCDg997qFMXg=
+branches:
+  except:
+  - "/[0-9]*\\.[0-9]*\\.[0-9]*/"
+before_install:
+# Expose RabbitMQ to Docker container
+- sudo ./bin/ci/init-rabbitmq.sh
+before_script:
+# Create test user for rabbitMQ
+#  - rabbitmqctl add_user test test
+#  - rabbitmqctl set_permissions -p / test ".*" ".*" ".*"
+# Extract project name and version from mix.exs
+- source ./bin/ci/rel/fetch-project-environment.sh
+# Load information about new version
+- source ./bin/ci/release/fetch-source-version.sh
+script:
+# Check for versioning error
+- ./bin/ci/release/check-version-error.sh || travis_terminate 1
+# Increment version in mix.exs
+- ./bin/ci/release/put-source-version.sh || travis_terminate 1
+# Run all tests except pending ones
+- ./bin/mix_tests.sh || travis_terminate 1
+# Build Docker container
+- ./bin/ci/rel/build-container.sh || travis_terminate 1
+# Run Docker container
+- sudo ./bin/ci/rel/start-container.sh
+# Check that Docker container started
+- sudo ./bin/ci/release/check-container.sh || travis_terminate 1
+# Submit Docker container to Docker Hub and create GitHub Release by pushing tag with changelog
+- ./bin/ci/rel/push-changes.sh || travis_terminate 1
+#  - echo "Decrypting deploy key..."
+#  - openssl aes-256-cbc -K $encrypted_c996ec964e08_key -iv $encrypted_c996ec964e08_iv -in eHealth-8110bd102a69.json.enc -out eHealth-8110bd102a69.json -d
+#  - sudo ./bin/deploy.sh || travis_terminate 1
