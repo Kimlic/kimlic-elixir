@@ -37,7 +37,7 @@ defmodule Core.MixProject do
       {:redix, ">= 0.0.0"},
       {:ecto, "~> 2.1"},
       {:swoosh, "~> 0.14"},
-      {:gen_smtp, "~> 0.12.0"},
+      {:gen_smtp, "~> 0.12.0"}
     ]
   end
 end
