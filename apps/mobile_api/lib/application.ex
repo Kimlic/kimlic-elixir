@@ -9,7 +9,7 @@ defmodule MobileApi.Application do
     # Define workers and child supervisors to be supervised
     children = [
       # Start the endpoint when the application starts
-      supervisor(MobileApi.Endpoint, []),
+      supervisor(MobileApi.Endpoint, [])
       # Start your own worker by calling: MobileApi.Worker.start_link(arg1, arg2, arg3)
       # worker(MobileApi.Worker, [arg1, arg2, arg3]),
     ]
