@@ -9,6 +9,7 @@ services:
   - docker
 addons:
   apt:
+    update: true
     packages:
       - docker-ce
 elixir:
@@ -25,8 +26,8 @@ env:
     - Chart=kimlic-core
     - MIX_ENV=test
     - REQUIRE_VERSION_TAGS="true"
-    - DOCKER_HUB_ACCOUNT=kimlic
-    - TRUNK_BRANCH="develop"
+    - DOCKER_HUB_ACCOUNT=kimlictr
+    - TRUNK_BRANCH="docker"
 branches:
   except:
     - /[0-9]*\.[0-9]*\.[0-9]*/
