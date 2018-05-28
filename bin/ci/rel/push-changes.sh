@@ -35,8 +35,8 @@ if [[ "${TRAVIS_PULL_REQUEST}" == "false" ]]; then
 
     if [[ "${GITHUB_TOKEN}" != "" ]]; then
       echo "Pushing changes back to origin repo.";
-      git push upstream HEAD:$TRAVIS_BRANCH &> /dev/null;
-      git push upstream HEAD:$TRAVIS_BRANCH --tags &> /dev/null;
+      git push upstream HEAD:$TRAVIS_BRANCH;
+      git push upstream HEAD:$TRAVIS_BRANCH --tags
       echo "Done.";
     else
       echo "Done. Pushing changes back to upstream repo.";
