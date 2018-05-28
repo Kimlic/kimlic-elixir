@@ -15,7 +15,7 @@ cd $TRAVIS_BUILD_DIR
   # Submit code coverage report to Coveralls
   # Add --pro if you using private repo.
 
-temporary disabled for private repo
+# temporary disabled for private repo
 #  echo "- mix coveralls.travis --exclude pending --umbrella;"
 #        mix coveralls.travis --exclude pending --umbrella
 
