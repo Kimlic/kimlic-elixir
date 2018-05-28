@@ -8,8 +8,6 @@ config :task_bunny,
       connect_options: [
         host: "localhost",
         port: 5672
-        #        host: {:system, "REBBITMQ_HOST", "localhost"},
-        #        port: {:system, :integer, "REBBITMQ_PORT", 15672}
       ]
     ]
   ]
