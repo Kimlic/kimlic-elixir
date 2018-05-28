@@ -15,9 +15,9 @@ environment :default do
   )
 end
 
-release :core do
-  set(version: current_version(:core))
+release :mobile_api do
+  set(version: current_version(:mobile_api))
   set applications: [
-        core: :permanent
-      ]
+    mobile_api: :permanent
+  ]
 end

@@ -15,9 +15,9 @@ addons:
     packages:
       - docker-ce
 elixir:
-  - 1.6.4
+  - 1.6.5
 otp_release:
-  - 20.2.2
+  - 20.3.6
 notifications:
   slack:
     rooms:
@@ -48,7 +48,7 @@ script:
   # Build Docker container
   - ./bin/ci/rel/build-container.sh || travis_terminate 1
   # Run Docker container
-  - sudo ./bin/ci/release/start-container.sh
+  - sudo ./bin/ci/rel/start-container.sh
   # Check that Docker container started
   - sudo ./bin/ci/release/check-container.sh || travis_terminate 1
   # Submit Docker container to Docker Hub and create GitHub Release by pushing tag with changelog

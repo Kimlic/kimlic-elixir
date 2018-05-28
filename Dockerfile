@@ -1,4 +1,4 @@
-FROM nebo15/alpine-elixir:1.6.4 as builder
+FROM bitwalker/alpine-elixir:1.6.5 as builder
 
 ARG APP_NAME
 ARG APP_VERSION

@@ -38,7 +38,6 @@ defmodule Core.MixProject do
       {:ecto, "~> 2.1"},
       {:swoosh, "~> 0.14"},
       {:gen_smtp, "~> 0.12.0"},
-      {:distillery, "~> 1.5", runtime: false}
     ]
   end
 end
