@@ -33,6 +33,9 @@ env:
 branches:
   except:
     - /[0-9]*\.[0-9]*\.[0-9]*/
+before_install:
+  # Expose RabbitMQ to Docker container
+  - sudo ./bin/ci/init-rabbitmq.sh
 before_script:
   # Extract project name and version from mix.exs
   - source ./bin/ci/rel/fetch-project-environment.sh
