@@ -1,8 +1,6 @@
 use Mix.Config
 
-
-config :core, :kimlic_website,
-  url: {:system, "KIMLIC_WEBSITE_URL", ""}
+config :core, :kimlic_website, url: {:system, "KIMLIC_WEBSITE_URL", ""}
 
 config :core, :emails,
   create_profile_email: %{

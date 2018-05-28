@@ -2,7 +2,7 @@ defmodule MobileApi.Plugs.RequestValidator do
   @moduledoc false
 
   use Phoenix.Controller
-2
+
   import Plug.Conn
 
   alias Plug.Conn
