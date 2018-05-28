@@ -14,8 +14,7 @@ config :proxy_api, ProxyApi.Endpoint,
   url: [host: "localhost"],
   secret_key_base: "K6HcbKqaTy7SKd3wkLPFuiaBN4xy0lXT7Z4er1HpDS9uKkmqGmeTzOQMuj+DTLar",
   render_errors: [view: ProxyApi.ErrorView, accepts: ~w(json)],
-  pubsub: [name: ProxyApi.PubSub,
-           adapter: Phoenix.PubSub.PG2]
+  pubsub: [name: ProxyApi.PubSub, adapter: Phoenix.PubSub.PG2]
 
 # Configures Elixir's Logger
 config :logger, :console,
@@ -24,4 +23,4 @@ config :logger, :console,
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
-import_config "#{Mix.env}.exs"
+import_config "#{Mix.env()}.exs"
