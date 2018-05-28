@@ -6,7 +6,7 @@ defmodule Core.Application do
 
   def start(_type, _args) do
     children = [
-      worker(Redix, [[], [name: :redix]])
+      worker(Redix, [Application.get_env(:core, Redix), [name: :redix]])
     ]
 
     opts = [strategy: :one_for_one, name: Core.Supervisor]
