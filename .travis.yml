@@ -34,8 +34,8 @@ before_install:
 - sudo ./bin/ci/init-rabbitmq.sh
 - >-
   openssl aes-256-cbc
-  -K $encrypted_xxxxxxxxxxxx_key
-  -iv $encrypted_xxxxxxxxxxxx_iv
+  -K $encrypted_75f1c6481c4b_key
+  -iv $encrypted_75f1c6481c4b_iv
   -in github_deploy_key.enc
   -out github_deploy_key
   -d
