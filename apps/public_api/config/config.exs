@@ -11,15 +11,18 @@ config :public_api,
 
 # Configures the endpoint
 config :public_api, PublicApi.Endpoint,
+  load_from_system_env: true,
   url: [host: "localhost"],
   secret_key_base: "lz9q5+6HvbQJ8twyC7pXB9aedy2hk4aVxeQ9QcLC+OQdZtT6/1dCtfCSrC4nPF8R",
-  render_errors: [view: PublicApi.ErrorView, accepts: ~w(json)],
-  pubsub: [name: PublicApi.PubSub, adapter: Phoenix.PubSub.PG2]
+  render_errors: [view: PublicApi.ErrorView, accepts: ~w(json)]
 
-# Configures Elixir's Logger
+# Configures loggers
+config :phoenix, :format_encoders, json: Jason
+
 config :logger, :console,
-  format: "$time $metadata[$level] $message\n",
-  metadata: [:user_id]
+  format: "$message\n",
+  handle_otp_reports: true,
+  level: :info
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
