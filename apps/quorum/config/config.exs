@@ -5,16 +5,9 @@ alias Core.Jobs.{CreateUserAccount, CreateVerificationContract}
 config :task_bunny,
   hosts: [
     default: [
-      connect_options: [
-        host: "localhost",
-        port: 5672
-        #        host: {:system, "REBBITMQ_HOST", "localhost"},
-        #        port: {:system, :integer, "REBBITMQ_PORT", 15672}
-      ]
+      connect_options: "amqp://localhost?heartbeat=30"
     ]
-  ]
-
-config :task_bunny,
+  ],
   queue: [
     namespace: "kimlic-core.",
     queues: [
@@ -22,5 +15,10 @@ config :task_bunny,
       [name: "create-verification-contract", jobs: [CreateVerificationContract]]
     ]
   ]
+
+config :logger, :console,
+  format: "$message\n",
+  handle_otp_reports: true,
+  level: :info
 
 import_config "#{Mix.env()}.exs"

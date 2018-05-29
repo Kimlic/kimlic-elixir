@@ -29,4 +29,8 @@ defmodule Core.Verifications do
       status: status
     })
   end
+  
+  def verify do
+    # todo: write code
+  end
 end

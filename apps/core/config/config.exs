@@ -9,4 +9,9 @@ config :core, :emails,
     subject: {:system, "EMAIL_CREATE_PROFILE_SUBJECT", "Kimlic - New user email verification"}
   }
 
+config :logger, :console,
+  format: "$message\n",
+  handle_otp_reports: true,
+  level: :info
+
 import_config "#{Mix.env()}.exs"

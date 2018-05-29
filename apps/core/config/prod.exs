@@ -3,9 +3,7 @@ use Mix.Config
 # Do not print debug messages in production
 config :logger, level: :info
 
-config :core, Redix,
-  host: {:system, "REDIS_HOST"},
-  port: {:system, "REDIS_PORT"}
+config :core, Redix, "${REDIS_URI}"
 
 config :core, Core.Clients.Mailer,
   adapter: Swoosh.Adapters.AmazonSES,

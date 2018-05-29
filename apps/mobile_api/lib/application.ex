@@ -1,6 +1,8 @@
 defmodule MobileApi.Application do
   use Application
 
+  alias Confex.Resolver
+
   # See https://hexdocs.pm/elixir/Application.html
   # for more information on OTP Applications
   def start(_type, _args) do
@@ -25,5 +27,9 @@ defmodule MobileApi.Application do
   def config_change(changed, _new, removed) do
     MobileApi.Endpoint.config_change(changed, removed)
     :ok
+  end
+
+  def init(_key, config) do
+    Resolver.resolve(config)
   end
 end

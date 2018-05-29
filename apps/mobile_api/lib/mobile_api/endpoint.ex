@@ -1,13 +1,10 @@
 defmodule MobileApi.Endpoint do
   use Phoenix.Endpoint, otp_app: :mobile_api
 
-  # Code reloading can be explicitly enabled under the
-  # :code_reloader configuration of your endpoint.
-  if code_reloading? do
-    plug(Phoenix.CodeReloader)
-  end
+  alias Confex.Resolver
 
-  plug(Plug.Logger)
+  plug(Plug.RequestId)
+  plug(Plug.LoggerJSON, level: Logger.level())
 
   plug(
     Plug.Parsers,
@@ -28,11 +25,12 @@ defmodule MobileApi.Endpoint do
   configuration should be loaded from the system environment.
   """
   def init(_key, config) do
-    if config[:load_from_system_env] do
-      port = System.get_env("PORT") || raise "expected the PORT environment variable to be set"
-      {:ok, Keyword.put(config, :http, [:inet6, port: port])}
-    else
-      {:ok, config}
+    config = Resolver.resolve!(config)
+
+    unless config[:secret_key_base] do
+      raise "Set SECRET_KEY environment variable!"
     end
+
+    {:ok, config}
   end
 end
