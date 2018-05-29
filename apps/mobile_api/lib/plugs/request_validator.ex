@@ -7,6 +7,7 @@ defmodule MobileApi.Plugs.RequestValidator do
 
   alias Plug.Conn
   alias Ecto.Changeset
+  alias MobileApi.FallbackController
 
   def init(opts), do: opts
 
@@ -15,10 +16,10 @@ defmodule MobileApi.Plugs.RequestValidator do
 
     case validator.changeset(params) do
       %Changeset{valid?: true} = changeset ->
-        assign(conn, :validated_params, changeset)
+        assign(conn, :validated_params, Changeset.apply_changes(changeset))
 
       %Changeset{valid?: false} = changeset ->
-        err_handler = fetch_error_handler!(opts)
+        err_handler = fetch_error_handler(opts)
 
         conn
         |> err_handler.call(changeset)
@@ -30,7 +31,7 @@ defmodule MobileApi.Plugs.RequestValidator do
   end
 
   defp fetch_validator!(opts), do: fetch!(opts, :validator)
-  defp fetch_error_handler!(opts), do: fetch!(opts, :error_handler)
+  defp fetch_error_handler(opts), do: opts[:error_handler] || FallbackController
 
   defp fetch!(opts, key) do
     case Keyword.get(opts, key) do

@@ -23,24 +23,23 @@ defmodule MobileApi.AuthTest do
     end
   end
 
+  @spec request_data(binary, binary) :: %{}
   defp request_data(email, account_address) do
     %{
-      "user_profile" => %{
-        "source_data" => %{
-          "public_key" =>
-            "AAAAB3NzaC1yc2EAAAABIwAAAQEAklOUpkDHrfHY17SbrmTIpNLTGK9Tjom/BWDSUGPl+nafzlHDTYW7hdI4yZ5ew18JH4JW9jbhUFrviQzM7xlELEVf4h9lFX5QVkbPppSwg0cda3Pbv7kOdJ/MTyBlWXFCR+HAo3FXRitBqxiX1nKhXpHAZsMciLq8V6RjsNAQwdsdMFvSlVK/7XAt3FaoJoAsncM1Q9x5+3V0Ww68/eIFmb1zuUFljQJKprrX88XypNDvjYNby6vw/Pb0rwert/EnmZ+AW4OZPnTPI89ZPmVMLuayrD2cE86Z/il8b+gw3r3+1nKatmIkjn2so1d01QraTlMqVSsbxNrRFi9wrf+M7Q==",
-          "email" => email,
-          "device_fingerprint" => %{
-            "dhcp_fingerprint" => "1,33,3,6,12,15,28,51,58,59,119",
-            "dhcp_vendor" => "dhcpcd-5.5.6",
-            "user_agents" => ["Mozilla/5.0 (Linux; Android 5.0.2; SM-G920F Build/LRX22G; wv) AppleWebK"]
-          }
-        },
-        "blockchain_data" => %{
-          "account_address" => account_address,
-          "user_account_transaction" => %{
-            "data" => "transaction_data_generated_on_mobile"
-          }
+      "source_data" => %{
+        "public_key" =>
+          "AAAAB3NzaC1yc2EAAAABIwAAAQEAklOUpkDHrfHY17SbrmTIpNLTGK9Tjom/BWDSUGPl+nafzlHDTYW7hdI4yZ5ew18JH4JW9jbhUFrviQzM7xlELEVf4h9lFX5QVkbPppSwg0cda3Pbv7kOdJ/MTyBlWXFCR+HAo3FXRitBqxiX1nKhXpHAZsMciLq8V6RjsNAQwdsdMFvSlVK/7XAt3FaoJoAsncM1Q9x5+3V0Ww68/eIFmb1zuUFljQJKprrX88XypNDvjYNby6vw/Pb0rwert/EnmZ+AW4OZPnTPI89ZPmVMLuayrD2cE86Z/il8b+gw3r3+1nKatmIkjn2so1d01QraTlMqVSsbxNrRFi9wrf+M7Q==",
+        "email" => email,
+        "device_fingerprint" => %{
+          "dhcp_fingerprint" => "1,33,3,6,12,15,28,51,58,59,119",
+          "dhcp_vendor" => "dhcpcd-5.5.6",
+          "user_agents" => ["Mozilla/5.0 (Linux; Android 5.0.2; SM-G920F Build/LRX22G; wv) AppleWebK"]
+        }
+      },
+      "blockchain_data" => %{
+        "account_address" => account_address,
+        "user_account_transaction" => %{
+          "data" => "transaction_data_generated_on_mobile"
         }
       }
     }

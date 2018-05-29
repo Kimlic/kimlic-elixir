@@ -10,11 +10,20 @@ defmodule Core.Verifications.Verification do
   def entity_type(:phone), do: @entity_type_phone
   def entity_type(:email), do: @entity_type_email
 
+  @status_new "NEW"
+  @status_passed "PASSED"
+  @status_expired "EXPIRED"
+
+  def status(:new), do: @status_new
+  def status(:passed), do: @status_passed
+  def status(:expired), do: @status_expired
+
   @primary_key false
   embedded_schema do
     field(:account_address, :string)
     field(:entity_type, :string)
     field(:token, :string)
+    field(:status, :string)
   end
 
   @spec changeset(%{}) :: Ecto.Changeset.t()

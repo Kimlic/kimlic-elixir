@@ -1,0 +1,5 @@
+Welcome to Kimlic platform! Your registration is currently on email verification step. Please, follow link below to complete it:
+<%= activation_link %>
+
+Best regards,
+Kimlic team

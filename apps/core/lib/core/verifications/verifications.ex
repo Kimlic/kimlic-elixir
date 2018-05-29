@@ -6,6 +6,8 @@ defmodule Core.Verifications do
   alias Ecto.Changeset
   alias Ecto.UUID
 
+  @verification_status_new Verification.status(:new)
+
   @spec create_email_verification(binary, binary) :: {:ok, binary} | {:error, binary} | {:error, Ecto.Changeset.t()}
   def create_email_verification(email, account_address) do
     token = :crypto.hash(:sha256, Enum.join([UUID.generate(), email, account_address]))
@@ -19,11 +21,12 @@ defmodule Core.Verifications do
   end
 
   @spec create_verification(binary, binary, binary) :: Ecto.Changeset.t()
-  defp create_verification(account_address, entity_type, token) do
+  defp create_verification(account_address, entity_type, token, status \\ @verification_status_new) do
     Verification.changeset(%{
       account_address: account_address,
       entity_type: entity_type,
-      token: token
+      token: token,
+      status: status
     })
   end
 end

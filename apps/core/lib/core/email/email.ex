@@ -2,7 +2,7 @@ defmodule Core.Email do
   @moduledoc false
 
   alias Core.Clients.Mailer
-  alias Core.Email.Templates.CreateProfileEmail
+  alias Core.Email.Views.CreateProfileEmail
   alias Core.Verifications.Verification
 
   @spec send_verification(binary, %Verification{}) :: :ok | {:error, binary}
