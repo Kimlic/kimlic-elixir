@@ -30,7 +30,12 @@ if [[ "${TRAVIS_PULL_REQUEST}" == "false" ]]; then
   if [[ "${TRAVIS_BRANCH}" == "${TRUNK_BRANCH}" && "${BUILD_REQUIRES_MAINTENANCE}" == "0" || "${TRAVIS_BRANCH}" == "${MAINTENANCE_BRANCH}" ]]; then
 #    ${DIR}/../release/push-container.sh -a $DOCKER_HUB_ACCOUNT -t $TRAVIS_BRANCH -l;
 
-    # Get the deploy key by using Travis's stored variables to decrypt github_deploy_key.enc
+    # Save some useful information
+    REPO=`git config remote.origin.url`
+    SSH_REPO=${REPO/https:\/\/github.com\//git@github.com:}
+    SHA=`git rev-parse --verify HEAD`
+
+    # Get the deploy key by using Travis's stored variables to decrypt deploy_key.enc
     ENCRYPTED_KEY_VAR="encrypted_${ENCRYPTION_LABEL}_key"
     ENCRYPTED_IV_VAR="encrypted_${ENCRYPTION_LABEL}_iv"
     ENCRYPTED_KEY=${!ENCRYPTED_KEY_VAR}
@@ -41,8 +46,8 @@ if [[ "${TRAVIS_PULL_REQUEST}" == "false" ]]; then
     ssh-add github_deploy_key
 
     echo "Pushing changes back to origin repo.";
-    git push upstream HEAD:$TRAVIS_BRANCH;
-    git push upstream HEAD:$TRAVIS_BRANCH --tags
+    git push $SSH_REPO HEAD:$TRAVIS_BRANCH;
+    git push $SSH_REPO HEAD:$TRAVIS_BRANCH --tags
     echo "Done.";
   else
     echo "[I] This build is not in a trunk or maintenance branch, new version will not be created"
