@@ -7,6 +7,7 @@ defmodule MobileApi.AuthController do
 
   action_fallback(MobileApi.FallbackController)
 
+  # todo: validate request
   @spec create_profile(Conn.t(), %{}) :: Conn.t()
   def create_profile(conn, params) do
     email = get_in(params, ["source_data", "email"])
