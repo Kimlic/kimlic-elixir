@@ -31,6 +31,7 @@ defmodule PublicApi.Mixfile do
     [
       {:core, in_umbrella: true},
       {:phoenix, "~> 1.3.2"},
+      {:plug_logger_json, "~> 0.5"},
       {:cowboy, "~> 1.0"}
     ]
   end

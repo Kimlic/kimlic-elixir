@@ -11,15 +11,18 @@ config :mobile_api,
 
 # Configures the endpoint
 config :mobile_api, MobileApi.Endpoint,
+  load_from_system_env: true,
   url: [host: "localhost"],
   secret_key_base: "ghZOO+R91Vccb2LL2mwvwDIzuJ75zidmln2nZFpaCnyoRGxjX/q1K5/tzZ3nLn/b",
-  render_errors: [view: MobileApi.ErrorView, accepts: ~w(json)],
-  pubsub: [name: MobileApi.PubSub, adapter: Phoenix.PubSub.PG2]
+  render_errors: [view: MobileApi.ErrorView, accepts: ~w(json)]
 
-# Configures Elixir's Logger
+# Configures loggers
+config :phoenix, :format_encoders, json: Jason
+
 config :logger, :console,
-  format: "$time $metadata[$level] $message\n",
-  metadata: [:user_id]
+  format: "$message\n",
+  handle_otp_reports: true,
+  level: :info
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
