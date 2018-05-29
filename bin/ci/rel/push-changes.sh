@@ -13,13 +13,6 @@ git config --global user.email "travis@travis-ci.com";
 git config --global user.name "Travis-CI";
 git config --global push.default upstream;
 
-# When you use Travis-CI with public repos, you need to add user token so Travis will be able to push tags bag to repo.
-if [[ "${GITHUB_TOKEN}" != "" ]]; then
-  echo "Use GITHUB_TOKEN for ${TRAVIS_REPO_SLUG}.git";
-  REPO_URL="https://${GITHUB_TOKEN}@github.com/${TRAVIS_REPO_SLUG}.git";
-  git remote add upstream ${REPO_URL} &> /dev/null
-fi;
-
 if [[ "${TRAVIS_PULL_REQUEST}" == "false" ]]; then
   # ToDo: Hardcoded build application
   git add apps/mobile_api/mix.exs;
