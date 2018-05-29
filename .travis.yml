@@ -49,13 +49,13 @@ script:
 # Increment version in mix.exs
 - ./bin/ci/release/put-source-version.sh || travis_terminate 1
 # Run all tests except pending ones
-#- ./bin/mix_tests.sh || travis_terminate 1
+- ./bin/mix_tests.sh || travis_terminate 1
 # Build Docker container
-#- ./bin/ci/rel/build-container.sh || travis_terminate 1
+- ./bin/ci/rel/build-container.sh || travis_terminate 1
 # Run Docker container
-#- sudo ./bin/ci/rel/start-container.sh
+- sudo ./bin/ci/rel/start-container.sh
 # Check that Docker container started
-#- sudo ./bin/ci/release/check-container.sh || travis_terminate 1
+- sudo ./bin/ci/release/check-container.sh || travis_terminate 1
 # Submit Docker container to Docker Hub and create GitHub Release by pushing tag with changelog
 - ./bin/ci/rel/push-changes.sh || travis_terminate 1
 #  - echo "Decrypting deploy key..."
