@@ -34,10 +34,12 @@ defmodule Core.MixProject do
   defp deps do
     [
       {:quorum, in_umbrella: true},
+      {:confex, "~> 3.3.1"},
       {:redix, ">= 0.0.0"},
       {:ecto, "~> 2.1"},
       {:swoosh, "~> 0.14"},
-      {:gen_smtp, "~> 0.12.0"}
+      {:gen_smtp, "~> 0.12.0"},
+      {:mox, "~> 0.3", only: :test}
     ]
   end
 end

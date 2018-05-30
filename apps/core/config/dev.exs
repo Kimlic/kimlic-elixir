@@ -7,4 +7,4 @@ config :core, Redix,
   host: "127.0.0.1",
   port: 6379
 
-config :core, Core.Foundation.Mailer, adapter: Swoosh.Adapters.Local
+config :core, Core.Clients.Mailer, adapter: Swoosh.Adapters.Local

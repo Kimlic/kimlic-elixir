@@ -1,4 +1,14 @@
 defmodule Core.Email do
-  def generate_and_send_verification_url(_email) do
+  @moduledoc false
+
+  alias Core.Clients.Mailer
+  alias Core.Email.Views.CreateProfileEmail
+  alias Core.Verifications.Verification
+
+  @spec send_verification(binary, %Verification{}) :: :ok | {:error, binary}
+  def send_verification(email, %Verification{token: token}) do
+    with {:ok, _} <- email |> CreateProfileEmail.mail(token) |> Mailer.deliver() do
+      :ok
+    end
   end
 end
