@@ -5,6 +5,7 @@ defmodule Quorum.Unit.QuorumTest do
   import Mox
 
   alias Core.Jobs.{CreateUserAccount, CreateVerificationContract}
+  alias Quorum.Jobs.{UpdateUserAccount}
 
   doctest Quorum
 
@@ -13,6 +14,7 @@ defmodule Quorum.Unit.QuorumTest do
 
   @queue_create_user_account "kimlic-core-test.create-user-account"
   @queue_create_verification_contract "kimlic-core-test.create-verification-contract"
+  @queue_update_user_account "kimlic-core-test.update-user-account"
 
   describe "create user account" do
     setup do
@@ -60,6 +62,28 @@ defmodule Quorum.Unit.QuorumTest do
 
       # manually invoke message processing
       assert quorum_client_resp == CreateVerificationContract.perform(payload)
+    end
+  end
+
+  describe "update user account" do
+    setup do
+      on_exit(fn -> purge(@queue_update_user_account) end)
+    end
+
+    test "success" do
+      quorum_client_resp = {:ok, "updated"}
+      expect(QuorumClientMock, :update_user_account, fn _params -> quorum_client_resp end)
+
+      # Start job Create user account
+      user_data = %{"transaction" => "update-user"}
+      assert :ok == Quorum.update_user_account(user_data)
+
+      # Ensure that queue contain message for user creation
+      {payload, _queue_metadata} = pop(@queue_update_user_account)
+      assert user_data == Jason.decode!(payload)["payload"]
+
+      # manually invoke message processing
+      assert quorum_client_resp == UpdateUserAccount.perform(payload)
     end
   end
 end

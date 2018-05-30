@@ -4,6 +4,7 @@ defmodule Quorum do
   """
 
   alias Core.Jobs.{CreateUserAccount, CreateVerificationContract}
+  alias Quorum.Jobs.{UpdateUserAccount}
 
   def authenticated?(_token) do
     true
@@ -15,5 +16,9 @@ defmodule Quorum do
 
   def create_verification_contract(params) do
     CreateVerificationContract.enqueue!(params)
+  end
+
+  def update_user_account(params) do
+    UpdateUserAccount.enqueue!(params)
   end
 end
