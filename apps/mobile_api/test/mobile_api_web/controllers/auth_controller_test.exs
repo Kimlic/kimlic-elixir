@@ -2,23 +2,32 @@ defmodule MobileApi.AuthTest do
   @moduledoc false
 
   use MobileApi.ConnCase, async: true
+  import Mox
 
+  alias Core.StorageKeys
   alias Core.Clients.Redis
   alias Core.Verifications.Verification
+  alias Ecto.UUID
 
   @entity_type_email Verification.entity_type(:email)
 
   describe "create profile test" do
     test "success", %{conn: conn} do
+      token1 = UUID.generate()
+      token2 = UUID.generate()
+
+      expect(TokenGeneratorMock, :generate_email_token, fn "test@email.com", _address_account -> token1 end)
+      expect(TokenGeneratorMock, :generate_email_token, fn "test2@email.com", _address_account -> token2 end)
+
       [
-        {"0xd0a6e6c54dbc68db5db3a091b171a77407ff7ccf", "test@email.com"},
-        {"0xf0a6e6c54dbc68db5db3a091b171a77407ff7ccd", "test2@email.com"}
+        {"0xd0a6e6c54dbc68db5db3a091b171a77407ff7ccf", "test@email.com", token1},
+        {"0xf0a6e6c54dbc68db5db3a091b171a77407ff7ccd", "test2@email.com", token2}
       ]
-      |> Enum.map(fn {account_address, email} ->
+      |> Enum.map(fn {account_address, email, token} ->
         assert %{status: 201} = post(conn, auth_path(conn, :create_profile), request_data(email, account_address))
 
         assert {:ok, %Verification{account_address: ^account_address, entity_type: @entity_type_email}} =
-                 Redis.get("core.create_profile.email-vefirication.#{account_address}")
+                 Redis.get(StorageKeys.vefirication_email(token))
       end)
     end
   end

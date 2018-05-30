@@ -2,20 +2,22 @@ defmodule Core.Verifications do
   @moduledoc false
 
   alias Core.Clients.Redis
+  alias Core.StorageKeys
   alias Core.Verifications.Verification
   alias Ecto.Changeset
-  alias Ecto.UUID
 
+  @token_generator Application.get_env(:core, :dependencies)[:token_generator]
   @verification_status_new Verification.status(:new)
 
   @spec create_email_verification(binary, binary) :: {:ok, binary} | {:error, binary} | {:error, Ecto.Changeset.t()}
   def create_email_verification(email, account_address) do
-    token = :crypto.hash(:sha256, Enum.join([UUID.generate(), email, account_address]))
+    verification_ttl = Confex.fetch_env!(:core, :verification_email_ttl)
+    token = @token_generator.generate_email_token(email, account_address)
 
     with %Ecto.Changeset{valid?: true} = verification <-
            create_verification(account_address, Verification.entity_type(:email), token),
          verification <- Changeset.apply_changes(verification),
-         :ok <- Redis.set("core.create_profile.email-vefirication.#{account_address}", verification, :timer.hours(24)) do
+         :ok <- Redis.set(StorageKeys.vefirication_email(token), verification, verification_ttl) do
       {:ok, verification}
     end
   end
@@ -28,9 +30,5 @@ defmodule Core.Verifications do
       token: token,
       status: status
     })
-  end
-  
-  def verify do
-    # todo: write code
   end
 end
