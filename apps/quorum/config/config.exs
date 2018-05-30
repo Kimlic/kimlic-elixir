@@ -14,7 +14,8 @@ config :task_bunny,
       [name: "create-user-account", jobs: [CreateUserAccount]],
       [name: "create-verification-contract", jobs: [CreateVerificationContract]]
     ]
-  ]
+  ],
+  failure_backend: [Quorum.Loggers.TaskBunny]
 
 config :logger, :console,
   format: "$message\n",
