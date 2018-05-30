@@ -27,6 +27,8 @@ defmodule MobileApi.ConnCase do
   end
 
   setup _tags do
+    Core.Clients.Redis.flush()
+
     {:ok, conn: Phoenix.ConnTest.build_conn()}
   end
 end

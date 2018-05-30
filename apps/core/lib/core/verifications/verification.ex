@@ -7,12 +7,12 @@ defmodule Core.Verifications.Verification do
   @entity_type_phone "PHONE"
   @entity_type_email "EMAIL"
 
-  def entity_type(:phone), do: @entity_type_phone
-  def entity_type(:email), do: @entity_type_email
-
   @status_new "NEW"
   @status_passed "PASSED"
   @status_expired "EXPIRED"
+
+  def entity_type(:phone), do: @entity_type_phone
+  def entity_type(:email), do: @entity_type_email
 
   def status(:new), do: @status_new
   def status(:passed), do: @status_passed

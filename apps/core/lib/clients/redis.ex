@@ -4,7 +4,11 @@ defmodule Core.Clients.Redis do
   @spec get(binary) :: {:ok, term} | {:error, binary}
   def get(key) when is_binary(key) do
     with {:ok, encoded_value} <- Redix.command(:redix, ["GET", key]) do
-      {:ok, decode(encoded_value)}
+      if encoded_value == nil do
+        {:error, :not_found}
+      else
+        {:ok, decode(encoded_value)}
+      end
     end
   end
 
@@ -25,7 +29,7 @@ defmodule Core.Clients.Redis do
     end
   end
 
-  @spec delete(binary) :: {:ok, term} | {:error, binary}
+  @spec delete(binary) :: {:ok, non_neg_integer} | {:error, binary}
   def delete(key) when is_binary(key) do
     Redix.command(:redix, ["DEL", key])
   end
@@ -42,6 +46,5 @@ defmodule Core.Clients.Redis do
   defp encode(value), do: :erlang.term_to_binary(value)
 
   @spec decode(term) :: term
-  defp decode(nil), do: nil
   defp decode(value), do: :erlang.binary_to_term(value)
 end
