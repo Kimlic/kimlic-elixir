@@ -1,1 +1,1 @@
-Mox.defmock(QuorumClientMock, for: Quorum.ClientBehaviour)
+Mox.defmock(QuorumClientMock, for: Ethereumex.Client.Behaviour)

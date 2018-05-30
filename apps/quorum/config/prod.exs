@@ -6,3 +6,5 @@ config :task_bunny,
       connect_options: "${RABBITMQ_URI}"
     ]
   ]
+
+config :ethereumex, url: "${QUORUM_URI}"
