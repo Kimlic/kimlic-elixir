@@ -9,13 +9,16 @@ defmodule Core.Verifications do
   @token_generator Application.get_env(:core, :dependencies)[:token_generator]
   @verification_status_new Verification.status(:new)
 
+  @verification_entity_type_email Verification.entity_type(:email)
+  @verification_entity_type_phone Verification.entity_type(:phone)
+
   @spec create_email_verification(binary, binary) :: {:ok, binary} | {:error, binary} | {:error, Ecto.Changeset.t()}
   def create_email_verification(email, account_address) do
     verification_ttl = Confex.fetch_env!(:core, :verification_email_ttl)
     token = @token_generator.generate_email_token(email, account_address)
 
     with %Ecto.Changeset{valid?: true} = verification <-
-           create_verification(account_address, Verification.entity_type(:email), token),
+           create_verification(account_address, @verification_entity_type_email, token),
          verification <- Changeset.apply_changes(verification),
          :ok <- Redis.set(StorageKeys.vefirication_email(token), verification, verification_ttl) do
       {:ok, verification}
@@ -59,11 +62,17 @@ defmodule Core.Verifications do
   end
 
   @spec delete(%Verification{}) :: :ok | {:error, term}
-  def delete(%Verification{entity_type: type, token: token} = verification) do
-    cond do
-      type === Verification.entity_type(:email) -> StorageKeys.vefirication_email(token)
-      type === Verification.entity_type(:phone) -> StorageKeys.vefirication_phone(token)
+  def delete(%Verification{entity_type: type, token: token} = verification)
+      when type in [@verification_entity_type_email, @verification_entity_type_phone] do
+    type
+    |> case do
+      @verification_entity_type_email -> StorageKeys.vefirication_email(token)
+      @verification_entity_type_phone -> StorageKeys.vefirication_phone(token)
     end
     |> Redis.delete()
+  end
+
+  def delete(_) do
+    {:error, :invalid_verification_type}
   end
 end
