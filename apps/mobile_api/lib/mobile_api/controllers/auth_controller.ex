@@ -23,9 +23,7 @@ defmodule MobileApi.AuthController do
   # todo: validate request
   @spec check_verification_token(Conn.t(), map) :: Conn.t()
   def check_verification_token(conn, params) do
-    token = get_in(params, ["token"])
-
-    with :ok <- Auth.check_verification_token(token) do
+    with :ok <- Auth.check_verification_token(params["token"]) do
       json(conn, %{status: "ok"})
     end
   end

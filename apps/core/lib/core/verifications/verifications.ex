@@ -41,28 +41,18 @@ defmodule Core.Verifications do
   def get(token, :email) do
     token
     |> StorageKeys.vefirication_email()
-    |> do_get()
+    |> Redis.get()
   end
 
   @spec get(binary, atom) :: {:ok, %Verification{}} | {:error, term}
   def get(token, :phone) do
     token
     |> StorageKeys.vefirication_phone()
-    |> do_get()
-  end
-
-  @spec do_get(binary) :: {:ok, %Verification{}} | {:error, term}
-  defp do_get(redis_key) do
-    redis_key
     |> Redis.get()
-    |> case do
-      {:ok, %Verification{} = verification} -> {:ok, verification}
-      error -> {:error, :not_found}
-    end
   end
 
-  @spec delete(%Verification{}) :: :ok | {:error, term}
-  def delete(%Verification{entity_type: type, token: token} = verification)
+  @spec delete(%Verification{} | term) :: {:ok, non_neg_integer} | {:error, term}
+  def delete(%Verification{entity_type: type, token: token})
       when type in [@verification_entity_type_email, @verification_entity_type_phone] do
     type
     |> case do
