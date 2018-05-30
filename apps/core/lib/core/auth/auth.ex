@@ -10,4 +10,16 @@ defmodule Core.Auth do
       Email.send_verification(email, verification)
     end
   end
+
+  @spec check_verification_token(binary) :: :ok | {:error, term}
+  def check_verification_token(token) do
+    with {:ok, verification} <- Verifications.get(token, :email),
+         {:ok, 1} <- Verifications.delete(verification) do
+      # todo: call quorum
+      :ok
+    else
+      {:ok, 0} -> {:error, :not_found}
+      error -> error
+    end
+  end
 end

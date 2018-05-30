@@ -4,8 +4,9 @@ defmodule MobileApi.AuthTest do
   use MobileApi.ConnCase, async: true
   import Mox
 
-  alias Core.StorageKeys
   alias Core.Clients.Redis
+  alias Core.Factory
+  alias Core.StorageKeys
   alias Core.Verifications.Verification
   alias Ecto.UUID
 
@@ -32,7 +33,23 @@ defmodule MobileApi.AuthTest do
     end
   end
 
-  @spec request_data(binary, binary) :: %{}
+  describe "check verification token test" do
+    test "success", %{conn: conn} do
+      token = UUID.generate()
+      verification = Factory.verification!(%{token: token})
+      Redis.set(StorageKeys.vefirication_email(token), verification)
+
+      assert %{"status" => "ok"} =
+               post(conn, auth_path(conn, :check_verification_token), %{"token" => token})
+               |> json_response(200)
+    end
+
+    test "not found", %{conn: conn} do
+      assert post(conn, auth_path(conn, :check_verification_token), %{"token" => UUID.generate()}) |> json_response(404)
+    end
+  end
+
+  @spec request_data(binary, binary) :: map
   defp request_data(email, account_address) do
     %{
       "source_data" => %{
