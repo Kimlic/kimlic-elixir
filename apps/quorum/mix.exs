@@ -31,6 +31,7 @@ defmodule Quorum.MixProject do
     [
       {:jason, "~> 1.0"},
       {:task_bunny, "~> 0.3.2"},
+      {:ethereumex, "~> 0.3.2"},
       {:mox, "~> 0.3", only: :test}
     ]
   end

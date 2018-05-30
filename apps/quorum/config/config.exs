@@ -1,9 +1,16 @@
 use Mix.Config
 
-alias Core.Jobs.{CreateUserAccount, CreateVerificationContract}
-alias Quorum.Jobs.{UpdateUserAccount}
+alias Quorum.Jobs.{
+  CreateUserAccount,
+  CreateVerificationContract,
+  TransactionCreate,
+  TransactionStatus,
+  UpdateUserAccount
+}
 
-config :quorum, client: Quorum.Client
+config :quorum, client: Ethereumex.HttpClient
+
+config :ethereumex, url: "http://localhost:22000"
 
 config :task_bunny,
   hosts: [
@@ -16,7 +23,9 @@ config :task_bunny,
     queues: [
       [name: "create-user-account", jobs: [CreateUserAccount]],
       [name: "create-verification-contract", jobs: [CreateVerificationContract]],
-      [name: "update-user-account", jobs: [UpdateUserAccount]]
+      [name: "update-user-account", jobs: [UpdateUserAccount]],
+      [name: "transaction", jobs: [TransactionCreate]],
+      [name: "transaction-status", jobs: [TransactionStatus]]
     ]
   ]
 
