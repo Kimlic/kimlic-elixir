@@ -3,6 +3,8 @@ use Mix.Config
 alias Core.Jobs.{CreateUserAccount, CreateVerificationContract}
 alias Quorum.Jobs.{UpdateUserAccount}
 
+config :quorum, client: Quorum.Client
+
 config :task_bunny,
   hosts: [
     default: [
