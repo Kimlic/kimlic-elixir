@@ -1,6 +1,7 @@
 use Mix.Config
 
 alias Core.Jobs.{CreateUserAccount, CreateVerificationContract}
+alias Quorum.Jobs.{UpdateUserAccount}
 
 config :task_bunny,
   hosts: [
@@ -12,7 +13,8 @@ config :task_bunny,
     namespace: "kimlic-core.",
     queues: [
       [name: "create-user-account", jobs: [CreateUserAccount]],
-      [name: "create-verification-contract", jobs: [CreateVerificationContract]]
+      [name: "create-verification-contract", jobs: [CreateVerificationContract]],
+      [name: "update-user-account", jobs: [UpdateUserAccount]]
     ]
   ]
 
