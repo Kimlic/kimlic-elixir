@@ -136,10 +136,7 @@ defmodule Quorum.Unit.QuorumTest do
         assert "test params" == params
       end)
 
-      assert {:ok, account_address} = QuorumHttpClient.request("personal_newAccount", ["p@ssW0rd"], [])
-      assert {:ok, _} = QuorumHttpClient.request("personal_unlockAccount", [account_address, "p@ssW0rd"], [])
-
-      transaction_data = %{from: account_address}
+      transaction_data = %{from: "0xaf438474fda68a51c5f3b04eb08d6b27a879ba14"}
       callback = {QuorumClientMock, :eth_get_logs, ["test params"]}
 
       # Start Create transaction job
