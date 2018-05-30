@@ -18,6 +18,8 @@ elixir:
 - 1.6.5
 otp_release:
 - 20.3.6
+notifications:
+  slack: kimlic:1fQoIvvw0ckjFF5Bgftxggmf
 env:
   global:
   - Chart=kimlic-core
