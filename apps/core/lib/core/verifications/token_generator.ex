@@ -6,5 +6,5 @@ defmodule Core.Verifications.TokenGenerator do
   @behaviour TokenGeneratorBehaviour
 
   @spec generate_code :: binary
-  def generate_code, do: "#{Enum.random(1_000_000..9_999_999)}"
+  def generate_code, do: "#{Enum.random(100_000..999_999)}"
 end

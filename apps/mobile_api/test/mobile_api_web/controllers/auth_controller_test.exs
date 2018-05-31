@@ -2,6 +2,8 @@ defmodule MobileApi.AuthTest do
   @moduledoc false
 
   use MobileApi.ConnCase, async: true
+
+  import MobileApi.RequestDataFactory
   import Mox
 
   alias Core.Clients.Redis
@@ -10,6 +12,7 @@ defmodule MobileApi.AuthTest do
   alias Core.Verifications.Verification
 
   @entity_type_email Verification.entity_type(:email)
+  @entity_type_phone Verification.entity_type(:phone)
 
   describe "create profile test" do
     test "success", %{conn: conn} do
@@ -24,7 +27,8 @@ defmodule MobileApi.AuthTest do
         {"0xf0a6e6c54dbc68db5db3a091b171a77407ff7ccd", "test2@email.com", token2}
       ]
       |> Enum.map(fn {account_address, email, token} ->
-        assert %{status: 201} = post(conn, auth_path(conn, :create_profile), request_data(email, account_address))
+        assert %{status: 201} =
+                 post(conn, auth_path(conn, :create_profile), data_for(:auth_create_profile, email, account_address))
 
         assert {:ok, %Verification{account_address: ^account_address, entity_type: @entity_type_email}} =
                  Redis.get(StorageKeys.vefirication_email(token))
@@ -48,27 +52,33 @@ defmodule MobileApi.AuthTest do
     end
   end
 
-  @spec request_data(binary, binary) :: map
-  defp request_data(email, account_address) do
-    %{
-      "source_data" => %{
-        "public_key" =>
-          "AAAAB3NzaC1yc2EAAAABIwAAAQEAklOUpkDHrfHY17SbrmTIpNLTGK9Tjom/BWDSUGPl+nafzlHDTYW7hdI4yZ5ew18JH4JW9jbhUFrviQzM7xlELEVf4h9lFX5QVkbPppSwg0cda3Pbv7kOdJ/MTyBlWXFCR+HAo3FXRitBqxiX1nKhXpHAZsMciLq8V6RjsNAQwdsdMFvSlVK/7XAt3FaoJoAsncM1Q9x5+3V0Ww68/eIFmb1zuUFljQJKprrX88XypNDvjYNby6vw/Pb0rwert/EnmZ+AW4OZPnTPI89ZPmVMLuayrD2cE86Z/il8b+gw3r3+1nKatmIkjn2so1d01QraTlMqVSsbxNrRFi9wrf+M7Q==",
-        "email" => email,
-        "device_fingerprint" => %{
-          "dhcp_fingerprint" => "1,33,3,6,12,15,28,51,58,59,119",
-          "dhcp_vendor" => "dhcpcd-5.5.6",
-          "user_agents" => ["Mozilla/5.0 (Linux; Android 5.0.2; SM-G920F Build/LRX22G; wv) AppleWebK"]
-        }
-      },
-      "blockchain_data" => %{
-        "account_address" => account_address,
-        "user_account_transaction" => %{
-          "data" => "transaction_data_generated_on_mobile"
-        }
-      }
-    }
+  @tag :wip
+  describe "create phone verification" do
+    test "success", %{conn: conn} do
+      token1 = generate_code()
+      token2 = generate_code()
+
+      expect(TokenGeneratorMock, :generate_code, fn -> token1 end)
+      expect(TokenGeneratorMock, :generate_code, fn -> token2 end)
+
+      [
+        {"0xd0a6e6c54dbc68db5db3a091b171a77407ff7ccf", token1},
+        {"0xf0a6e6c54dbc68db5db3a091b171a77407ff7ccd", token2}
+      ]
+      |> Enum.map(fn {account_address, token} ->
+        assert %{status: 201} =
+                 post(
+                   conn,
+                   auth_path(conn, :create_phone_verification),
+                   data_for(:auth_create_phone_verification, account_address)
+                 )
+
+        assert {:ok, %Verification{account_address: ^account_address, entity_type: @entity_type_phone}} =
+                 Redis.get(StorageKeys.vefirication_phone(token))
+      end)
+    end
   end
 
-  defp generate_code, do: Enum.random(1_000_000..9_999_999) |> to_string()
+  @spec generate_code :: binary
+  defp generate_code, do: Enum.random(100_000..999_999) |> to_string()
 end
