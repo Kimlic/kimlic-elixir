@@ -8,17 +8,16 @@ defmodule MobileApi.AuthTest do
   alias Core.Factory
   alias Core.StorageKeys
   alias Core.Verifications.Verification
-  alias Ecto.UUID
 
   @entity_type_email Verification.entity_type(:email)
 
   describe "create profile test" do
     test "success", %{conn: conn} do
-      token1 = UUID.generate()
-      token2 = UUID.generate()
+      token1 = generate_code()
+      token2 = generate_code()
 
-      expect(TokenGeneratorMock, :generate_email_token, fn "test@email.com", _address_account -> token1 end)
-      expect(TokenGeneratorMock, :generate_email_token, fn "test2@email.com", _address_account -> token2 end)
+      expect(TokenGeneratorMock, :generate_code, fn -> token1 end)
+      expect(TokenGeneratorMock, :generate_code, fn -> token2 end)
 
       [
         {"0xd0a6e6c54dbc68db5db3a091b171a77407ff7ccf", "test@email.com", token1},
@@ -35,7 +34,7 @@ defmodule MobileApi.AuthTest do
 
   describe "check verification token test" do
     test "success", %{conn: conn} do
-      token = UUID.generate()
+      token = generate_code()
       verification = Factory.verification!(%{token: token})
       Redis.set(StorageKeys.vefirication_email(token), verification)
 
@@ -45,7 +44,7 @@ defmodule MobileApi.AuthTest do
     end
 
     test "not found", %{conn: conn} do
-      assert post(conn, auth_path(conn, :check_verification_token), %{"token" => UUID.generate()}) |> json_response(404)
+      assert post(conn, auth_path(conn, :check_verification_token), %{"token" => generate_code()}) |> json_response(404)
     end
   end
 
@@ -70,4 +69,6 @@ defmodule MobileApi.AuthTest do
       }
     }
   end
+
+  defp generate_code, do: Enum.random(1_000_000..9_999_999) |> to_string()
 end

@@ -1,5 +1,5 @@
 defmodule Quorum.QueueTestHelper do
-  alias AMQP.{Basic, Channel, Connection, Queue}
+  alias AMQP.{Basic, Channel, Queue}
   alias TaskBunny.Queue, as: TaskBunnyQueue
 
   # Queue Helpers

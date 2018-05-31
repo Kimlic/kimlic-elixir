@@ -6,8 +6,6 @@ defmodule Quorum.Unit.QuorumTest do
 
   alias Quorum.Jobs.{TransactionCreate, TransactionStatus}
 
-  alias Ethereumex.HttpClient, as: QuorumHttpClient
-
   doctest Quorum
 
   setup :verify_on_exit!

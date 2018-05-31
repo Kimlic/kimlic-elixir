@@ -9,7 +9,7 @@ defmodule Core.Factory do
     data = %{
       entity_type: Verification.entity_type(:email),
       account_address: "0x123456789#{Enum.random(10_000..99_999)}",
-      token: "1234567890",
+      token: "123456",
       status: Verification.status(:new)
     }
 

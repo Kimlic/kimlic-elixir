@@ -8,12 +8,7 @@ defmodule Core.Email.Views.CreateProfileEmail do
   @spec mail(binary, binary) :: Swoosh.Email.t()
   def mail(email, code) do
     email_data = Confex.fetch_env!(:core, :emails)[:create_profile_email]
-    kimlic_website_url = Confex.fetch_env!(:core, :kimlic_website)[:url]
-
-    # todo: set correct route to kimlic website
-    activation_link = kimlic_website_url <> "/activate-user/" <> code
-
-    mail_html = EEx.eval_file(mail_path(), activation_link: activation_link)
+    mail_html = EEx.eval_file(mail_path(), code: code)
 
     new()
     |> to(email)
