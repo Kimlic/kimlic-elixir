@@ -12,8 +12,6 @@ defmodule Quorum.Unit.QuorumTest do
     TransactionStatus
   }
 
-  alias Ethereumex.HttpClient, as: QuorumHttpClient
-
   doctest Quorum
 
   setup :verify_on_exit!
