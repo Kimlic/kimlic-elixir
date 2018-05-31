@@ -12,10 +12,10 @@ defmodule Core.Verifications do
   @verification_entity_type_email Verification.entity_type(:email)
   @verification_entity_type_phone Verification.entity_type(:phone)
 
-  @spec create_email_verification(binary, binary) :: {:ok, binary} | {:error, binary} | {:error, Ecto.Changeset.t()}
-  def create_email_verification(email, account_address) do
+  @spec create_email_verification(binary) :: {:ok, binary} | {:error, binary} | {:error, Ecto.Changeset.t()}
+  def create_email_verification(account_address) do
     verification_ttl = Confex.fetch_env!(:core, :verification_email_ttl)
-    token = @token_generator.generate_email_token(email, account_address)
+    token = @token_generator.generate_code()
 
     with %Ecto.Changeset{valid?: true} = verification <-
            create_verification(account_address, @verification_entity_type_email, token),
