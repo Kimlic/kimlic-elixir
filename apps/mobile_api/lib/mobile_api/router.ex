@@ -15,6 +15,7 @@ defmodule MobileApi.Router do
 
     post("/auth/create-profile", AuthController, :create_profile)
     post("/auth/check-verification-token", AuthController, :check_verification_token)
+    post("/auth/create-phone-verification", AuthController, :create_phone_verification)
   end
 
   defp handle_errors(%Plug.Conn{status: 500} = conn, %{kind: kind, reason: reason, stack: stacktrace}) do

@@ -22,4 +22,13 @@ defmodule Core.Auth do
       error -> error
     end
   end
+
+  @spec create_phone_verification(binary) :: :ok | {:error, binary}
+  def create_phone_verification(account_address) do
+    # todo: call quorum: create verification contract
+    with {:ok, _verification} <- Verifications.create_phone_verification(account_address) do
+      # todo: send sms
+      :ok
+    end
+  end
 end

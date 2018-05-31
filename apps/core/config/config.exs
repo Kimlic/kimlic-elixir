@@ -3,8 +3,7 @@ use Mix.Config
 config :core, :dependencies, token_generator: Core.Verifications.TokenGenerator
 
 config :core, verification_email_ttl: {:system, "VERIFICATION_EMAIL_TTL", :timer.hours(24)}
-
-config :core, :kimlic_website, url: {:system, "KIMLIC_WEBSITE_URL", ""}
+config :core, verification_phone_ttl: {:system, "VERIFICATION_PHONE_TTL", :timer.hours(24)}
 
 config :core, :emails,
   create_profile_email: %{
