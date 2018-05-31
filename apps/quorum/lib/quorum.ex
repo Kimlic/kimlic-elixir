@@ -3,29 +3,33 @@ defmodule Quorum do
   Documentation for Quorum.
   """
 
-  alias Quorum.Jobs.{CreateUserAccount, CreateVerificationContract, UpdateUserAccount, TransactionCreate}
+  alias Quorum.Jobs.TransactionCreate
 
   def authenticated?(_token) do
     true
   end
 
+  @spec create_transaction(map) :: :ok
   def create_user_account(params) do
-    CreateUserAccount.enqueue!(params)
+    # ToDo: write code
+    # create_transaction()
   end
 
   def create_verification_contract(params) do
-    CreateVerificationContract.enqueue!(params)
+    # ToDo: write code
+    # create_transaction()
   end
 
   def update_user_account(params) do
-    UpdateUserAccount.enqueue!(params)
+    # ToDo: write code
+    # create_transaction()
   end
 
   @spec create_transaction(map) :: :ok
   def create_transaction(transaction_data), do: do_create_transaction(transaction_data, nil)
 
   @spec create_transaction(map, {atom, atom, list}) :: :ok
-  def create_transaction(transaction_data, {module, function, args} = callback)
+  def create_transaction(transaction_data, {module, function, args})
       when is_atom(module) and is_atom(function) and is_list(args) do
     do_create_transaction(transaction_data, %{m: module, f: function, a: args})
   end

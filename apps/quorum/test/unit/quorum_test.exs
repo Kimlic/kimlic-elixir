@@ -4,13 +4,7 @@ defmodule Quorum.Unit.QuorumTest do
   import Mox
   import Quorum.QueueTestHelper
 
-  alias Quorum.Jobs.{
-    CreateUserAccount,
-    CreateVerificationContract,
-    UpdateUserAccount,
-    TransactionCreate,
-    TransactionStatus
-  }
+  alias Quorum.Jobs.{TransactionCreate, TransactionStatus}
 
   alias Ethereumex.HttpClient, as: QuorumHttpClient
 
