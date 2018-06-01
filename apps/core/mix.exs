@@ -39,6 +39,7 @@ defmodule Core.MixProject do
       {:ecto, "~> 2.1"},
       {:swoosh, "~> 0.14"},
       {:gen_smtp, "~> 0.12.0"},
+      {:ex_twilio, "~> 0.6.0"},
       {:mox, "~> 0.3", only: :test}
     ]
   end
