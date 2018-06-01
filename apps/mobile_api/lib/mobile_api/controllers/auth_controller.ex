@@ -32,8 +32,9 @@ defmodule MobileApi.AuthController do
   @spec create_phone_verification(Conn.t(), map) :: Conn.t()
   def create_phone_verification(conn, params) do
     account_address = get_in(params, ["blockchain_data", "account_address"])
+    phone = get_in(params, ["source_data", "phone"])
 
-    with :ok <- Auth.create_phone_verification(account_address) do
+    with :ok <- Auth.create_phone_verification(phone, account_address) do
       conn
       |> put_status(201)
       |> json(%{})

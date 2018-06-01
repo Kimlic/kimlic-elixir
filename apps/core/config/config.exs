@@ -7,6 +7,8 @@ config :core, :dependencies,
 config :core, verification_email_ttl: {:system, "VERIFICATION_EMAIL_TTL", :timer.hours(24)}
 config :core, verification_phone_ttl: {:system, "VERIFICATION_PHONE_TTL", :timer.hours(24)}
 
+config :core, messenger_message_from: {:system, "MESSAGER_MESSAGE_FROM", ""}
+
 config :core, :emails,
   create_profile_email: %{
     from_email: {:system, "EMAIL_CREATE_PROFILE_FROM_EMAIL", "verification@kimlic.com"},

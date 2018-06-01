@@ -17,7 +17,7 @@ defmodule Core.Verifications do
   @spec create_email_verification(binary) :: create_verification_t
   def create_email_verification(account_address) do
     verification_ttl = Confex.fetch_env!(:core, :verification_email_ttl)
-    token = @token_generator.generate_code()
+    token = @token_generator.generate(:email)
     storage_key = StorageKeys.vefirication_email(token)
 
     create_verification(account_address, @verification_entity_type_email, token, verification_ttl, storage_key)
@@ -26,7 +26,7 @@ defmodule Core.Verifications do
   @spec create_phone_verification(binary) :: create_verification_t
   def create_phone_verification(account_address) do
     verification_ttl = Confex.fetch_env!(:core, :verification_phone_ttl)
-    token = @token_generator.generate_code()
+    token = @token_generator.generate(:phone)
     storage_key = StorageKeys.vefirication_phone(token)
 
     create_verification(account_address, @verification_entity_type_phone, token, verification_ttl, storage_key)
