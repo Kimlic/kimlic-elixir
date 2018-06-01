@@ -29,6 +29,7 @@ defmodule Quorum.MixProject do
 
   defp deps do
     [
+      {:abi, "~> 0.1.8"},
       {:jason, "~> 1.0"},
       {:task_bunny, "~> 0.3.2"},
       {:ethereumex, "~> 0.3.2"},

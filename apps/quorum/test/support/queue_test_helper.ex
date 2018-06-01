@@ -10,6 +10,22 @@ defmodule Quorum.QueueTestHelper do
 
   def purge(queue, host \\ :default)
 
+  defmacro clean(queues) do
+    quote do
+      # Remove pre-existing queues before every test.
+      {:ok, connection} = AMQP.Connection.open()
+      {:ok, channel} = AMQP.Channel.open(connection)
+
+      Enum.each(unquote(queues), fn queue -> AMQP.Queue.delete(channel, queue) end)
+
+      on_exit(fn ->
+        # Cleanup after test by removing queue.
+        Enum.each(unquote(queues), fn queue -> AMQP.Queue.delete(channel, queue) end)
+        AMQP.Connection.close(connection)
+      end)
+    end
+  end
+
   def purge(queue, host) when is_binary(queue) do
     {:ok, channel} = open_channel(host)
 

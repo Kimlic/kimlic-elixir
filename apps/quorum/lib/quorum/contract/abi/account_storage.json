@@ -1,0 +1,330 @@
+[
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "name": "data",
+        "type": "string"
+      },
+      {
+        "name": "objectType",
+        "type": "string"
+      },
+      {
+        "name": "keys",
+        "type": "string"
+      }
+    ],
+    "name": "addAddress",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [
+      {
+        "name": "accountAddress",
+        "type": "address"
+      },
+      {
+        "name": "accountFieldName",
+        "type": "uint8"
+      }
+    ],
+    "name": "getFieldHistoryLength",
+    "outputs": [
+      {
+        "name": "length",
+        "type": "uint256"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "name": "data",
+        "type": "string"
+      },
+      {
+        "name": "objectType",
+        "type": "string"
+      },
+      {
+        "name": "keys",
+        "type": "string"
+      }
+    ],
+    "name": "addDocument",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "name": "accountAddress",
+        "type": "address"
+      },
+      {
+        "name": "accountFieldName",
+        "type": "uint8"
+      },
+      {
+        "name": "isVerified",
+        "type": "bool"
+      },
+      {
+        "name": "verifiedBy",
+        "type": "address"
+      },
+      {
+        "name": "verifiedAt",
+        "type": "uint256"
+      }
+    ],
+    "name": "setVerificationResult",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "name": "accountAddress",
+        "type": "address"
+      },
+      {
+        "name": "accountFieldName",
+        "type": "uint8"
+      },
+      {
+        "name": "index",
+        "type": "uint256"
+      },
+      {
+        "name": "isVerified",
+        "type": "bool"
+      },
+      {
+        "name": "verifiedBy",
+        "type": "address"
+      },
+      {
+        "name": "verifiedAt",
+        "type": "uint256"
+      }
+    ],
+    "name": "setVerificationResult",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [],
+    "name": "renounceOwnership",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "name": "accountAddress",
+        "type": "address"
+      },
+      {
+        "name": "identityHash",
+        "type": "string"
+      },
+      {
+        "name": "phoneHash",
+        "type": "string"
+      },
+      {
+        "name": "emailHash",
+        "type": "string"
+      },
+      {
+        "name": "deviceHash",
+        "type": "bytes32"
+      }
+    ],
+    "name": "setAccountData",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [],
+    "name": "owner",
+    "outputs": [
+      {
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [
+      {
+        "name": "accountAddress",
+        "type": "address"
+      },
+      {
+        "name": "accountFieldName",
+        "type": "uint8"
+      },
+      {
+        "name": "index",
+        "type": "uint256"
+      }
+    ],
+    "name": "getAccountData",
+    "outputs": [
+      {
+        "name": "data",
+        "type": "string"
+      },
+      {
+        "name": "objectType",
+        "type": "string"
+      },
+      {
+        "name": "keys",
+        "type": "string"
+      },
+      {
+        "name": "isVerified",
+        "type": "bool"
+      },
+      {
+        "name": "verifiedBy",
+        "type": "address"
+      },
+      {
+        "name": "verifiedAt",
+        "type": "uint256"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [
+      {
+        "name": "accountAddress",
+        "type": "address"
+      },
+      {
+        "name": "accountFieldName",
+        "type": "uint8"
+      }
+    ],
+    "name": "getAccountData",
+    "outputs": [
+      {
+        "name": "data",
+        "type": "string"
+      },
+      {
+        "name": "objectType",
+        "type": "string"
+      },
+      {
+        "name": "keys",
+        "type": "string"
+      },
+      {
+        "name": "isVerified",
+        "type": "bool"
+      },
+      {
+        "name": "verifiedBy",
+        "type": "address"
+      },
+      {
+        "name": "verifiedAt",
+        "type": "uint256"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "name": "newOwner",
+        "type": "address"
+      }
+    ],
+    "name": "transferOwnership",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "name": "context",
+        "type": "address"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "constructor"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "name": "previousOwner",
+        "type": "address"
+      }
+    ],
+    "name": "OwnershipRenounced",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "name": "previousOwner",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "name": "newOwner",
+        "type": "address"
+      }
+    ],
+    "name": "OwnershipTransferred",
+    "type": "event"
+  }
+]
