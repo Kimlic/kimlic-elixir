@@ -25,10 +25,11 @@ defmodule MobileApi.RequestDataFactory do
     }
   end
 
-  def data_for(:auth_create_phone_verification, account_address) do
+  def data_for(:auth_create_phone_verification, account_address, phone) do
     %{
       "source_data" => %{
         "public_key" => @public_key,
+        "phone" => phone,
         "device_fingerprint" => @device_fingerprint
       },
       "blockchain_data" => %{
