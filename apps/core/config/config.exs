@@ -1,6 +1,8 @@
 use Mix.Config
 
-config :core, :dependencies, token_generator: Core.Verifications.TokenGenerator
+config :core, :dependencies,
+  token_generator: Core.Verifications.TokenGenerator,
+  messenger: Core.Clients.Messenger
 
 config :core, verification_email_ttl: {:system, "VERIFICATION_EMAIL_TTL", :timer.hours(24)}
 
