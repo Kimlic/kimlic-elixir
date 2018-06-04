@@ -1,5 +1,5 @@
 defmodule Core.Verifications.TokenGeneratorBehaviour do
   @moduledoc false
 
-  @callback generate_code :: binary
+  @callback generate(:email | :phone) :: binary
 end

@@ -21,9 +21,30 @@ defmodule MobileApi.AuthController do
   end
 
   # todo: validate request
-  @spec check_verification_token(Conn.t(), map) :: Conn.t()
-  def check_verification_token(conn, params) do
-    with :ok <- Auth.check_verification_token(params["token"]) do
+  @spec check_email_verification(Conn.t(), map) :: Conn.t()
+  def check_email_verification(conn, params) do
+    with :ok <- Auth.check_verification(:email, params["account_address"], params["token"]) do
+      json(conn, %{status: "ok"})
+    end
+  end
+
+  # todo: validate request
+  @spec create_phone_verification(Conn.t(), map) :: Conn.t()
+  def create_phone_verification(conn, params) do
+    account_address = get_in(params, ["blockchain_data", "account_address"])
+    phone = get_in(params, ["source_data", "phone"])
+
+    with :ok <- Auth.create_phone_verification(phone, account_address) do
+      conn
+      |> put_status(201)
+      |> json(%{})
+    end
+  end
+
+  # todo: validate request
+  @spec check_phone_verification(Conn.t(), map) :: Conn.t()
+  def check_phone_verification(conn, params) do
+    with :ok <- Auth.check_verification(:phone, params["account_address"], params["code"]) do
       json(conn, %{status: "ok"})
     end
   end
