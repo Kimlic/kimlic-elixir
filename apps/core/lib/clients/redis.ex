@@ -12,7 +12,7 @@ defmodule Core.Clients.Redis do
     end
   end
 
-  @spec set(binary, term, pos_integer | nil) :: {:ok, term} | {:error, binary}
+  @spec set(binary, term, pos_integer | nil) :: :ok | {:error, atom}
   def set(key, value, ttl_seconds \\ nil)
 
   def set(key, value, nil) when is_binary(key) and value != nil,
@@ -34,7 +34,7 @@ defmodule Core.Clients.Redis do
     case Redix.command(:redix, ["DEL", key]) do
       {:ok, n} when n >= 1 -> {:ok, n}
       {:ok, 0} -> {:error, :not_found}
-      error -> error
+      err -> err
     end
   end
 
