@@ -15,7 +15,7 @@ defmodule MobileApi.AuthTest do
   @entity_type_email Verification.entity_type(:email)
   @entity_type_phone Verification.entity_type(:phone)
 
-  describe "create profile test" do
+  describe "create profile" do
     test "success", %{conn: conn} do
       account_address = generate_account_address()
       token = TokenGenerator.generate(:email)
@@ -31,20 +31,20 @@ defmodule MobileApi.AuthTest do
     end
   end
 
-  describe "check verification token test" do
+  describe "check email verification" do
     test "success", %{conn: conn} do
       token = TokenGenerator.generate(:email)
       verification = Factory.verification!(%{token: token})
       Redis.set(StorageKeys.vefirication_email(token), verification)
 
       assert %{"status" => "ok"} =
-               post(conn, auth_path(conn, :check_verification_token), %{"token" => token})
+               post(conn, auth_path(conn, :check_email_verification), %{"token" => token})
                |> json_response(200)
     end
 
-    test "not found", %{conn: conn} do
+    test "not found on email verification", %{conn: conn} do
       assert conn
-             |> post(auth_path(conn, :check_verification_token), %{"token" => TokenGenerator.generate(:email)})
+             |> post(auth_path(conn, :check_email_verification), %{"token" => TokenGenerator.generate(:email)})
              |> json_response(404)
     end
   end
@@ -67,6 +67,24 @@ defmodule MobileApi.AuthTest do
 
       assert {:ok, %Verification{account_address: ^account_address, entity_type: @entity_type_phone}} =
                Redis.get(StorageKeys.vefirication_phone(token))
+    end
+  end
+
+  describe "check phone verification" do
+    test "success", %{conn: conn} do
+      code = TokenGenerator.generate(:phone)
+      verification = Factory.verification!(%{token: code, entity_type: @entity_type_phone})
+      Redis.set(StorageKeys.vefirication_phone(code), verification)
+
+      assert %{"status" => "ok"} =
+               post(conn, auth_path(conn, :check_phone_verification), %{"code" => code})
+               |> json_response(200)
+    end
+
+    test "not found on phone verification", %{conn: conn} do
+      assert conn
+             |> post(auth_path(conn, :check_phone_verification), %{"code" => TokenGenerator.generate(:phone)})
+             |> json_response(404)
     end
   end
 

@@ -1,4 +1,6 @@
 defmodule MobileApi.Router do
+  @moduledoc false
+
   use MobileApi, :router
   use Plug.ErrorHandler
 
@@ -14,8 +16,9 @@ defmodule MobileApi.Router do
     pipe_through(:api)
 
     post("/auth/create-profile", AuthController, :create_profile)
-    post("/auth/check-verification-token", AuthController, :check_verification_token)
+    post("/auth/check-email-verification", AuthController, :check_email_verification)
     post("/auth/create-phone-verification", AuthController, :create_phone_verification)
+    post("/auth/check-phone-verification", AuthController, :check_phone_verification)
   end
 
   defp handle_errors(%Plug.Conn{status: 500} = conn, %{kind: kind, reason: reason, stack: stacktrace}) do

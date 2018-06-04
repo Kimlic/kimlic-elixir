@@ -14,18 +14,6 @@ defmodule Core.Auth do
     end
   end
 
-  @spec check_verification_token(binary) :: :ok | {:error, term}
-  def check_verification_token(token) do
-    with {:ok, verification} <- Verifications.get(token, :email),
-         {:ok, 1} <- Verifications.delete(verification) do
-      # todo: call quorum
-      :ok
-    else
-      {:ok, 0} -> {:error, :not_found}
-      error -> error
-    end
-  end
-
   @spec create_phone_verification(binary, binary) :: :ok | {:error, binary}
   def create_phone_verification(phone, account_address) do
     # todo: call quorum: create verification contract
@@ -33,6 +21,31 @@ defmodule Core.Auth do
          # todo: move message to resources
          {:ok, %{}} <- @messenger.send(phone, "Here is your code: #{sms_code}") do
       :ok
+    end
+  end
+
+  @spec check_verification(:phone | :email, binary) :: :ok | {:error, term}
+  def check_verification(:email, token) do
+    with :ok <- do_check_verification(:email, token) do
+      # todo: call quorum
+      :ok
+    end
+  end
+
+  def check_verification(:phone, code) do
+    with :ok <- do_check_verification(:phone, code) do
+      # todo: call quorum
+      :ok
+    end
+  end
+
+  @spec check_verification(:phone | :email, binary) :: :ok | {:error, term}
+  defp do_check_verification(type, token) do
+    with {:ok, verification} <- Verifications.get(token, type),
+         {:ok, 1} <- Verifications.delete(verification) do
+      :ok
+    else
+      error -> error
     end
   end
 end

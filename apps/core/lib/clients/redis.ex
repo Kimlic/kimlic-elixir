@@ -31,7 +31,11 @@ defmodule Core.Clients.Redis do
 
   @spec delete(binary) :: {:ok, non_neg_integer} | {:error, binary}
   def delete(key) when is_binary(key) do
-    Redix.command(:redix, ["DEL", key])
+    case Redix.command(:redix, ["DEL", key]) do
+      {:ok, n} when n >= 1 -> {:ok, n}
+      {:ok, 0} -> {:error, :not_found}
+      error -> error
+    end
   end
 
   @spec flush :: :ok | {:error, binary}
