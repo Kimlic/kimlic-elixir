@@ -3,11 +3,11 @@ defmodule MobileApi.AuthTest do
 
   use MobileApi.ConnCase, async: true
 
+  import Core.Factory, only: [insert: 3]
   import MobileApi.RequestDataFactory
   import Mox
 
   alias Core.Clients.Redis
-  alias Core.Factory
   alias Core.StorageKeys
   alias Core.Verifications.Verification
   alias Core.Verifications.TokenGenerator
@@ -35,8 +35,8 @@ defmodule MobileApi.AuthTest do
     test "success", %{conn: conn} do
       account_address = generate_account_address()
       token = TokenGenerator.generate(:email)
-      verification = Factory.verification!(%{account_address: account_address, token: token})
-      Redis.set(StorageKeys.vefirication_email(account_address), verification)
+      verification_key = StorageKeys.vefirication_email(account_address)
+      insert(:verification, verification_key, %{account_address: account_address, token: token})
 
       assert %{"status" => "ok"} =
                post(conn, auth_path(conn, :check_email_verification), %{
@@ -78,11 +78,13 @@ defmodule MobileApi.AuthTest do
     test "success", %{conn: conn} do
       account_address = generate_account_address()
       code = TokenGenerator.generate(:phone)
+      verification_key = StorageKeys.vefirication_phone(account_address)
 
-      verification =
-        Factory.verification!(%{account_address: account_address, token: code, entity_type: @entity_type_phone})
-
-      Redis.set(StorageKeys.vefirication_phone(account_address), verification)
+      insert(:verification, verification_key, %{
+        account_address: account_address,
+        token: code,
+        entity_type: @entity_type_phone
+      })
 
       assert %{"status" => "ok"} =
                conn
