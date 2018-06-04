@@ -18,7 +18,7 @@ defmodule Core.Verifications do
   def create_email_verification(account_address) do
     verification_ttl = Confex.fetch_env!(:core, :verification_email_ttl)
     token = @token_generator.generate(:email)
-    storage_key = StorageKeys.vefirication_email(token)
+    storage_key = StorageKeys.vefirication_email(account_address)
 
     create_verification(account_address, @verification_entity_type_email, token, verification_ttl, storage_key)
   end
@@ -27,7 +27,7 @@ defmodule Core.Verifications do
   def create_phone_verification(account_address) do
     verification_ttl = Confex.fetch_env!(:core, :verification_phone_ttl)
     token = @token_generator.generate(:phone)
-    storage_key = StorageKeys.vefirication_phone(token)
+    storage_key = StorageKeys.vefirication_phone(account_address)
 
     create_verification(account_address, @verification_entity_type_phone, token, verification_ttl, storage_key)
   end
@@ -54,26 +54,26 @@ defmodule Core.Verifications do
   ### Quering
 
   @spec get(binary, atom) :: {:ok, %Verification{}} | {:error, term}
-  def get(token, :email) do
-    token
+  def get(account_address, :email) do
+    account_address
     |> StorageKeys.vefirication_email()
     |> Redis.get()
   end
 
   @spec get(binary, atom) :: {:ok, %Verification{}} | {:error, term}
-  def get(token, :phone) do
-    token
+  def get(account_address, :phone) do
+    account_address
     |> StorageKeys.vefirication_phone()
     |> Redis.get()
   end
 
   @spec delete(%Verification{} | term) :: {:ok, non_neg_integer} | {:error, term}
-  def delete(%Verification{entity_type: type, token: token})
+  def delete(%Verification{entity_type: type, account_address: account_address})
       when type in [@verification_entity_type_email, @verification_entity_type_phone] do
     type
     |> case do
-      @verification_entity_type_email -> StorageKeys.vefirication_email(token)
-      @verification_entity_type_phone -> StorageKeys.vefirication_phone(token)
+      @verification_entity_type_email -> StorageKeys.vefirication_email(account_address)
+      @verification_entity_type_phone -> StorageKeys.vefirication_phone(account_address)
     end
     |> Redis.delete()
   end
