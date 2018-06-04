@@ -24,28 +24,39 @@ defmodule Core.Auth do
     end
   end
 
-  @spec check_verification(:phone | :email, binary) :: :ok | {:error, term}
-  def check_verification(:email, token) do
-    with :ok <- do_check_verification(:email, token) do
+  @spec check_verification(:phone | :email, binary, binary) :: :ok | {:error, term}
+  def check_verification(:email, account_address, token) do
+    with :ok <- do_check_verification(:email, account_address, token) do
       # todo: call quorum
       :ok
     end
   end
 
-  def check_verification(:phone, code) do
-    with :ok <- do_check_verification(:phone, code) do
+  def check_verification(:phone, account_address, code) do
+    with :ok <- do_check_verification(:phone, account_address, code) do
       # todo: call quorum
       :ok
     end
   end
 
-  @spec check_verification(:phone | :email, binary) :: :ok | {:error, term}
-  defp do_check_verification(type, token) do
-    with {:ok, verification} <- Verifications.get(token, type),
+  @spec check_verification(:phone | :email, binary, binary) :: :ok | {:error, term}
+  defp do_check_verification(type, account_address, token) do
+    with {:ok, %Verification{} = verification} <- Verifications.get(account_address, type),
+         {_, true} <- {:verification_access, can_access_verification?(verification, account_address, token)},
          {:ok, 1} <- Verifications.delete(verification) do
       :ok
     else
+      {:verification_access, _} -> {:error, :not_found}
       error -> error
     end
+  end
+
+  @spec can_access_verification?(%Verification{}, binary, binary) :: boolean
+  defp can_access_verification?(
+         %{token: token, account_address: account_address},
+         request_account_address,
+         request_token
+       ) do
+    account_address == request_account_address and token == request_token
   end
 end

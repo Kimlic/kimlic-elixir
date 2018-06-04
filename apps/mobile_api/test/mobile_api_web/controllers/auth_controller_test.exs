@@ -26,19 +26,23 @@ defmodule MobileApi.AuthTest do
       assert %{status: 201} =
                post(conn, auth_path(conn, :create_profile), data_for(:auth_create_profile, email, account_address))
 
-      assert {:ok, %Verification{account_address: ^account_address, entity_type: @entity_type_email}} =
-               Redis.get(StorageKeys.vefirication_email(token))
+      assert {:ok, %Verification{token: ^token, entity_type: @entity_type_email}} =
+               Redis.get(StorageKeys.vefirication_email(account_address))
     end
   end
 
   describe "check email verification" do
     test "success", %{conn: conn} do
+      account_address = generate_account_address()
       token = TokenGenerator.generate(:email)
-      verification = Factory.verification!(%{token: token})
-      Redis.set(StorageKeys.vefirication_email(token), verification)
+      verification = Factory.verification!(%{account_address: account_address, token: token})
+      Redis.set(StorageKeys.vefirication_email(account_address), verification)
 
       assert %{"status" => "ok"} =
-               post(conn, auth_path(conn, :check_email_verification), %{"token" => token})
+               post(conn, auth_path(conn, :check_email_verification), %{
+                 "token" => token,
+                 "account_address" => account_address
+               })
                |> json_response(200)
     end
 
@@ -65,25 +69,35 @@ defmodule MobileApi.AuthTest do
                  data_for(:auth_create_phone_verification, account_address, phone)
                )
 
-      assert {:ok, %Verification{account_address: ^account_address, entity_type: @entity_type_phone}} =
-               Redis.get(StorageKeys.vefirication_phone(token))
+      assert {:ok, %Verification{token: ^token, entity_type: @entity_type_phone}} =
+               Redis.get(StorageKeys.vefirication_phone(account_address))
     end
   end
 
   describe "check phone verification" do
     test "success", %{conn: conn} do
+      account_address = generate_account_address()
       code = TokenGenerator.generate(:phone)
-      verification = Factory.verification!(%{token: code, entity_type: @entity_type_phone})
-      Redis.set(StorageKeys.vefirication_phone(code), verification)
+
+      verification =
+        Factory.verification!(%{account_address: account_address, token: code, entity_type: @entity_type_phone})
+
+      Redis.set(StorageKeys.vefirication_phone(account_address), verification)
 
       assert %{"status" => "ok"} =
-               post(conn, auth_path(conn, :check_phone_verification), %{"code" => code})
+               conn
+               |> post(auth_path(conn, :check_phone_verification), %{
+                 "code" => code,
+                 "account_address" => account_address
+               })
                |> json_response(200)
     end
 
     test "not found on phone verification", %{conn: conn} do
+      request_data = %{"code" => TokenGenerator.generate(:phone), "account_address" => generate_account_address()}
+
       assert conn
-             |> post(auth_path(conn, :check_phone_verification), %{"code" => TokenGenerator.generate(:phone)})
+             |> post(auth_path(conn, :check_phone_verification), request_data)
              |> json_response(404)
     end
   end

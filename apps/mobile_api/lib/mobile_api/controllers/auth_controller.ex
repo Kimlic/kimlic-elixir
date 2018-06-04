@@ -23,7 +23,7 @@ defmodule MobileApi.AuthController do
   # todo: validate request
   @spec check_email_verification(Conn.t(), map) :: Conn.t()
   def check_email_verification(conn, params) do
-    with :ok <- Auth.check_verification(:email, params["token"]) do
+    with :ok <- Auth.check_verification(:email, params["account_address"], params["token"]) do
       json(conn, %{status: "ok"})
     end
   end
@@ -41,9 +41,10 @@ defmodule MobileApi.AuthController do
     end
   end
 
+  # todo: validate request
   @spec check_phone_verification(Conn.t(), map) :: Conn.t()
   def check_phone_verification(conn, params) do
-    with :ok <- Auth.check_verification(:phone, params["code"]) do
+    with :ok <- Auth.check_verification(:phone, params["account_address"], params["code"]) do
       json(conn, %{status: "ok"})
     end
   end
