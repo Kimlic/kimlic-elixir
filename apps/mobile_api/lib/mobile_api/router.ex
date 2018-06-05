@@ -5,6 +5,7 @@ defmodule MobileApi.Router do
   use Plug.ErrorHandler
 
   alias Plug.LoggerJSON
+  alias MobileApi.Plugs.CreatePhoneVerificationLimiter
 
   require Logger
 
@@ -12,13 +13,22 @@ defmodule MobileApi.Router do
     plug(:accepts, ["json"])
   end
 
+  pipeline :create_phone_verification_limiter do
+    plug(CreatePhoneVerificationLimiter)
+  end
+
   scope "/api", MobileApi do
     pipe_through(:api)
 
     post("/auth/create-profile", AuthController, :create_profile)
     post("/auth/check-email-verification", AuthController, :check_email_verification)
-    post("/auth/create-phone-verification", AuthController, :create_phone_verification)
     post("/auth/check-phone-verification", AuthController, :check_phone_verification)
+
+    scope "/auth/create-phone-verification" do
+      pipe_through(:create_phone_verification_limiter)
+
+      post("/", AuthController, :create_phone_verification)
+    end
   end
 
   defp handle_errors(%Plug.Conn{status: 500} = conn, %{kind: kind, reason: reason, stack: stacktrace}) do
