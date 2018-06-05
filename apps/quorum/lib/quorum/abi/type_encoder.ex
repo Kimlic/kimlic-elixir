@@ -252,9 +252,9 @@ defmodule Quorum.ABI.TypeEncoder do
     end
   end
 
-  def mod(x, n) when x > 0, do: rem(x, n)
-  def mod(x, n) when x < 0, do: rem(n + x, n)
-  def mod(0, _n), do: 0
+  defp mod(x, n) when x > 0, do: rem(x, n)
+  defp mod(x, n) when x < 0, do: rem(n + x, n)
+  defp mod(0, _n), do: 0
 
   @spec maybe_encode_unsigned(binary() | integer()) :: binary()
   defp maybe_encode_unsigned(bin) when is_binary(bin), do: bin
