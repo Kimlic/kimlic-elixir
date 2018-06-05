@@ -4,107 +4,61 @@ defmodule Quorum.Unit.QuorumTest do
   import Mox
   import Quorum.QueueTestHelper
 
-  alias Quorum.Jobs.{
-    CreateUserAccount,
-    CreateVerificationContract,
-    UpdateUserAccount,
-    TransactionCreate,
-    TransactionStatus
-  }
+  alias TaskBunny.Queue
+  alias Quorum.Jobs.{TransactionCreate, TransactionStatus}
 
   doctest Quorum
 
   setup :verify_on_exit!
   setup :set_mox_global
 
-  @queue_create_user_account "kimlic-core-test.create-user-account"
-  @queue_create_verification_contract "kimlic-core-test.create-verification-contract"
-  @queue_update_user_account "kimlic-core-test.update-user-account"
   @queue_transaction_create "kimlic-core-test.transaction"
   @queue_transaction_status "kimlic-core-test.transaction-status"
 
-  @tag :pending
-  describe "create user account" do
-    setup do
-      on_exit(fn ->
-        purge_all(@queue_create_user_account)
-      end)
-    end
-
-    test "success" do
-      quorum_client_resp = {:ok, "created"}
-      expect(QuorumClientMock, :create_user_account, fn _params -> quorum_client_resp end)
-
-      # Start job Create user account
-      user_data = %{"transaction" => "create-user"}
-      assert :ok == Quorum.create_user_account(user_data)
-
-      # Ensure that queue contain message for user creation
-      {payload, _queue_metadata} = pop(@queue_create_user_account)
-      assert user_data == Jason.decode!(payload)["payload"]
-
-      # manually invoke message processing
-      assert quorum_client_resp == CreateUserAccount.perform(payload)
-    end
+  setup do
+    clean(Queue.queue_with_subqueues(@queue_transaction_create))
+    clean(Queue.queue_with_subqueues(@queue_transaction_status))
+    Queue.declare_with_subqueues(:default, @queue_transaction_create)
+    Queue.declare_with_subqueues(:default, @queue_transaction_status)
+    :ok
   end
 
-  @tag :pending
-  describe "create verification contract" do
-    setup do
-      on_exit(fn ->
-        purge_all(@queue_create_verification_contract)
+  describe "create verification_contract" do
+    test "success" do
+      expect(QuorumClientMock, :eth_send_transaction, fn _params, _opts ->
+        {:ok, "0x9b4f4029f7e13575d5f4eab2c65ccc43b21aa67f4cf0746c4500b6c80a23fc23"}
       end)
-    end
 
-    test "success" do
-      quorum_client_resp = {:ok, "1"}
+      expect(QuorumClientMock, :eth_get_transaction_receipt, fn _params, _opts ->
+        {:ok, %{"transactionHash" => "0x9b4f4029f7e13575d5f4eab2c65ccc43b21aa67f4cf0746"}}
+      end)
 
-      expect(QuorumClientMock, :create_verification_contract, fn _params -> quorum_client_resp end)
+      expect(QuorumClientMock, :eth_get_logs, fn status, params ->
+        assert %{"transactionHash" => _} = status
+        assert "callback" = params
+      end)
 
-      contract_data = %{"email" => "alice@example.com"}
-      # Start job Create verification contract
-      assert :ok == Quorum.create_verification_contract(contract_data)
+      # ToDo: too short address, ABI compile raise error: Data overflow encoding uint, data cannot fit in 160 bits
+      account_address = "33c1b162cf32c781a365"
 
-      # Ensure that queue contain message for create verification contract
-      {payload, _queue_metadata} = pop(@queue_create_verification_contract)
-      assert contract_data == Jason.decode!(payload)["payload"]
+      callback = {QuorumClientMock, :eth_get_logs, ["callback"]}
+      assert :ok = Quorum.create_verification_contract(account_address, :email, callback)
 
-      # manually invoke message processing
-      assert quorum_client_resp == CreateVerificationContract.perform(payload)
-    end
-  end
+      # Ensure that queue contain message for create transaction job
+      assert {transaction_payload, _queue_metadata} = pop(@queue_transaction_create)
 
-  @tag :pending
-  describe "update user account" do
-    setup do
-      on_exit(fn -> purge_all(@queue_update_user_account) end)
-    end
+      # manually invoke create transaction job
+      assert :ok == transaction_payload |> fetch_payload_from_queue() |> TransactionCreate.perform()
 
-    test "success" do
-      quorum_client_resp = {:ok, "updated"}
-      expect(QuorumClientMock, :update_user_account, fn _params -> quorum_client_resp end)
+      # ensure that message succesfully created in transaction_status queue
+      assert {status_payload, _queue_metadata} = pop(@queue_transaction_status)
 
-      # Start job Create user account
-      user_data = %{"transaction" => "update-user"}
-      assert :ok == Quorum.update_user_account(user_data)
-
-      # Ensure that queue contain message for user creation
-      {payload, _queue_metadata} = pop(@queue_update_user_account)
-      assert user_data == Jason.decode!(payload)["payload"]
-
-      # manually invoke message processing
-      assert quorum_client_resp == UpdateUserAccount.perform(payload)
+      # manually invoke transaction status job
+      assert :ok == status_payload |> fetch_payload_from_queue() |> TransactionStatus.perform()
     end
   end
 
   describe "create transaction and check status" do
-    setup do
-      on_exit(fn ->
-        purge_all(@queue_transaction_status)
-        purge_all(@queue_transaction_create)
-      end)
-    end
-
     test "success" do
       expect(QuorumClientMock, :eth_send_transaction, fn _params, _opts ->
         {:ok, "0x9b4f4029f7e13575d5f4eab2c65ccc43b21aa67f4cf0746c4500b6c80a23fc23"}
@@ -131,11 +85,11 @@ defmodule Quorum.Unit.QuorumTest do
 
       expect(QuorumClientMock, :eth_get_logs, fn status, params ->
         assert transaction_status == status
-        assert "test params" == params
+        assert "callback" == params
       end)
 
       transaction_data = %{from: "0xaf438474fda68a51c5f3b04eb08d6b27a879ba14"}
-      callback = {QuorumClientMock, :eth_get_logs, ["test params"]}
+      callback = {QuorumClientMock, :eth_get_logs, ["callback"]}
 
       # Start Create transaction job
       assert :ok = Quorum.create_transaction(transaction_data, callback)
