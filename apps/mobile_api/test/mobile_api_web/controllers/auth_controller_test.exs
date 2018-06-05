@@ -72,6 +72,32 @@ defmodule MobileApi.AuthTest do
       assert {:ok, %Verification{token: ^token, entity_type: @entity_type_phone}} =
                Redis.get(StorageKeys.vefirication_phone(account_address))
     end
+
+    test "with limited requests", %{conn: conn} do
+      phone = generate_phone()
+      account_address = generate_account_address()
+      token = TokenGenerator.generate(:phone)
+
+      attempts = Confex.fetch_env!(:mobile_api, :rate_limit_create_phone_verification_attempts)
+
+      do_request = fn ->
+        post(
+          conn,
+          auth_path(conn, :create_phone_verification),
+          data_for(:auth_create_phone_verification, account_address, phone)
+        )
+      end
+
+      for _ <- 1..attempts do
+        expect(TokenGeneratorMock, :generate, fn :phone -> token end)
+        expect(MessengerMock, :send, fn ^phone, _message -> {:ok, %{}} end)
+
+        assert %{status: 201} = do_request.()
+      end
+
+      # rate limited requests
+      for _ <- 0..10, do: assert(%{status: 429} = do_request.())
+    end
   end
 
   describe "check phone verification" do

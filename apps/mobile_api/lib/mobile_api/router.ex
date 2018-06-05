@@ -27,7 +27,7 @@ defmodule MobileApi.Router do
     scope "/auth/create-phone-verification" do
       pipe_through(:create_phone_verification_limiter)
 
-      post("/auth/create-phone-verification", AuthController, :create_phone_verification)
+      post("/", AuthController, :create_phone_verification)
     end
   end
 

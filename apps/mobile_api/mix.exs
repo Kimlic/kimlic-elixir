@@ -39,8 +39,7 @@ defmodule MobileApi.Mixfile do
       {:plug_logger_json, "~> 0.5"},
       {:cowboy, "~> 1.0"},
       {:hammer, "~> 5.0"},
-      {:hammer_backend_redis, "~> 5.0"},
-      {:mox, "~> 0.3", only: :test}
+      {:hammer_backend_redis, "~> 5.0"}
     ]
   end
 end

@@ -4,8 +4,7 @@ defmodule MobileApi.Plugs.CreatePhoneVerificationLimiter do
   import Plug.Conn
   alias Plug.Conn
 
-  @timeout :timer.hours(24)
-  @attempts 5
+  @too_many_requests_status 429
 
   @spec init(Plug.opts()) :: Plug.opts()
   def init(opts), do: opts
@@ -16,9 +15,15 @@ defmodule MobileApi.Plugs.CreatePhoneVerificationLimiter do
     phone = get_in(params, ["source_data", "phone"])
     user_rate_limit_key = "create_phone_verification_limiter:#{account_address}:#{phone}"
 
-    case Hammer.check_rate(user_rate_limit_key, @timeout, @attempts) do
+    case Hammer.check_rate(user_rate_limit_key, timeout(), attempts()) do
       {:allow, _count} -> conn
-      _ -> conn |> put_status(429) |> halt()
+      _ -> conn |> put_status(@too_many_requests_status) |> halt()
     end
   end
+
+  @spec timeout :: integer
+  defp timeout, do: Confex.fetch_env!(:mobile_api, :rate_limit_create_phone_verification_timeout)
+
+  @spec attempts :: integer
+  defp attempts, do: Confex.fetch_env!(:mobile_api, :rate_limit_create_phone_verification_attempts)
 end
