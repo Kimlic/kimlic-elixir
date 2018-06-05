@@ -88,15 +88,13 @@ defmodule MobileApi.AuthTest do
         )
       end
 
-      for _ <- 1..attempts do
-        expect(TokenGeneratorMock, :generate, fn :phone -> token end)
-        expect(MessengerMock, :send, fn ^phone, _message -> {:ok, %{}} end)
+      expect(TokenGeneratorMock, :generate, attempts, fn :phone -> token end)
+      expect(MessengerMock, :send, attempts, fn ^phone, _message -> {:ok, %{}} end)
 
-        assert %{status: 201} = do_request.()
-      end
+      for _ <- 1..attempts, do: assert(%{status: 201} = do_request.())
 
       # rate limited requests
-      for _ <- 0..10, do: assert(%{status: 429} = do_request.())
+      for _ <- 1..10, do: assert(%{status: 429} = do_request.())
     end
   end
 

@@ -17,7 +17,7 @@ config :mobile_api,
 
 config :phoenix, :format_encoders, json: Jason
 
-config :hammer, backend: {Hammer.Backend.Redis, [redix_config: "${REDIS_HOST}"]}
+config :hammer, backend: {Hammer.Backend.Redis, [redix_config: "${REDIS_URI}"]}
 
 config :logger, :console,
   format: "$message\n",
