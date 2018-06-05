@@ -4,8 +4,8 @@ defmodule MobileApi.Router do
   use MobileApi, :router
   use Plug.ErrorHandler
 
-  alias Plug.LoggerJSON
   alias MobileApi.Plugs.CreatePhoneVerificationLimiter
+  alias Plug.LoggerJSON
 
   require Logger
 
