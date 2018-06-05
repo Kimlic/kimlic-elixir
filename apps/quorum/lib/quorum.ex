@@ -12,12 +12,6 @@ defmodule Quorum do
     true
   end
 
-  @spec create_user_account(map) :: :ok
-  def create_user_account(_params) do
-    # ToDo: write code
-    # create_transaction()
-  end
-
   @spec create_verification_contract(binary, atom, {atom, atom, list}) :: :ok
   def create_verification_contract(account_address, :email, {_module, _function, _args} = callback),
     do: create_verification_transaction(account_address, "createEmailVerification", callback)
