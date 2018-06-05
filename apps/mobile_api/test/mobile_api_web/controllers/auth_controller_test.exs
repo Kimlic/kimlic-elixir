@@ -12,6 +12,8 @@ defmodule MobileApi.AuthTest do
   alias Core.Verifications.Verification
   alias Core.Verifications.TokenGenerator
 
+  @moduletag :authorized
+
   @entity_type_email Verification.entity_type(:email)
   @entity_type_phone Verification.entity_type(:phone)
 

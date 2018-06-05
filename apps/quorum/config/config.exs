@@ -10,6 +10,8 @@ alias Quorum.Jobs.{
 
 config :quorum, client: Ethereumex.HttpClient
 
+config :quorum, authorization_salt: {:system, "AUTHORIZATION_SALT"}
+
 config :ethereumex, url: "http://localhost:22000"
 
 config :task_bunny,

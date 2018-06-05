@@ -5,6 +5,7 @@ defmodule MobileApi.Router do
   use Plug.ErrorHandler
 
   alias Plug.LoggerJSON
+  alias MobileApi.Plugs.CheckAuthorization
   alias MobileApi.Plugs.CreatePhoneVerificationLimiter
 
   require Logger
@@ -13,12 +14,16 @@ defmodule MobileApi.Router do
     plug(:accepts, ["json"])
   end
 
+  pipeline :authorized do
+    plug(CheckAuthorization)
+  end
+
   pipeline :create_phone_verification_limiter do
     plug(CreatePhoneVerificationLimiter)
   end
 
   scope "/api", MobileApi do
-    pipe_through(:api)
+    pipe_through([:api, :authorized])
 
     post("/auth/create-profile", AuthController, :create_profile)
     post("/auth/check-email-verification", AuthController, :check_email_verification)
@@ -31,6 +36,7 @@ defmodule MobileApi.Router do
     end
   end
 
+  @spec handle_errors(Plug.Conn.t(), map) :: Plug.Conn.t()
   defp handle_errors(%Plug.Conn{status: 500} = conn, %{kind: kind, reason: reason, stack: stacktrace}) do
     LoggerJSON.log_error(kind, reason, stacktrace)
 
