@@ -1,6 +1,7 @@
 defmodule Quorum.Unit.SmartContractTest do
   use ExUnit.Case
 
+  alias Quorum.ABI
   alias Ethereumex.HttpClient, as: QuorumHttpClient
 
   @tag :pending

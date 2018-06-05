@@ -10,17 +10,11 @@ WORKDIR /app
 ENV MIX_ENV=prod
 
 RUN apk add --no-cache \
-      ncurses-libs \
-      zlib \
-      ca-certificates \
-      openssl \
-      bash \
       autoconf \
       automake \
       make \
       g++ \
-      gcc \
-      libtool
+      gcc
 
 RUN mix do \
       local.hex --force, \
@@ -33,6 +27,13 @@ FROM alpine:edge
 
 ARG APP_NAME
 ARG APP_VERSION
+
+RUN apk add --no-cache \
+      ncurses-libs \
+      zlib \
+      ca-certificates \
+      openssl \
+      bash
 
 WORKDIR /app
 

@@ -3,13 +3,6 @@ defmodule Quorum.QueueTestHelper do
   alias TaskBunny.Queue, as: TaskBunnyQueue
 
   # Queue Helpers
-  def open_channel(host \\ :default) do
-    conn = TaskBunny.Connection.get_connection!(host)
-    {:ok, _channel} = Channel.open(conn)
-  end
-
-  def purge(queue, host \\ :default)
-
   defmacro clean(queues) do
     quote do
       # Remove pre-existing queues before every test.
@@ -25,6 +18,13 @@ defmodule Quorum.QueueTestHelper do
       end)
     end
   end
+
+  def open_channel(host \\ :default) do
+    conn = TaskBunny.Connection.get_connection!(host)
+    {:ok, _channel} = Channel.open(conn)
+  end
+
+  def purge(queue, host \\ :default)
 
   def purge(queue, host) when is_binary(queue) do
     {:ok, channel} = open_channel(host)

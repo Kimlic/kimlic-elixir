@@ -3,6 +3,8 @@ defmodule Quorum.Contract do
   @contract_account_storage :account_storage
   @contract_verification_factory :verification_factory
 
+  alias Quorum.ABI
+
   def contract(:account_storage), do: @contract_account_storage
   def contract(:verification_factory), do: @contract_verification_factory
 
