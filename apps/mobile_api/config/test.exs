@@ -1,10 +1,10 @@
 use Mix.Config
 
-# We don't run a server during test. If one is required,
-# you can enable the server option below.
 config :mobile_api, MobileApi.Endpoint,
   http: [port: 4001],
   server: false
 
-# Print only warnings and errors during test
+config :hammer,
+  backend: {Hammer.Backend.Redis, [expiry_ms: :timer.hours(24) * 7, redix_config: "redis://localhost:6379/1"]}
+
 config :logger, level: :warn

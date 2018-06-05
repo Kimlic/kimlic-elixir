@@ -7,6 +7,4 @@ config :mobile_api, MobileApi.Endpoint,
   check_origin: false,
   watchers: []
 
-# Set a higher stacktrace during development. Avoid configuring such
-# in production as building large stacktraces may be expensive.
 config :phoenix, :stacktrace_depth, 20
