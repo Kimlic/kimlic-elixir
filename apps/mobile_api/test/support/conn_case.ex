@@ -20,6 +20,7 @@ defmodule MobileApi.ConnCase do
       # Import conveniences for testing with connections
       use Phoenix.ConnTest
       import MobileApi.Router.Helpers
+      import Core.Factory
 
       # The default endpoint for testing
       @endpoint MobileApi.Endpoint
