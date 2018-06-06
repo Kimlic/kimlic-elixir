@@ -25,15 +25,15 @@ defmodule MobileApi.Router do
   scope "/api", MobileApi do
     pipe_through([:api, :authorized])
 
-    post("/auth/create-profile", AuthController, :create_profile)
-    post("/auth/check-email-verification", AuthController, :check_email_verification)
-    post("/auth/check-phone-verification", AuthController, :check_phone_verification)
+    post("/auth/email/send-verification", AuthController, :create_email_verification)
+    post("/auth/email/verify", AuthController, :verify_email)
 
-    scope "/auth/create-phone-verification" do
+    scope "/" do
       pipe_through(:create_phone_verification_limiter)
-
-      post("/", AuthController, :create_phone_verification)
+      post("/auth/phone/send-verification", AuthController, :create_phone_verification)
     end
+
+    post("/auth/phone/verify", AuthController, :verify_phone)
   end
 
   @spec handle_errors(Plug.Conn.t(), map) :: Plug.Conn.t()
