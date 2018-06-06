@@ -42,6 +42,9 @@ defmodule Core.Clients.Redis do
     end
   end
 
+  @spec delete(map) :: {:ok, non_neg_integer} | {:error, binary}
+  def delete(%{redis_key: key}), do: delete(key)
+
   @spec delete(binary) :: {:ok, non_neg_integer} | {:error, binary}
   def delete(key) when is_binary(key) do
     case Redix.command(:redix, ["DEL", key]) do

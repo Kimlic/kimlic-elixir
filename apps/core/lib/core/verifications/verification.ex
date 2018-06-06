@@ -19,6 +19,9 @@ defmodule Core.Verifications.Verification do
   def status(:passed), do: @status_passed
   def status(:expired), do: @status_expired
 
+  defguard allowed_type_atom(type) when type in ~w(phone, email)a
+  defguard allowed_type_string(type) when type in [@entity_type_phone, @entity_type_email]
+
   @primary_key false
   embedded_schema do
     field(:redis_key, :string, virtual: true)
@@ -48,5 +51,7 @@ defmodule Core.Verifications.Verification do
 
   def put_redis_key(changeset), do: changeset
 
-  def redis_key(type, account_address), do: "verification:#{String.downcase(type)}:#{account_address}"
+  @spec redis_key(binary, binary) :: binary
+  def redis_key(type, account_address) when allowed_type(type),
+    do: "verification:#{String.downcase(type)}:#{account_address}"
 end

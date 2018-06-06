@@ -17,7 +17,7 @@ defmodule Core.Auth do
   @spec create_phone_verification(binary, binary) :: :ok | {:error, binary}
   def create_phone_verification(phone, account_address) do
     # todo: call quorum: create verification contract
-    with {:ok, %Verification{token: sms_code}} <- Verifications.create_phone_verification(account_address),
+    with {:ok, %Verification{token: sms_code}} <- Verifications.create_verification(account_address, :phone),
          # todo: move message to resources
          {:ok, %{}} <- @messenger.send(phone, "Here is your code: #{sms_code}") do
       :ok
