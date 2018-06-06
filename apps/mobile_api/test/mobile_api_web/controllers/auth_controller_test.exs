@@ -6,8 +6,7 @@ defmodule MobileApi.AuthTest do
   import MobileApi.RequestDataFactory
   import Mox
 
-  alias Core.Clients.Redis
-  alias Core.StorageKeys
+  alias Core.Verifications
   alias Core.Verifications.{TokenGenerator, Verification}
 
   @moduletag :authorized
@@ -31,7 +30,7 @@ defmodule MobileApi.AuthTest do
                )
 
       assert {:ok, %Verification{token: ^token, entity_type: @entity_type_email}} =
-               Redis.get(StorageKeys.vefirication_email(account_address))
+               Verifications.get(account_address, :email)
     end
   end
 
@@ -46,7 +45,7 @@ defmodule MobileApi.AuthTest do
 
       assert %{"status" => "ok"} =
                conn
-               |> post(auth_path(conn, :check_email_verification), data)
+               |> post(auth_path(conn, :verify_email), data)
                |> json_response(200)
     end
 
@@ -74,7 +73,7 @@ defmodule MobileApi.AuthTest do
                )
 
       assert {:ok, %Verification{token: ^token, entity_type: @entity_type_phone}} =
-               Redis.get(StorageKeys.vefirication_phone(account_address))
+               Verifications.get(account_address, :phone)
     end
 
     test "with limited requests", %{conn: conn} do

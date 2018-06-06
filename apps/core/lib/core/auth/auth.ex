@@ -9,7 +9,7 @@ defmodule Core.Auth do
 
   @spec create_email_verification(binary, binary) :: :ok | {:error, binary}
   def create_email_verification(email, account_address) do
-    with {:ok, verification} <- Verifications.create_email_verification(account_address) do
+    with {:ok, verification} <- Verifications.create_verification(account_address, :email) do
       Email.send_verification(email, verification)
     end
   end

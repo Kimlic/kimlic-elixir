@@ -11,9 +11,6 @@ defmodule Core.Verifications do
   @token_generator Application.get_env(:core, :dependencies)[:token_generator]
   @verification_status_new Verification.status(:new)
 
-  @verification_entity_type_email Verification.entity_type(:email)
-  @verification_entity_type_phone Verification.entity_type(:phone)
-
   @spec create_verification(binary, atom) :: create_verification_t
   def create_verification(account_address, type) when allowed_type_atom(type) do
     %{
