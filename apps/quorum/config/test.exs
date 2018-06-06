@@ -18,9 +18,6 @@ config :task_bunny,
   queue: [
     namespace: "kimlic-core-test.",
     queues: [
-      [name: "create-user-account", jobs: [CreateUserAccount], worker: false],
-      [name: "create-verification-contract", jobs: [CreateVerificationContract], worker: false],
-      [name: "update-user-account", jobs: [UpdateUserAccount], worker: false],
       [name: "transaction", jobs: [TransactionCreate], worker: false],
       [name: "transaction-status", jobs: [TransactionStatus], worker: false]
     ]

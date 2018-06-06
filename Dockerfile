@@ -9,6 +9,13 @@ WORKDIR /app
 
 ENV MIX_ENV=prod
 
+RUN apk add --no-cache \
+      autoconf \
+      automake \
+      make \
+      g++ \
+      gcc
+
 RUN mix do \
       local.hex --force, \
       local.rebar --force, \
