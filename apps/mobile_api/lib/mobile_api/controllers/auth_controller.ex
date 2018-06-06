@@ -8,12 +8,12 @@ defmodule MobileApi.AuthController do
   action_fallback(MobileApi.FallbackController)
 
   # todo: validate request
-  @spec create_profile(Conn.t(), map) :: Conn.t()
-  def create_profile(conn, params) do
+  @spec create_email_verification(Conn.t(), map) :: Conn.t()
+  def create_email_verification(conn, params) do
     email = get_in(params, ["source_data", "email"])
     account_address = get_in(params, ["blockchain_data", "account_address"])
 
-    with :ok <- Auth.create_profile(email, account_address) do
+    with :ok <- Auth.create_email_verification(email, account_address) do
       conn
       |> put_status(201)
       |> json(%{})
@@ -21,8 +21,8 @@ defmodule MobileApi.AuthController do
   end
 
   # todo: validate request
-  @spec check_email_verification(Conn.t(), map) :: Conn.t()
-  def check_email_verification(conn, params) do
+  @spec verify_email(Conn.t(), map) :: Conn.t()
+  def verify_email(conn, params) do
     with :ok <- Auth.check_verification(:email, params["account_address"], params["token"]) do
       json(conn, %{status: "ok"})
     end
@@ -42,8 +42,8 @@ defmodule MobileApi.AuthController do
   end
 
   # todo: validate request
-  @spec check_phone_verification(Conn.t(), map) :: Conn.t()
-  def check_phone_verification(conn, params) do
+  @spec verify_phone(Conn.t(), map) :: Conn.t()
+  def verify_phone(conn, params) do
     with :ok <- Auth.check_verification(:phone, params["account_address"], params["code"]) do
       json(conn, %{status: "ok"})
     end

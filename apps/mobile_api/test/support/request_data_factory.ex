@@ -9,7 +9,7 @@ defmodule MobileApi.RequestDataFactory do
   }
 
   @spec data_for(atom, binary, binary) :: map
-  def data_for(:auth_create_profile, email, account_address) do
+  def data_for(:auth_create_email_verification, email, account_address) do
     %{
       "source_data" => %{
         "public_key" => @public_key,

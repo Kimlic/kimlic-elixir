@@ -17,7 +17,7 @@ defmodule MobileApi.AuthTest do
   @entity_type_email Verification.entity_type(:email)
   @entity_type_phone Verification.entity_type(:phone)
 
-  describe "create profile" do
+  describe "create email verification" do
     test "success", %{conn: conn} do
       account_address = generate_account_address()
       token = TokenGenerator.generate(:email)
@@ -26,14 +26,18 @@ defmodule MobileApi.AuthTest do
       expect(TokenGeneratorMock, :generate, fn :email -> token end)
 
       assert %{status: 201} =
-               post(conn, auth_path(conn, :create_profile), data_for(:auth_create_profile, email, account_address))
+               post(
+                 conn,
+                 auth_path(conn, :create_email_verification),
+                 data_for(:auth_create_email_verification, email, account_address)
+               )
 
       assert {:ok, %Verification{token: ^token, entity_type: @entity_type_email}} =
                Redis.get(StorageKeys.vefirication_email(account_address))
     end
   end
 
-  describe "check email verification" do
+  describe "verify email" do
     test "success", %{conn: conn} do
       account_address = generate_account_address()
       token = TokenGenerator.generate(:email)
@@ -41,7 +45,7 @@ defmodule MobileApi.AuthTest do
       insert(:verification, verification_key, %{account_address: account_address, token: token})
 
       assert %{"status" => "ok"} =
-               post(conn, auth_path(conn, :check_email_verification), %{
+               post(conn, auth_path(conn, :verify_email), %{
                  "token" => token,
                  "account_address" => account_address
                })
@@ -50,7 +54,7 @@ defmodule MobileApi.AuthTest do
 
     test "not found on email verification", %{conn: conn} do
       assert conn
-             |> post(auth_path(conn, :check_email_verification), %{"token" => TokenGenerator.generate(:email)})
+             |> post(auth_path(conn, :verify_email), %{"token" => TokenGenerator.generate(:email)})
              |> json_response(404)
     end
   end
@@ -100,7 +104,7 @@ defmodule MobileApi.AuthTest do
     end
   end
 
-  describe "check phone verification" do
+  describe "verify phone" do
     test "success", %{conn: conn} do
       account_address = generate_account_address()
       code = TokenGenerator.generate(:phone)
@@ -114,7 +118,7 @@ defmodule MobileApi.AuthTest do
 
       assert %{"status" => "ok"} =
                conn
-               |> post(auth_path(conn, :check_phone_verification), %{
+               |> post(auth_path(conn, :verify_phone), %{
                  "code" => code,
                  "account_address" => account_address
                })
@@ -125,7 +129,7 @@ defmodule MobileApi.AuthTest do
       request_data = %{"code" => TokenGenerator.generate(:phone), "account_address" => generate_account_address()}
 
       assert conn
-             |> post(auth_path(conn, :check_phone_verification), request_data)
+             |> post(auth_path(conn, :verify_phone), request_data)
              |> json_response(404)
     end
   end
