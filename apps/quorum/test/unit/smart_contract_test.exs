@@ -20,7 +20,7 @@ defmodule Quorum.Unit.SmartContractTest do
 
       :timer.sleep(50)
       assert {:ok, map} = QuorumHttpClient.eth_get_transaction_receipt(transaction_hash, [])
-      assert is_map(map)
+      assert is_map(map), "Expected map from Quorum, get: #{inspect map}"
 
       contract_func =
         abi()
@@ -34,7 +34,7 @@ defmodule Quorum.Unit.SmartContractTest do
 
       :timer.sleep(50)
       assert {:ok, map} = QuorumHttpClient.eth_get_transaction_receipt(transaction_hash, [])
-      assert is_map(map)
+      assert is_map(map), "Expected map from Quorum, get: #{inspect map}"
     end
   end
 
