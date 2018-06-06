@@ -12,6 +12,8 @@ config :ex_unit, capture_log: true
 
 config :quorum, client: QuorumClientMock
 
+config :quorum, authorization_salt: {:system, "AUTHORIZATION_SALT", "1234567890"}
+
 config :task_bunny,
   queue: [
     namespace: "kimlic-core-test.",
