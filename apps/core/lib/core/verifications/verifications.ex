@@ -18,26 +18,22 @@ defmodule Core.Verifications do
   def create_email_verification(account_address) do
     verification_ttl = Confex.fetch_env!(:core, :verification_email_ttl)
     token = @token_generator.generate(:email)
-    storage_key = StorageKeys.vefirication_email(account_address)
 
-    create_verification(account_address, @verification_entity_type_email, token, verification_ttl, storage_key)
+    create_verification(account_address, @verification_entity_type_email, token, verification_ttl)
   end
 
   @spec create_phone_verification(binary) :: create_verification_t
   def create_phone_verification(account_address) do
     verification_ttl = Confex.fetch_env!(:core, :verification_phone_ttl)
     token = @token_generator.generate(:phone)
-    storage_key = StorageKeys.vefirication_phone(account_address)
 
-    create_verification(account_address, @verification_entity_type_phone, token, verification_ttl, storage_key)
+    create_verification(account_address, @verification_entity_type_phone, token, verification_ttl)
   end
 
-  @spec create_verification(binary, binary, integer, binary, binary) :: create_verification_t
-  defp create_verification(account_address, entity_type, token, verification_ttl, verification_storage_key) do
-    with %Ecto.Changeset{valid?: true} = verification <- changeset(account_address, entity_type, token),
-         verification <- Changeset.apply_changes(verification),
-         :ok <- Redis.set(verification_storage_key, verification, verification_ttl) do
-      {:ok, verification}
+  @spec create_verification(binary, binary, integer, binary) :: create_verification_t
+  defp create_verification(account_address, entity_type, token, verification_ttl) do
+    with %Ecto.Changeset{valid?: true} = verification <- changeset(account_address, entity_type, token) do
+      Redis.insert(verification, verification_ttl)
     end
   end
 

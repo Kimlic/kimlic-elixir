@@ -2,17 +2,21 @@ defmodule Core.Factory do
   @moduledoc false
 
   alias Core.Clients.Redis
-  alias Core.Verifications.Verification
+  alias Core.Verifications.{TokenGenerator, Verification}
   alias Ecto.Changeset
 
   @spec build(atom, map) :: %Verification{} | term
   def build(entity_atom, params \\ %{}), do: :erlang.apply(__MODULE__, entity_atom, [params])
 
-  @spec insert(atom, binary, map) :: {:ok, term} | {:error, binary}
-  def insert(entity_atom, key, params \\ %{}) do
-    entity = build(entity_atom, params)
+  @spec insert(atom, map) :: {:ok, term} | {:error, binary}
+  def insert(:verification, params \\ %{}) do
+    params
+    |> verification()
+    |> redis_insert()
+  end
 
-    with :ok <- Redis.set(key, entity) do
+  defp redis_insert(changeset) do
+    with {:ok, entity} <- Redis.insert(changeset) do
       entity
     else
       _ -> raise "[Core.Factory]: Can't set data in redis"
@@ -25,7 +29,7 @@ defmodule Core.Factory do
   def verification(params \\ %{}) do
     data = %{
       entity_type: Verification.entity_type(:email),
-      account_address: "0x123456789#{Enum.random(10_000..99_999)}",
+      account_address: generate(:account_address),
       token: "123456",
       status: Verification.status(:new)
     }
@@ -34,8 +38,15 @@ defmodule Core.Factory do
     |> Map.merge(params)
     |> Verification.changeset()
     |> case do
-      %{valid?: true} = changeset -> Changeset.apply_changes(changeset)
+      %{valid?: true} = changeset -> changeset
       _ -> raise "Changeset of Verification is not valid in `Core.Factory`"
     end
   end
+
+  @spec generate(atom) :: binary
+  def generate(:phone), do: "+38097#{Enum.random(1_000_000..9_999_999)}"
+
+  @spec generate(atom) :: binary
+  def generate(:account_address),
+    do: "0xf" <> (:md5 |> :crypto.hash(TokenGenerator.generate(:email)) |> Base.encode16())
 end

@@ -1,6 +1,9 @@
 defmodule Core.Clients.Redis do
   @moduledoc false
 
+  import Ecto.Changeset
+  alias Ecto.Changeset
+
   @spec get(binary) :: {:ok, term} | {:error, binary}
   def get(key) when is_binary(key) do
     with {:ok, encoded_value} <- Redix.command(:redix, ["GET", key]) do
@@ -9,6 +12,16 @@ defmodule Core.Clients.Redis do
       else
         {:ok, decode(encoded_value)}
       end
+    end
+  end
+
+  def insert(%Changeset{} = changeset, ttl_seconds \\ nil) do
+    {_, key} = fetch_field(changeset, :redis_key)
+    entity = Changeset.apply_changes(changeset)
+
+    case set(key, entity, ttl_seconds) do
+      :ok -> {:ok, entity}
+      err -> err
     end
   end
 
