@@ -8,9 +8,11 @@ alias Quorum.Jobs.{
   UpdateUserAccount
 }
 
-config :quorum, client: Ethereumex.HttpClient
-
-config :quorum, authorization_salt: {:system, "AUTHORIZATION_SALT"}
+config :quorum,
+  authorization_salt: {:system, "AUTHORIZATION_SALT"},
+  client: Ethereumex.HttpClient,
+  proxy_client: Quorum.Proxy.Client,
+  allowed_rpc_methods: {:system, :list, "QUORUM_ALLOWED_RPC_METHODS", ["web3_clientVersion", "eth_sendTransaction"]}
 
 config :ethereumex, url: "http://localhost:22000"
 
