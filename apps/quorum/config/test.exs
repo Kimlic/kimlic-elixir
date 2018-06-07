@@ -1,18 +1,13 @@
 use Mix.Config
 
-alias Quorum.Jobs.{
-  CreateUserAccount,
-  CreateVerificationContract,
-  TransactionCreate,
-  TransactionStatus,
-  UpdateUserAccount
-}
+alias Quorum.Jobs.{TransactionCreate, TransactionStatus}
 
 config :ex_unit, capture_log: true
 
-config :quorum, client: QuorumClientMock
-
-config :quorum, authorization_salt: {:system, "AUTHORIZATION_SALT", "1234567890"}
+config :quorum,
+  authorization_salt: {:system, "AUTHORIZATION_SALT", "1234567890"},
+  client: QuorumClientMock,
+  proxy_client: QuorumClientProxyMock
 
 config :task_bunny,
   queue: [

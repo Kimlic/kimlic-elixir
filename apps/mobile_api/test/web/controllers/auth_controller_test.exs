@@ -1,4 +1,4 @@
-defmodule MobileApi.AuthTest do
+defmodule MobileApi.AuthControllerTest do
   @moduledoc false
 
   use MobileApi.ConnCase, async: true
