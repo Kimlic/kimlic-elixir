@@ -39,7 +39,7 @@ defmodule Quorum.Unit.QuorumTest do
       end)
 
       # ToDo: too short address, ABI compile raise error: Data overflow encoding uint, data cannot fit in 160 bits
-      account_address = "33c1b162cf32c781a365"
+      account_address = "0x6cc3a44428c1722ee2fd2eb6d72387f4bc62449c"
 
       callback = {QuorumClientMock, :eth_get_logs, ["callback"]}
       assert :ok = Quorum.create_verification_contract(account_address, :email, callback)

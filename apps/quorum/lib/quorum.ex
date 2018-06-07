@@ -8,25 +8,31 @@ defmodule Quorum do
 
   @behaviour Quorum.Behaviour
 
+  @spec authenticated?(binary) :: boolean
   def authenticated?(_token) do
     true
   end
 
-  @spec create_verification_contract(binary, atom, {atom, atom, list}) :: :ok
-  def create_verification_contract(account_address, :email, {_module, _function, _args} = callback),
+  @spec create_verification_contract(binary, atom, Quorum.Behaviour.callback()) :: :ok
+  def create_verification_contract(account_address, verification_type, callback \\ nil)
+
+  def create_verification_contract(account_address, :email, callback),
     do: create_verification_transaction(account_address, "createEmailVerification", callback)
 
-  @spec create_verification_contract(binary, atom, {atom, atom, list}) :: :ok
-  def create_verification_contract(account_address, :phone, {_module, _function, _args} = callback),
+  def create_verification_contract(account_address, :phone, callback),
     do: create_verification_transaction(account_address, "createPhoneVerification", callback)
 
+  @spec create_verification_transaction(binary, binary, Quorum.Behaviour.callback()) :: :ok
   defp create_verification_transaction(account_address, contract_function, callback) do
+    "0x" <> account_address = account_address
+    {account_address_hex, _} = Integer.parse(account_address, 16)
+
     data =
       :verification_factory
       |> contract()
-      |> hash_data(contract_function, [account_address])
+      |> hash_data(contract_function, [account_address_hex])
 
-    create_transaction(%{from: account_address, data: data}, callback)
+    create_transaction(%{from: account_address_hex, data: data}, callback)
   end
 
   def update_user_account(_params) do

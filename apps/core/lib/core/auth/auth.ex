@@ -9,15 +9,16 @@ defmodule Core.Auth do
 
   @spec create_email_verification(binary, binary) :: :ok | {:error, binary}
   def create_email_verification(email, account_address) do
-    with {:ok, verification} <- Verifications.create_verification(account_address, :email) do
+    with {:ok, verification} <- Verifications.create_verification(account_address, :email),
+         :ok <- Quorum.create_verification_contract(account_address, :email) do
       Email.send_verification(email, verification)
     end
   end
 
   @spec create_phone_verification(binary, binary) :: :ok | {:error, binary}
   def create_phone_verification(phone, account_address) do
-    # todo: call quorum: create verification contract
     with {:ok, %Verification{token: sms_code}} <- Verifications.create_verification(account_address, :phone),
+         :ok <- Quorum.create_verification_contract(account_address, :phone),
          # todo: move message to resources
          {:ok, %{}} <- @messenger.send(phone, "Here is your code: #{sms_code}") do
       :ok

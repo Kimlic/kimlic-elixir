@@ -47,6 +47,13 @@ defmodule Core.Factory do
   def generate(:phone), do: "+38097#{Enum.random(1_000_000..9_999_999)}"
 
   @spec generate(atom) :: binary
-  def generate(:account_address),
-    do: "0xf" <> (:md5 |> :crypto.hash(TokenGenerator.generate(:email)) |> Base.encode16())
+  def generate(:account_address) do
+    account_address =
+      :sha256
+      |> :crypto.hash(TokenGenerator.generate(:email))
+      |> Base.encode16(case: :lower)
+      |> String.slice(0..39)
+
+    "0x" <> account_address
+  end
 end
