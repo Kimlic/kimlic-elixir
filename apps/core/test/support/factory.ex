@@ -2,8 +2,8 @@ defmodule Core.Factory do
   @moduledoc false
 
   alias Core.Clients.Redis
-  alias Core.Verifications.{TokenGenerator, Verification}
-  alias Ecto.Changeset
+  alias Core.Verifications.TokenGenerator
+  alias Core.Verifications.Verification
 
   @spec build(atom, map) :: %Verification{} | term
   def build(entity_atom, params \\ %{}), do: :erlang.apply(__MODULE__, entity_atom, [params])
@@ -15,6 +15,7 @@ defmodule Core.Factory do
     |> redis_insert()
   end
 
+  @spec redis_insert(Ecto.Changeset.t()) :: term
   defp redis_insert(changeset) do
     with {:ok, entity} <- Redis.insert(changeset) do
       entity
@@ -31,6 +32,7 @@ defmodule Core.Factory do
       entity_type: Verification.entity_type(:email),
       account_address: generate(:account_address),
       token: "123456",
+      contract_address: generate(:account_address),
       status: Verification.status(:new)
     }
 

@@ -10,7 +10,7 @@ defmodule Core.Auth do
   @spec create_email_verification(binary, binary) :: :ok | {:error, binary}
   def create_email_verification(email, account_address) do
     with {:ok, verification} <- Verifications.create_verification(account_address, :email),
-         :ok <- Quorum.create_verification_contract(account_address, :email) do
+         :ok <- create_verification_contract(account_address, :email) do
       Email.send_verification(email, verification)
     end
   end
@@ -18,11 +18,20 @@ defmodule Core.Auth do
   @spec create_phone_verification(binary, binary) :: :ok | {:error, binary}
   def create_phone_verification(phone, account_address) do
     with {:ok, %Verification{token: sms_code}} <- Verifications.create_verification(account_address, :phone),
-         :ok <- Quorum.create_verification_contract(account_address, :phone),
+         :ok <- create_verification_contract(account_address, :phone),
          # todo: move message to resources
          {:ok, %{}} <- @messenger.send(phone, "Here is your code: #{sms_code}") do
       :ok
     end
+  end
+
+  @spec create_verification_contract(binary, atom) :: :ok
+  defp create_verification_contract(account_address, type) do
+    Quorum.create_verification_contract(
+      account_address,
+      type,
+      {Verifications, :update_verification_contract_address, [account_address, type]}
+    )
   end
 
   @spec check_verification(:phone | :email, binary, binary) :: :ok | {:error, term}
@@ -48,7 +57,7 @@ defmodule Core.Auth do
       :ok
     else
       {:verification_access, _} -> {:error, :not_found}
-      error -> error
+      err -> err
     end
   end
 

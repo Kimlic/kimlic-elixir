@@ -29,15 +29,17 @@ defmodule Core.Verifications.Verification do
     field(:entity_type, :string)
     field(:token, :string)
     field(:status, :string)
+    field(:contract_address, :string)
   end
 
   @spec changeset(%{}) :: Ecto.Changeset.t()
   def changeset(params) do
     schema_fields = __MODULE__.__schema__(:fields)
+    required_fields = schema_fields -- [:contract_address]
 
     %__MODULE__{}
     |> cast(params, schema_fields)
-    |> validate_required(schema_fields)
+    |> validate_required(required_fields)
     |> validate_inclusion(:entity_type, ["PHONE", "EMAIL"])
     |> put_redis_key()
   end

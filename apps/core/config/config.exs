@@ -4,8 +4,8 @@ config :core, :dependencies,
   token_generator: Core.Verifications.TokenGenerator,
   messenger: Core.Clients.Messenger
 
-config :core, verification_email_ttl: {:system, "VERIFICATION_EMAIL_TTL", :timer.hours(24)}
-config :core, verification_phone_ttl: {:system, "VERIFICATION_PHONE_TTL", :timer.hours(24)}
+config :core, verification_email_ttl: {:system, :integer, "VERIFICATION_EMAIL_TTL", :timer.hours(24)}
+config :core, verification_phone_ttl: {:system, :integer, "VERIFICATION_PHONE_TTL", :timer.hours(24)}
 
 config :core, messenger_message_from: {:system, "MESSAGER_MESSAGE_FROM", ""}
 

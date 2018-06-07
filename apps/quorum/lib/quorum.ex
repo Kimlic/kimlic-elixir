@@ -8,12 +8,14 @@ defmodule Quorum do
 
   @behaviour Quorum.Behaviour
 
+  @type callback :: nil | {module :: atom, function :: atom, args :: list}
+
   @spec authenticated?(binary) :: boolean
   def authenticated?(_token) do
     true
   end
 
-  @spec create_verification_contract(binary, atom, Quorum.Behaviour.callback()) :: :ok
+  @spec create_verification_contract(binary, atom, callback) :: :ok
   def create_verification_contract(account_address, verification_type, callback \\ nil)
 
   def create_verification_contract(account_address, :email, callback),
@@ -22,10 +24,9 @@ defmodule Quorum do
   def create_verification_contract(account_address, :phone, callback),
     do: create_verification_transaction(account_address, "createPhoneVerification", callback)
 
-  @spec create_verification_transaction(binary, binary, Quorum.Behaviour.callback()) :: :ok
+  @spec create_verification_transaction(binary, binary, callback) :: :ok
   defp create_verification_transaction(account_address, contract_function, callback) do
-    "0x" <> account_address = account_address
-    {account_address_hex, _} = Integer.parse(account_address, 16)
+    account_address_hex = parse_hex(account_address)
 
     data =
       :verification_factory
@@ -33,11 +34,6 @@ defmodule Quorum do
       |> hash_data(contract_function, [account_address_hex])
 
     create_transaction(%{from: account_address_hex, data: data}, callback)
-  end
-
-  def update_user_account(_params) do
-    # ToDo: write code
-    # create_transaction()
   end
 
   @spec create_transaction(map) :: :ok
@@ -54,5 +50,11 @@ defmodule Quorum do
 
   defp do_create_transaction(transaction_data, callback) do
     TransactionCreate.enqueue!(%{transaction_data: transaction_data, callback: callback})
+  end
+
+  @spec parse_hex(binary) :: integer
+  defp parse_hex("0x" <> address) do
+    {address_hex, _} = Integer.parse(address, 16)
+    address_hex
   end
 end
