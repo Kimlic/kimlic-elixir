@@ -2,14 +2,18 @@ defmodule Core.Verifications do
   @moduledoc false
 
   import Core.Verifications.Verification, only: [allowed_type_atom: 1]
+
   alias Core.Clients.Redis
   alias Core.Verifications.Verification
-  alias Ecto.Changeset
 
   @typep create_verification_t :: {:ok, %Verification{}} | {:error, binary} | {:error, Ecto.Changeset.t()}
 
   @token_generator Application.get_env(:core, :dependencies)[:token_generator]
   @verification_status_new Verification.status(:new)
+
+  @spec verification_ttl(atom) :: integer
+  defp verification_ttl(:phone), do: Confex.fetch_env!(:core, :verifications_ttl)[:phone]
+  defp verification_ttl(:email), do: Confex.fetch_env!(:core, :verifications_ttl)[:email]
 
   @spec create_verification(binary, atom) :: create_verification_t
   def create_verification(account_address, type) when allowed_type_atom(type) do
@@ -19,13 +23,24 @@ defmodule Core.Verifications do
       entity_type: Verification.entity_type(type),
       status: @verification_status_new
     }
-    |> insert_verification(Confex.fetch_env!(:core, :verification_email_ttl))
+    |> insert_verification(verification_ttl(type))
   end
 
   @spec insert_verification(map, binary) :: create_verification_t
   defp insert_verification(attrs, verification_ttl) do
     with %Ecto.Changeset{valid?: true} = verification <- Verification.changeset(attrs) do
       Redis.insert(verification, verification_ttl)
+    end
+  end
+
+  ### Callbacks (do not remove)
+
+  @spec update_verification_contract_address(list) :: :ok
+  defp update_verification_contract_address([account_address, verification_type, transaction_status, contract_address]) do
+    with {:ok, verification} = get(account_address, verification_type),
+         verification <- %Verification{verification | contract_address: contract_address},
+         {:ok, _} <- Redis.set(verification, verification_ttl(verification_type)) do
+      :ok
     end
   end
 

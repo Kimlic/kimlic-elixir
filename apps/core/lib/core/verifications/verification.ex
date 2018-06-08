@@ -7,10 +7,14 @@ defmodule Core.Verifications.Verification do
 
   @entity_type_phone "PHONE"
   @entity_type_email "EMAIL"
+  @entity_types [@entity_type_phone, @entity_type_email]
 
   @status_new "NEW"
   @status_passed "PASSED"
   @status_expired "EXPIRED"
+
+  @required_fields ~w(account_address entity_type token status)a
+  @optional_fileds ~w(contract_address)
 
   def entity_type(:phone), do: @entity_type_phone
   def entity_type(:email), do: @entity_type_email
@@ -29,16 +33,15 @@ defmodule Core.Verifications.Verification do
     field(:entity_type, :string)
     field(:token, :string)
     field(:status, :string)
+    field(:contract_address, :string)
   end
 
   @spec changeset(%{}) :: Ecto.Changeset.t()
   def changeset(params) do
-    schema_fields = __MODULE__.__schema__(:fields)
-
     %__MODULE__{}
-    |> cast(params, schema_fields)
-    |> validate_required(schema_fields)
-    |> validate_inclusion(:entity_type, ["PHONE", "EMAIL"])
+    |> cast(params, @required_fields ++ @optional_fileds)
+    |> validate_required(@required_fields)
+    |> validate_inclusion(:entity_type, @entity_types)
     |> put_redis_key()
   end
 

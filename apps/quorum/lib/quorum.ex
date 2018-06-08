@@ -8,26 +8,27 @@ defmodule Quorum do
 
   @behaviour Quorum.Behaviour
 
-  @spec create_verification_contract(binary, atom, {atom, atom, list}) :: :ok
-  def create_verification_contract(account_address, :email, {_module, _function, _args} = callback),
+  @type callback :: nil | {module :: atom, function :: atom, args :: list}
+
+  @spec create_verification_contract(binary, atom, callback) :: :ok
+  def create_verification_contract(account_address, verification_type, callback \\ nil)
+
+  def create_verification_contract(account_address, :email, callback),
     do: create_verification_transaction(account_address, "createEmailVerification", callback)
 
-  @spec create_verification_contract(binary, atom, {atom, atom, list}) :: :ok
-  def create_verification_contract(account_address, :phone, {_module, _function, _args} = callback),
+  def create_verification_contract(account_address, :phone, callback),
     do: create_verification_transaction(account_address, "createPhoneVerification", callback)
 
+  @spec create_verification_transaction(binary, binary, callback) :: :ok
   defp create_verification_transaction(account_address, contract_function, callback) do
+    account_address_hex = parse_hex(account_address)
+
     data =
       :verification_factory
       |> contract()
-      |> hash_data(contract_function, [account_address])
+      |> hash_data(contract_function, [account_address_hex])
 
-    create_transaction(%{from: account_address, data: data}, callback)
-  end
-
-  def update_user_account(_params) do
-    # ToDo: write code
-    # create_transaction()
+    create_transaction(%{from: account_address_hex, data: data}, callback)
   end
 
   @spec create_transaction(map) :: :ok
@@ -44,5 +45,11 @@ defmodule Quorum do
 
   defp do_create_transaction(transaction_data, callback) do
     TransactionCreate.enqueue!(%{transaction_data: transaction_data, callback: callback})
+  end
+
+  @spec parse_hex(binary) :: integer
+  defp parse_hex("0x" <> address) do
+    {address_hex, _} = Integer.parse(address, 16)
+    address_hex
   end
 end

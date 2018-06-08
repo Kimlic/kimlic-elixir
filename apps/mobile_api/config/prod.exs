@@ -13,6 +13,7 @@ config :mobile_api, MobileApi.Endpoint,
 
 config :logger, level: :info
 
-config :hammer, backend: {Hammer.Backend.Redis, [redix_config: "${REDIS_URI}"]}
+config :hammer,
+  backend: {Hammer.Backend.Redis, [expiry_ms: :timer.hours(24) * 7, redix_config: "${REDIS_URI}"]}
 
 config :phoenix, :serve_endpoints, true
