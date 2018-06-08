@@ -22,7 +22,8 @@ config :task_bunny,
       [name: "transaction", jobs: [TransactionCreate]],
       [name: "transaction-status", jobs: [TransactionStatus]]
     ]
-  ]
+  ],
+  failure_backend: [Quorum.Loggers.TaskBunny]
 
 config :logger, :console,
   format: "$message\n",
