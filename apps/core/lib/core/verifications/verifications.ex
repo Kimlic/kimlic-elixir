@@ -30,7 +30,7 @@ defmodule Core.Verifications do
   @spec insert_verification(map, binary) :: create_verification_t
   defp insert_verification(attrs, verification_ttl) do
     with %Ecto.Changeset{valid?: true} = verification <- Verification.changeset(attrs) do
-      Redis.insert(verification, verification_ttl)
+      Redis.upsert(verification, verification_ttl)
     end
   end
 
@@ -45,7 +45,8 @@ defmodule Core.Verifications do
       ) do
     with {:ok, verification} = get(account_address, verification_type),
          verification <- %Verification{verification | contract_address: contract_address},
-         {:ok, _} <- Redis.set(verification, verification_ttl(verification_type)) do
+         %Ecto.Changeset{valid?: true} = changeset <- verification |> Map.from_struct() |> Verification.changeset(),
+         {:ok, _} <- Redis.upsert(changeset, verification_ttl(verification_type)) do
       :ok
     end
   end
