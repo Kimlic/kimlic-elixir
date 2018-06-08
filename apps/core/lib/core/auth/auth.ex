@@ -37,13 +37,9 @@ defmodule Core.Auth do
   end
 
   @spec verify(atom, binary, binary) :: :ok | {:error, term}
-  def verify(verification_type, account_address, token) when allowed_type_atom(verification_type),
-    do: do_verify(verification_type, account_address, token)
-
-  @spec verify(:phone | :email, binary, binary) :: :ok | {:error, term}
-  defp do_verify(type, account_address, token) do
+  def verify(verification_type, account_address, token) when allowed_type_atom(verification_type) do
     with {:ok, %Verification{contract_address: contract_address} = verification} <-
-           Verifications.get(account_address, type),
+           Verifications.get(account_address, verification_type),
          {_, "0x" <> _} <- {:contract_address_set, contract_address},
          {_, true} <- {:verification_access, can_access_verification?(verification, account_address, token)},
          {:ok, 1} <- Verifications.delete(verification),
