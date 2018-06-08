@@ -5,8 +5,7 @@ defmodule Core.Verifications do
 
   alias Core.Clients.Redis
   alias Core.Verifications.Verification
-
-  require Logger
+  alias Log
 
   @typep create_verification_t :: {:ok, %Verification{}} | {:error, binary} | {:error, Ecto.Changeset.t()}
 
@@ -52,7 +51,7 @@ defmodule Core.Verifications do
   end
 
   def update_verification_contract_address(_, _, _, {:error, reason}) do
-    Logger.error("[#{__MODULE__}]: fail to update verification contract address with info: #{inspect(reason)}")
+    Log.error("[#{__MODULE__}]: fail to update verification contract address with info: #{inspect(reason)}")
   end
 
   ### Quering

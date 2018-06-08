@@ -1,6 +1,8 @@
 defmodule Core.Auth do
   @moduledoc false
 
+  import Core.Verifications.Verification, only: [allowed_type_atom: 1]
+
   alias Core.Email
   alias Core.Verifications
   alias Core.Verifications.Verification
@@ -34,9 +36,9 @@ defmodule Core.Auth do
     )
   end
 
-  @spec verify(:email | :phone, binary, binary) :: :ok | {:error, term}
-  def verify(:email, account_address, token), do: do_verify(:email, account_address, token)
-  def verify(:phone, account_address, code), do: do_verify(:phone, account_address, code)
+  @spec verify(atom, binary, binary) :: :ok | {:error, term}
+  def verify(verification_type, account_address, token) when allowed_type_atom(verification_type),
+    do: do_verify(verification_type, account_address, token)
 
   @spec verify(:phone | :email, binary, binary) :: :ok | {:error, term}
   defp do_verify(type, account_address, token) do

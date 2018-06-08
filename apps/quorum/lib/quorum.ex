@@ -74,7 +74,7 @@ defmodule Quorum do
 
   """
   @spec create_transaction(map, callback, boolean) :: :ok
-  def create_transaction(transaction_data, callback, provide_return_value)
+  def create_transaction(transaction_data, callback \\ nil, provide_return_value \\ false)
       when is_nil(callback) or is_tuple(callback) do
     %{transaction_data: transaction_data}
     |> put_callback(callback)
