@@ -17,7 +17,7 @@ defmodule Core.Factory do
 
   @spec redis_insert(Ecto.Changeset.t()) :: term
   defp redis_insert(changeset) do
-    with {:ok, entity} <- Redis.insert(changeset) do
+    with {:ok, entity} <- Redis.upsert(changeset) do
       entity
     else
       _ -> raise "[Core.Factory]: Can't set data in redis"
