@@ -33,15 +33,20 @@ defmodule Quorum.Unit.QuorumTest do
         {:ok, %{"transactionHash" => "0x9b4f4029f7e13575d5f4eab2c65ccc43b21aa67f4cf0746"}}
       end)
 
-      expect(QuorumClientMock, :eth_get_logs, fn status, params ->
+      expect(QuorumClientMock, :request, fn method, _params, _opts ->
+        assert "debug_traceTransaction" == method
+        {:ok, %{"returnValue" => "0x9b4f4029f7e13575d5f4eab2c65ccc43b21aa67f4cf0555"}}
+      end)
+
+      expect(QuorumClientMock, :eth_get_logs, fn status, return_value ->
         assert %{"transactionHash" => _} = status
-        assert "callback" = params
+        assert {:ok, "0x9b4f4029f7e13575d5f4eab2c65ccc43b21aa67f4cf0555"} = return_value
       end)
 
       # ToDo: too short address, ABI compile raise error: Data overflow encoding uint, data cannot fit in 160 bits
       account_address = "0x6cc3a44428c1722ee2fd2eb6d72387f4bc62449c"
 
-      callback = {QuorumClientMock, :eth_get_logs, ["callback"]}
+      callback = {QuorumClientMock, :eth_get_logs, []}
       assert :ok = Quorum.create_verification_contract(account_address, :email, callback)
 
       # Ensure that queue contain message for create transaction job
@@ -83,16 +88,16 @@ defmodule Quorum.Unit.QuorumTest do
 
       expect(QuorumClientMock, :eth_get_transaction_receipt, fn _params, _opts -> {:ok, transaction_status} end)
 
-      expect(QuorumClientMock, :eth_get_logs, fn status, params ->
+      expect(QuorumClientMock, :eth_get_logs, fn requested_arg, status ->
         assert transaction_status == status
-        assert "callback" == params
+        assert "callback" == requested_arg
       end)
 
       transaction_data = %{from: "0xaf438474fda68a51c5f3b04eb08d6b27a879ba14"}
       callback = {QuorumClientMock, :eth_get_logs, ["callback"]}
 
       # Start Create transaction job
-      assert :ok = Quorum.create_transaction(transaction_data, callback)
+      assert :ok = Quorum.create_transaction(transaction_data, callback, false)
 
       # Ensure that queue contain message for create transaction job
       assert {transaction_payload, _queue_metadata} = pop(@queue_transaction_create)
