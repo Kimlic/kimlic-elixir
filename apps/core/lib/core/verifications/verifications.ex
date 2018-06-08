@@ -5,6 +5,7 @@ defmodule Core.Verifications do
 
   alias Core.Clients.Redis
   alias Core.Verifications.Verification
+  alias Log
 
   @typep create_verification_t :: {:ok, %Verification{}} | {:error, binary} | {:error, Ecto.Changeset.t()}
 
@@ -35,13 +36,22 @@ defmodule Core.Verifications do
 
   ### Callbacks (do not remove)
 
-  @spec update_verification_contract_address(list) :: :ok
-  defp update_verification_contract_address([account_address, verification_type, transaction_status, contract_address]) do
+  @spec update_verification_contract_address(binary, binary, map, {:ok, binary} | {:error, binary}) :: :ok
+  def update_verification_contract_address(
+        account_address,
+        verification_type,
+        _transaction_status,
+        {:ok, contract_address}
+      ) do
     with {:ok, verification} = get(account_address, verification_type),
          verification <- %Verification{verification | contract_address: contract_address},
          {:ok, _} <- Redis.set(verification, verification_ttl(verification_type)) do
       :ok
     end
+  end
+
+  def update_verification_contract_address(_, _, _, {:error, reason}) do
+    Log.error("[#{__MODULE__}]: fail to update verification contract address with info: #{inspect(reason)}")
   end
 
   ### Quering
