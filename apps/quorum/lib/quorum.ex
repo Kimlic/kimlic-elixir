@@ -30,6 +30,37 @@ defmodule Quorum do
     create_transaction(%{from: account_address_hex, data: data}, callback, true)
   end
 
+  @doc """
+    Create transaction in Quorum via TaskBunny.
+    Uses two jobs `TransactionCreate` and `TransactionStatus` that applied to two queues respectively:
+    `transaction` and `transaction_status`.
+
+    `TransactionCreate`
+    Steps:
+      1. creates transaction in Quorum using `eth_sendTransaction` call
+      2. on success response from Quorum - create second job `TransactionStatus` with transaction hash
+
+    `TransactionStatus`
+    Steps:
+      1. Check transaction status in Quorum using `eth_get_transaction_receipt` call
+      2. Try 5 times, until success responce. On failed response - mark job as failed
+      3. If argument `provide_return_value` set as true: fetch `return_value` from Quorum using `debug_traceTransaction` call
+      4. Call callback if it provided. Transaction status and return value will be added as last arguments.
+         Transaction status argument - @spec map
+         Retrun value argument - @spec {:ok, binary} | {:error, binary}
+
+    ## Examples
+
+      create_transaction(%{...}, {MyModule, :callback, ["my_callback_param"]})
+
+      def MyModule do
+
+        def callback("my_callback_param", transaction_status, {:ok, return_value}), do: ...
+
+        def callback("my_callback_param", transaction_status, {:error, reason}), do: ...
+      end
+
+  """
   @spec create_transaction(map, {atom, atom, list}, boolean) :: :ok
   def create_transaction(transaction_data, {module, function, args}, provide_return_value)
       when is_atom(module) and is_atom(function) and is_list(args) do
