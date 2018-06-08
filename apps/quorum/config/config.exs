@@ -1,12 +1,6 @@
 use Mix.Config
 
-alias Quorum.Jobs.{
-  CreateUserAccount,
-  CreateVerificationContract,
-  TransactionCreate,
-  TransactionStatus,
-  UpdateUserAccount
-}
+alias Quorum.Jobs.{TransactionCreate, TransactionStatus}
 
 config :quorum,
   authorization_salt: {:system, "AUTHORIZATION_SALT"},
