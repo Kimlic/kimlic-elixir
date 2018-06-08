@@ -1,5 +1,8 @@
-Welcome to Kimlic platform! Your registration is currently on email verification step. Please, enter this code in mobile app to complete it:
+Welcome to Kimlic platform! <br>
+Your registration is currently on email verification step. Please, enter this code in mobile app to complete it: <br><br>
 <%= code %>
 
-Best regards,
+<br>
+<br>
+Best regards, <br>
 Kimlic team
