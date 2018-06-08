@@ -8,14 +8,14 @@ defmodule Quorum.Loggers.TaskBunny do
   require Logger
 
   # Callback for FailureBackend
-  def report_job_error(error = %JobError{}) do
+  def report_job_error(%JobError{} = error) do
     error
     |> get_job_error_message()
     |> do_report(error.reject)
   end
 
   @spec get_job_error_message(JobError.t()) :: String.t()
-  def get_job_error_message(error = %JobError{error_type: :exception}) do
+  def get_job_error_message(%JobError{error_type: :exception} = error) do
     """
     TaskBunny - #{error.job} failed for an exception.
     Exception:
@@ -26,7 +26,7 @@ defmodule Quorum.Loggers.TaskBunny do
     """
   end
 
-  def get_job_error_message(error = %JobError{error_type: :return_value}) do
+  def get_job_error_message(%JobError{error_type: :return_value} = error) do
     """
     TaskBunny - #{error.job} failed for an invalid return value.
     Return value:
@@ -35,7 +35,7 @@ defmodule Quorum.Loggers.TaskBunny do
     """
   end
 
-  def get_job_error_message(error = %JobError{error_type: :exit}) do
+  def get_job_error_message(%JobError{error_type: :exit} = error) do
     """
     TaskBunny - #{error.job} failed for EXIT signal.
     Reason:
@@ -44,14 +44,14 @@ defmodule Quorum.Loggers.TaskBunny do
     """
   end
 
-  def get_job_error_message(error = %JobError{error_type: :timeout}) do
+  def get_job_error_message(%JobError{error_type: :timeout} = error) do
     """
     TaskBunny - #{error.job} failed for timeout.
     #{common_message(error)}
     """
   end
 
-  def get_job_error_message(error = %JobError{}) do
+  def get_job_error_message(%JobError{} = error) do
     """
     TaskBunny - Failed with the unknown error type.
     #{common_message(error)}
