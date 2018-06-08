@@ -1,6 +1,14 @@
 use Mix.Config
 
-alias Core.Jobs.{CreateUserAccount, CreateVerificationContract}
+alias Quorum.Jobs.{TransactionCreate, TransactionStatus}
+
+config :quorum,
+  authorization_salt: {:system, "AUTHORIZATION_SALT"},
+  client: Ethereumex.HttpClient,
+  proxy_client: Quorum.Proxy.Client,
+  allowed_rpc_methods: {:system, :list, "QUORUM_ALLOWED_RPC_METHODS", ["web3_clientVersion", "eth_sendTransaction"]}
+
+config :ethereumex, url: "http://localhost:22000"
 
 config :task_bunny,
   hosts: [
@@ -11,8 +19,8 @@ config :task_bunny,
   queue: [
     namespace: "kimlic-core.",
     queues: [
-      [name: "create-user-account", jobs: [CreateUserAccount]],
-      [name: "create-verification-contract", jobs: [CreateVerificationContract]]
+      [name: "transaction", jobs: [TransactionCreate]],
+      [name: "transaction-status", jobs: [TransactionStatus]]
     ]
   ],
   failure_backend: [Quorum.Loggers.TaskBunny]

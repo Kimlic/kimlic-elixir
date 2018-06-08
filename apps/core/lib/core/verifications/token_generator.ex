@@ -2,14 +2,10 @@ defmodule Core.Verifications.TokenGenerator do
   @moduledoc false
 
   alias Core.Verifications.TokenGeneratorBehaviour
-  alias Ecto.UUID
 
   @behaviour TokenGeneratorBehaviour
 
-  @spec generate_email_token(binary, binary) :: binary
-  def generate_email_token(email, account_address) do
-    :sha256
-    |> :crypto.hash(Enum.join([UUID.generate(), email, account_address]))
-    |> Base.encode16()
-  end
+  @spec generate(:email | :phone) :: binary
+  def generate(:phone), do: "#{Enum.random(100_000..999_999)}"
+  def generate(:email), do: "#{Enum.random(100_000..999_999)}"
 end

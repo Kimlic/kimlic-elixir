@@ -1,16 +1,19 @@
 use Mix.Config
 
-alias Core.Jobs.{CreateUserAccount, CreateVerificationContract}
+alias Quorum.Jobs.{TransactionCreate, TransactionStatus}
 
 config :ex_unit, capture_log: true
 
-config :quorum, client: QuorumClientMock
+config :quorum,
+  authorization_salt: {:system, "AUTHORIZATION_SALT", "1234567890"},
+  client: QuorumClientMock,
+  proxy_client: QuorumClientProxyMock
 
 config :task_bunny,
   queue: [
     namespace: "kimlic-core-test.",
     queues: [
-      [name: "create-user-account", jobs: [CreateUserAccount], worker: false],
-      [name: "create-verification-contract", jobs: [CreateVerificationContract], worker: false]
+      [name: "transaction", jobs: [TransactionCreate], worker: false],
+      [name: "transaction-status", jobs: [TransactionStatus], worker: false]
     ]
   ]

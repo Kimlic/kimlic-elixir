@@ -20,13 +20,34 @@ defmodule MobileApi.ConnCase do
       # Import conveniences for testing with connections
       use Phoenix.ConnTest
       import MobileApi.Router.Helpers
+      import Core.Factory
 
       # The default endpoint for testing
       @endpoint MobileApi.Endpoint
     end
   end
 
-  setup _tags do
-    {:ok, conn: Phoenix.ConnTest.build_conn()}
+  setup tags do
+    Core.Clients.Redis.flush()
+
+    conn =
+      Phoenix.ConnTest.build_conn()
+      |> put_authorization_headers(tags)
+
+    {:ok, conn: conn}
+  end
+
+  @spec put_authorization_headers(Conn.t(), map) :: Conn.t()
+  def put_authorization_headers(conn, %{authorized: true}) do
+    auth_token = Ecto.UUID.generate()
+    bearer_token = Quorum.BearerService.bearer(auth_token)
+
+    conn
+    |> Plug.Conn.put_req_header("authorization", "Bearer: #{bearer_token}")
+    |> Plug.Conn.put_req_header("auth-secret-token", auth_token)
+  end
+
+  def put_authorization_headers(conn, _tags) do
+    conn
   end
 end

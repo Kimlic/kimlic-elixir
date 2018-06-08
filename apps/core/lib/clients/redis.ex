@@ -1,14 +1,32 @@
 defmodule Core.Clients.Redis do
   @moduledoc false
 
+  import Ecto.Changeset
+  alias Ecto.Changeset
+
   @spec get(binary) :: {:ok, term} | {:error, binary}
   def get(key) when is_binary(key) do
     with {:ok, encoded_value} <- Redix.command(:redix, ["GET", key]) do
-      {:ok, decode(encoded_value)}
+      if encoded_value == nil do
+        {:error, :not_found}
+      else
+        {:ok, decode(encoded_value)}
+      end
     end
   end
 
-  @spec set(binary, term, pos_integer | nil) :: {:ok, term} | {:error, binary}
+  @spec upsert(Changeset.t()) :: {:ok, term} | {:error, binary}
+  def upsert(%Changeset{} = changeset, ttl_seconds \\ nil) do
+    {_, key} = fetch_field(changeset, :redis_key)
+    entity = Changeset.apply_changes(changeset)
+
+    case set(key, entity, ttl_seconds) do
+      :ok -> {:ok, entity}
+      err -> err
+    end
+  end
+
+  @spec set(binary, term, pos_integer | nil) :: :ok | {:error, atom}
   def set(key, value, ttl_seconds \\ nil)
 
   def set(key, value, nil) when is_binary(key) and value != nil,
@@ -25,9 +43,16 @@ defmodule Core.Clients.Redis do
     end
   end
 
-  @spec delete(binary) :: {:ok, term} | {:error, binary}
+  @spec delete(map) :: {:ok, non_neg_integer} | {:error, binary}
+  def delete(%{redis_key: key}), do: delete(key)
+
+  @spec delete(binary) :: {:ok, non_neg_integer} | {:error, binary}
   def delete(key) when is_binary(key) do
-    Redix.command(:redix, ["DEL", key])
+    case Redix.command(:redix, ["DEL", key]) do
+      {:ok, n} when n >= 1 -> {:ok, n}
+      {:ok, 0} -> {:error, :not_found}
+      err -> err
+    end
   end
 
   @spec flush :: :ok | {:error, binary}
@@ -42,6 +67,5 @@ defmodule Core.Clients.Redis do
   defp encode(value), do: :erlang.term_to_binary(value)
 
   @spec decode(term) :: term
-  defp decode(nil), do: nil
   defp decode(value), do: :erlang.binary_to_term(value)
 end

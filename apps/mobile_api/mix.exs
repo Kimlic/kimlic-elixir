@@ -1,7 +1,7 @@
 defmodule MobileApi.Mixfile do
   use Mix.Project
 
-  @version "0.3.0"
+  @version "0.34.0"
 
   def project do
     [
@@ -33,11 +33,14 @@ defmodule MobileApi.Mixfile do
   defp deps do
     [
       {:core, in_umbrella: true},
+      {:quorum, in_umbrella: true},
       {:jason, "~> 1.0"},
       {:confex, "~> 3.3.1"},
       {:phoenix, "~> 1.3.2"},
       {:plug_logger_json, "~> 0.5"},
-      {:cowboy, "~> 1.0"}
+      {:cowboy, "~> 1.0"},
+      {:hammer, "~> 5.0"},
+      {:hammer_backend_redis, "~> 5.0"}
     ]
   end
 end

@@ -34,4 +34,10 @@ defmodule MobileApi.FallbackController do
     |> put_status(:unprocessable_entity)
     |> render(ErrorView, :"422", changeset)
   end
+
+  def call(conn, {:error, {:internal_error, message}}) do
+    conn
+    |> put_status(:internal_server_error)
+    |> render(ErrorView, :"500", %{message: message})
+  end
 end
