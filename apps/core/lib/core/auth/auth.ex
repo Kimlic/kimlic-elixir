@@ -34,28 +34,21 @@ defmodule Core.Auth do
     )
   end
 
-  @spec check_verification(:phone | :email, binary, binary) :: :ok | {:error, term}
-  def check_verification(:email, account_address, token) do
-    with :ok <- do_check_verification(:email, account_address, token) do
-      # todo: call quorum
-      :ok
-    end
-  end
+  @spec verify(:email | :phone, binary, binary) :: :ok | {:error, term}
+  def verify(:email, account_address, token), do: do_verify(:email, account_address, token)
+  def verify(:phone, account_address, code), do: do_verify(:phone, account_address, code)
 
-  def check_verification(:phone, account_address, code) do
-    with :ok <- do_check_verification(:phone, account_address, code) do
-      # todo: call quorum
-      :ok
-    end
-  end
-
-  @spec check_verification(:phone | :email, binary, binary) :: :ok | {:error, term}
-  defp do_check_verification(type, account_address, token) do
-    with {:ok, %Verification{} = verification} <- Verifications.get(account_address, type),
+  @spec verify(:phone | :email, binary, binary) :: :ok | {:error, term}
+  defp do_verify(type, account_address, token) do
+    with {:ok, %Verification{contract_address: contract_address} = verification} <-
+           Verifications.get(account_address, type),
+         {_, "0x" <> _} <- {:contract_address_set, contract_address},
          {_, true} <- {:verification_access, can_access_verification?(verification, account_address, token)},
-         {:ok, 1} <- Verifications.delete(verification) do
+         {:ok, 1} <- Verifications.delete(verification),
+         :ok <- Quorum.set_verification_result_transaction(account_address, contract_address) do
       :ok
     else
+      {:contract_address_set, _} -> {:error, :not_found}
       {:verification_access, _} -> {:error, :not_found}
       err -> err
     end

@@ -6,8 +6,6 @@ defmodule Quorum do
   import Quorum.Contract
   alias Quorum.Jobs.TransactionCreate
 
-  @behaviour Quorum.Behaviour
-
   @type callback :: nil | {module :: atom, function :: atom, args :: list}
 
   defguardp is_callback(mfa)
@@ -32,6 +30,16 @@ defmodule Quorum do
       |> hash_data(contract_function, [account_address_hex])
 
     create_transaction(%{from: account_address_hex, data: data}, callback, true)
+  end
+
+  @spec set_verification_result_transaction(binary, binary) :: :ok
+  def set_verification_result_transaction(account_address, contract_address) do
+    data =
+      :base_verification
+      |> contract()
+      |> hash_data("setVerificationResult", [true])
+
+    create_transaction(%{from: parse_hex(account_address), to: parse_hex(contract_address), data: data})
   end
 
   @doc """
