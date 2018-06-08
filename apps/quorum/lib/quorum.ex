@@ -10,6 +10,10 @@ defmodule Quorum do
 
   @type callback :: nil | {module :: atom, function :: atom, args :: list}
 
+  defguardp is_callback(mfa)
+            when is_tuple(mfa) and tuple_size(mfa) == 3 and
+                   (is_atom(elem(mfa, 0)) and is_atom(elem(mfa, 1)) and is_list(elem(mfa, 2)))
+
   @spec create_verification_transaction(binary, atom, callback) :: :ok
   def create_verification_contract(account_address, :email, callback),
     do: create_verification_transaction(account_address, "createEmailVerification", callback)
@@ -61,20 +65,25 @@ defmodule Quorum do
       end
 
   """
-  @spec create_transaction(map, {atom, atom, list}, boolean) :: :ok
-  def create_transaction(transaction_data, {module, function, args}, provide_return_value)
-      when is_atom(module) and is_atom(function) and is_list(args) do
-    %{
-      transaction_data: transaction_data,
-      callback: %{m: module, f: function, a: args}
-    }
+  @spec create_transaction(map, callback, boolean) :: :ok
+  def create_transaction(transaction_data, callback, provide_return_value)
+      when is_nil(callback) or is_tuple(callback) do
+    %{transaction_data: transaction_data}
+    |> put_callback(callback)
     |> put_provide_return_value(provide_return_value)
     |> TransactionCreate.enqueue!()
   end
 
-  @spec put_provide_return_value(map, map) :: map
+  @spec put_provide_return_value(map, boolean) :: map
   defp put_provide_return_value(message, true), do: Map.put(message, :provide_return_value, true)
   defp put_provide_return_value(message, _), do: message
+
+  @spec put_provide_return_value(map, callback) :: map
+  defp put_callback(message, {module, function, args} = callback) when is_callback(callback),
+    do: Map.put(message, :callback, %{m: module, f: function, a: args})
+
+  @spec put_provide_return_value(map, nil) :: map
+  defp put_callback(message, nil), do: Map.put(message, :callback, nil)
 
   @spec parse_hex(binary) :: integer
   defp parse_hex("0x" <> address) do
