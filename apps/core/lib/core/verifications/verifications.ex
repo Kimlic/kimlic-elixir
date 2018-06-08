@@ -12,8 +12,8 @@ defmodule Core.Verifications do
   @verification_status_new Verification.status(:new)
 
   @spec verification_ttl(atom) :: integer
-  defp verification_ttl(:phone), do: Confex.fetch_env!(:core, :verification_phone_ttl)
-  defp verification_ttl(:email), do: Confex.fetch_env!(:core, :verification_email_ttl)
+  defp verification_ttl(:phone), do: Confex.fetch_env!(:core, :verifications_ttl)[:phone]
+  defp verification_ttl(:email), do: Confex.fetch_env!(:core, :verifications_ttl)[:email]
 
   @spec create_verification(binary, atom) :: create_verification_t
   def create_verification(account_address, type) when allowed_type_atom(type) do
