@@ -25,6 +25,8 @@ defmodule MobileApi.Router do
   scope "/api", MobileApi do
     pipe_through([:api, :authorized])
 
+    post("/quorum", QuorumController, :proxy)
+
     scope "/auth" do
       post("/email/send-verification", AuthController, :create_email_verification)
       post("/email/verify", AuthController, :verify_email)

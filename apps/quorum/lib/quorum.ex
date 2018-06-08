@@ -10,11 +10,6 @@ defmodule Quorum do
 
   @type callback :: nil | {module :: atom, function :: atom, args :: list}
 
-  @spec authenticated?(binary) :: boolean
-  def authenticated?(_token) do
-    true
-  end
-
   @spec create_verification_contract(binary, atom, callback) :: :ok
   def create_verification_contract(account_address, verification_type, callback \\ nil)
 
