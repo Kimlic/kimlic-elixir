@@ -10,7 +10,7 @@ config :core,
     phone: {:system, :integer, "VERIFICATION_PHONE_TTL", :timer.hours(24)}
   ]
 
-config :core, messenger_message_from: {:system, "MESSAGER_MESSAGE_FROM", ""}
+config :core, messenger_message_from: {:system, "MESSAGER_MESSAGE_FROM", "Kimlic"}
 
 config :core, :emails,
   create_profile_email: %{
