@@ -1,0 +1,9 @@
+{
+  "skip_files": [
+    "src/*",
+    "test/*",
+
+    "lib/quorum/abi/*"
+  ],
+  "treat_no_relevant_lines_as_covered": true
+}
