@@ -94,6 +94,7 @@ defmodule Quorum.ABI.FunctionSelector do
         ]
       }
   """
+  @spec decode(binary) :: term
   def decode(signature) do
     Parser.parse!(signature, as: :selector)
   end
@@ -109,12 +110,14 @@ defmodule Quorum.ABI.FunctionSelector do
       iex> FunctionSelector.decode_raw("")
       []
   """
+  @spec decode_raw(binary) :: list
   def decode_raw(type_string) do
     {:tuple, types} = decode_type("(#{type_string})")
     types
   end
 
   @doc false
+  @spec parse_specification_item(map) :: FunctionSelector.t() | nil
   def parse_specification_item(%{"type" => "function"} = item) do
     %{
       "name" => function_name,
@@ -142,6 +145,7 @@ defmodule Quorum.ABI.FunctionSelector do
 
   def parse_specification_item(_), do: nil
 
+  @spec parse_specification_type(map) :: tuple
   defp parse_specification_type(%{"type" => type}), do: decode_type(type)
 
   @doc """
@@ -158,6 +162,7 @@ defmodule Quorum.ABI.FunctionSelector do
       iex> FunctionSelector.decode_type("address[][3]")
       {:array, {:array, :address}, 3}
   """
+  @spec decode_type(binary) :: tuple
   def decode_type(single_type) do
     Parser.parse!(single_type, as: :type)
   end
@@ -179,18 +184,21 @@ defmodule Quorum.ABI.FunctionSelector do
       ...> })
       "bark(uint256,bool,string[],string[3],(uint256,bool))"
   """
+  @spec encode(FunctionSelector.t()) :: binary
   def encode(function_selector) do
     types = function_selector |> get_types() |> Enum.join(",")
 
     "#{function_selector.function}(#{types})"
   end
 
+  @spec encode(FunctionSelector.t()) :: binary | nil
   defp get_types(function_selector) do
     for type <- function_selector.types do
       get_type(type)
     end
   end
 
+  @spec get_type(FunctionSelector.type() | term) :: binary | nil
   defp get_type(nil), do: nil
   defp get_type({:int, size}), do: "int#{size}"
   defp get_type({:uint, size}), do: "uint#{size}"

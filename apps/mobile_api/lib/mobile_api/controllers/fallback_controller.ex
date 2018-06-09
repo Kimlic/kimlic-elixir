@@ -7,6 +7,9 @@ defmodule MobileApi.FallbackController do
 
   alias MobileApi.ErrorView
 
+  @typep fallback_param_t :: nil | tuple | Ecto.Changeset.t()
+
+  @spec call(Plug.Conn.t(), fallback_param_t) :: Plug.Conn.t()
   def call(conn, nil) do
     conn
     |> put_status(:not_found)

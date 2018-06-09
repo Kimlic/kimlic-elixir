@@ -3,18 +3,21 @@ defmodule Quorum.Loggers.TaskBunny do
   Default failure backend that reports job errors to Logger.
   """
   use TaskBunny.FailureBackend
+
   alias Log
   alias TaskBunny.JobError
+
   require Logger
 
   # Callback for FailureBackend
+  @spec report_job_error(%JobError{}) :: :ok
   def report_job_error(%JobError{} = error) do
     error
     |> get_job_error_message()
     |> do_report(error.reject)
   end
 
-  @spec get_job_error_message(JobError.t()) :: String.t()
+  @spec get_job_error_message(JobError.t()) :: binary
   def get_job_error_message(%JobError{error_type: :exception} = error) do
     """
     TaskBunny - #{error.job} failed for an exception.
@@ -58,6 +61,7 @@ defmodule Quorum.Loggers.TaskBunny do
     """
   end
 
+  @spec common_message(JobError.t()) :: binary
   defp common_message(error) do
     """
     Payload:
@@ -72,6 +76,7 @@ defmodule Quorum.Loggers.TaskBunny do
     """
   end
 
+  @spec do_report(binary, boolean) :: :ok
   defp do_report(message, rejected) do
     log = %{
       "log_type" => "application",
@@ -85,5 +90,7 @@ defmodule Quorum.Loggers.TaskBunny do
     else
       Log.warn(log)
     end
+
+    :ok
   end
 end

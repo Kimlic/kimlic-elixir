@@ -29,11 +29,11 @@ defmodule Quorum.Jobs.TransactionStatus do
     |> Enum.at(failed_count - 1, 1000)
   end
 
-  @spec fetch_return_value(binary, map) :: :atom
+  @spec fetch_return_value(binary, map) :: atom
   defp fetch_return_value(transaction_hash, %{"provide_return_value" => _}),
     do: do_fetch_return_value(transaction_hash, 1)
 
-  @spec fetch_return_value(term, term) :: :atom
+  @spec fetch_return_value(term, term) :: atom
   defp fetch_return_value(_, _), do: :not_required
 
   @spec do_fetch_return_value(binary, integer) :: {:error, binary}
@@ -52,16 +52,16 @@ defmodule Quorum.Jobs.TransactionStatus do
     end
   end
 
-  @spec maybe_callback(map, map, term) :: :atom
+  @spec maybe_callback(map, map, term) :: atom
   defp maybe_callback(%{"m" => module, "f" => function, "a" => args}, status, return_value) do
     Kernel.apply(String.to_atom(module), String.to_atom(function), prepare_args(args, status, return_value))
     :ok
   end
 
-  @spec maybe_callback(term, term, term) :: :atom
+  @spec maybe_callback(term, term, term) :: atom
   defp maybe_callback(_mfa, _status, _return_value), do: :ok
 
-  @spec prepare_args(list, map, term) :: :list
+  @spec prepare_args(list, map, term) :: list
   defp prepare_args(args, transaction_status, :not_required), do: args ++ [transaction_status]
   defp prepare_args(args, transaction_status, return_value), do: args ++ [transaction_status, return_value]
 end

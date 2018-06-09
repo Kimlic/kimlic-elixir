@@ -99,6 +99,7 @@ defmodule Quorum.ABI.TypeEncoder do
       ...> |> Base.encode16(case: :lower)
       "000000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000110000000000000000000000000000000000000000000000000000000000000001"
   """
+  @spec encode(list, FunctionSelector.t()) :: binary
   def encode(data, function_selector) do
     encode_method_id(function_selector) <> encode_raw(data, function_selector.types)
   end
@@ -115,6 +116,7 @@ defmodule Quorum.ABI.TypeEncoder do
       ...> |> Base.encode16(case: :lower)
       "000000000000000000000000000000000000000000000000000000000000004000000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000007617765736f6d6500000000000000000000000000000000000000000000000000"
   """
+  @spec encode_raw(list, list) :: binary
   def encode_raw(data, types) do
     do_encode(types, data, [])
   end
@@ -224,12 +226,14 @@ defmodule Quorum.ABI.TypeEncoder do
     raise "Unsupported encoding type: #{inspect(els)}"
   end
 
+  @spec encode_bytes(term) :: binary
   def encode_bytes(bytes) do
     bytes |> pad(byte_size(bytes), :right)
   end
 
   # Note, we'll accept a binary or an integer here, so long as the
   # binary is not longer than our allowed data size
+  @spec encode_uint(binary | integer, integer) :: binary
   defp encode_uint(data, size_in_bits) when rem(size_in_bits, 8) == 0 do
     size_in_bytes = round(size_in_bits / 8)
     bin = maybe_encode_unsigned(data)
@@ -240,6 +244,7 @@ defmodule Quorum.ABI.TypeEncoder do
     bin |> pad(size_in_bytes, :left)
   end
 
+  @spec pad(binary, integer, atom) :: binary
   defp pad(bin, size_in_bytes, direction) do
     # TODO: Create `left_pad` repo, err, add to `ExthCrypto.Math`
     total_size = size_in_bytes + mod(32 - size_in_bytes, 32)
@@ -252,6 +257,7 @@ defmodule Quorum.ABI.TypeEncoder do
     end
   end
 
+  @spec mod(integer, integer) :: integer
   defp mod(x, n) when x > 0, do: rem(x, n)
   defp mod(x, n) when x < 0, do: rem(n + x, n)
   defp mod(0, _n), do: 0
