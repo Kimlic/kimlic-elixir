@@ -2,8 +2,8 @@ defmodule Core.Factory do
   @moduledoc false
 
   alias Core.Clients.Redis
-  alias Core.Verifications.{TokenGenerator, Verification}
-  alias Ecto.Changeset
+  alias Core.Verifications.TokenGenerator
+  alias Core.Verifications.Verification
 
   @spec build(atom, map) :: %Verification{} | term
   def build(entity_atom, params \\ %{}), do: :erlang.apply(__MODULE__, entity_atom, [params])
@@ -15,8 +15,9 @@ defmodule Core.Factory do
     |> redis_insert()
   end
 
+  @spec redis_insert(Ecto.Changeset.t()) :: term
   defp redis_insert(changeset) do
-    with {:ok, entity} <- Redis.insert(changeset) do
+    with {:ok, entity} <- Redis.upsert(changeset) do
       entity
     else
       _ -> raise "[Core.Factory]: Can't set data in redis"
@@ -31,6 +32,7 @@ defmodule Core.Factory do
       entity_type: Verification.entity_type(:email),
       account_address: generate(:account_address),
       token: "123456",
+      contract_address: generate(:account_address),
       status: Verification.status(:new)
     }
 
@@ -47,6 +49,13 @@ defmodule Core.Factory do
   def generate(:phone), do: "+38097#{Enum.random(1_000_000..9_999_999)}"
 
   @spec generate(atom) :: binary
-  def generate(:account_address),
-    do: "0xf" <> (:md5 |> :crypto.hash(TokenGenerator.generate(:email)) |> Base.encode16())
+  def generate(:account_address) do
+    account_address =
+      :sha256
+      |> :crypto.hash(TokenGenerator.generate(:email))
+      |> Base.encode16(case: :lower)
+      |> String.slice(0..39)
+
+    "0x" <> account_address
+  end
 end
