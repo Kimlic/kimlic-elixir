@@ -16,9 +16,11 @@ defmodule Core.Verifications.Verification do
   @required_fields ~w(account_address entity_type token status)a
   @optional_fileds ~w(contract_address)
 
+  @spec entity_type(atom) :: binary
   def entity_type(:phone), do: @entity_type_phone
   def entity_type(:email), do: @entity_type_email
 
+  @spec status(atom) :: binary
   def status(:new), do: @status_new
   def status(:passed), do: @status_passed
   def status(:expired), do: @status_expired
@@ -36,7 +38,7 @@ defmodule Core.Verifications.Verification do
     field(:contract_address, :string)
   end
 
-  @spec changeset(%{}) :: Ecto.Changeset.t()
+  @spec changeset(map) :: Ecto.Changeset.t()
   def changeset(params) do
     %__MODULE__{}
     |> cast(params, @required_fields ++ @optional_fileds)

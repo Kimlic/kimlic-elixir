@@ -12,7 +12,7 @@ defmodule Core.Verifications do
   @token_generator Application.get_env(:core, :dependencies)[:token_generator]
   @verification_status_new Verification.status(:new)
 
-  @spec verification_ttl(atom) :: integer
+  @spec verification_ttl(atom) :: pos_integer
   defp verification_ttl(:phone), do: Confex.fetch_env!(:core, :verifications_ttl)[:phone]
   defp verification_ttl(:email), do: Confex.fetch_env!(:core, :verifications_ttl)[:email]
 

@@ -15,7 +15,7 @@ defmodule Core.Clients.Redis do
     end
   end
 
-  @spec upsert(Changeset.t()) :: {:ok, term} | {:error, binary}
+  @spec upsert(Changeset.t(), pos_integer | nil) :: {:ok, term} | {:error, binary}
   def upsert(%Changeset{} = changeset, ttl_seconds \\ nil) do
     {_, key} = fetch_field(changeset, :redis_key)
     entity = Changeset.apply_changes(changeset)
