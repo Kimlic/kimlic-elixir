@@ -31,9 +31,9 @@ defmodule MobileApi.Router do
       post("/email/send-verification", AuthController, :create_email_verification)
       post("/email/verify", AuthController, :verify_email)
 
-      scope "/" do
+      scope "/phone" do
         pipe_through(:create_phone_verification_limiter)
-        post("/phone/send-verification", AuthController, :create_phone_verification)
+        post("/send-verification", AuthController, :create_phone_verification)
       end
 
       post("/phone/verify", AuthController, :verify_phone)
