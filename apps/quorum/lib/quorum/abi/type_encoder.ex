@@ -150,7 +150,7 @@ defmodule Quorum.ABI.TypeEncoder do
     {encode_uint(data, size), rest}
   end
 
-  defp encode_type(:address, data), do: encode_type({:uint, 160}, data)
+  defp encode_type(:address, [data | rest]), do: {data, rest}
 
   defp encode_type(:bool, [data | rest]) do
     value =

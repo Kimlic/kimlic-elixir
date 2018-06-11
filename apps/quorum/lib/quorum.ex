@@ -22,14 +22,12 @@ defmodule Quorum do
 
   @spec create_verification_transaction(binary, binary, callback) :: :ok
   defp create_verification_transaction(account_address, contract_function, callback) do
-    account_address_hex = parse_hex(account_address)
-
     data =
       :verification_factory
       |> contract()
-      |> hash_data(contract_function, [account_address_hex])
+      |> hash_data(contract_function, [account_address])
 
-    create_transaction(%{from: account_address_hex, data: data}, callback, true)
+    create_transaction(%{from: account_address, data: data}, callback, true)
   end
 
   @spec set_verification_result_transaction(binary, binary) :: :ok
@@ -39,7 +37,7 @@ defmodule Quorum do
       |> contract()
       |> hash_data("setVerificationResult", [true])
 
-    create_transaction(%{from: parse_hex(account_address), to: parse_hex(contract_address), data: data})
+    create_transaction(%{from: account_address, to: contract_address, data: data})
   end
 
   @doc """
@@ -92,10 +90,4 @@ defmodule Quorum do
 
   @spec put_provide_return_value(map, nil) :: map
   defp put_callback(message, nil), do: Map.put(message, :callback, nil)
-
-  @spec parse_hex(binary) :: integer
-  defp parse_hex("0x" <> address) do
-    {address_hex, _} = Integer.parse(address, 16)
-    address_hex
-  end
 end
