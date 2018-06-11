@@ -68,7 +68,9 @@ defmodule Core.Verifications do
   end
 
   @spec delete(%Verification{} | term) :: {:ok, non_neg_integer} | {:error, term}
-  def delete(%Verification{} = verification) do
-    Redis.delete(verification)
+  def delete(%Verification{entity_type: entity_type, account_address: account_address} = verification) do
+    redis_key = Verification.redis_key(entity_type, account_address)
+
+    Redis.delete(%Verification{verification | redis_key: redis_key})
   end
 end
