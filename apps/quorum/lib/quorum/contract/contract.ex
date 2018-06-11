@@ -3,7 +3,8 @@ defmodule Quorum.Contract do
 
   alias Quorum.ABI
 
-  @abi_dir __DIR__ <> "/abi"
+  @abi_dir Application.app_dir(:quorum, "priv/abi") |> IO.inspect()
+
   @contract_account_storage :account_storage
   @contract_base_verification :base_verification
   @contract_verification_factory :verification_factory
