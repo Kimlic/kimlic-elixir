@@ -40,6 +40,12 @@ defmodule MobileApi.Router do
     end
   end
 
+  scope "/config", MobileApi do
+    pipe_through([:api])
+
+    post("/contracts_addresses", ConfigController, :set_contracts_addresses)
+  end
+
   @spec handle_errors(Plug.Conn.t(), map) :: Plug.Conn.t()
   defp handle_errors(%Plug.Conn{status: 500} = conn, %{kind: kind, reason: reason, stack: stacktrace}) do
     LoggerJSON.log_error(kind, reason, stacktrace)
