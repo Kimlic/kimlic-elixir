@@ -14,7 +14,7 @@ defmodule Core.Verifications.Verification do
   @status_expired "EXPIRED"
 
   @required_fields ~w(account_address entity_type token status)a
-  @optional_fileds ~w(contract_address)
+  @optional_fileds ~w(contract_address)a
 
   @spec entity_type(atom) :: binary
   def entity_type(:phone), do: @entity_type_phone

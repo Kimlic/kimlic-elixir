@@ -3,6 +3,7 @@ defmodule Core.Auth do
 
   import Core.Verifications.Verification, only: [allowed_type_atom: 1]
 
+  alias Core.ContractAddresses
   alias Core.Email
   alias Core.Verifications
   alias Core.Verifications.Verification
@@ -12,7 +13,8 @@ defmodule Core.Auth do
   @spec create_email_verification(binary, binary) :: :ok | {:error, binary}
   def create_email_verification(email, account_address) do
     with {:ok, verification} <- Verifications.create_verification(account_address, :email),
-         :ok <- create_verification_contract(account_address, :email) do
+         {:ok, contract_address} = ContractAddresses.get("VerificationContractFactory"),
+         :ok <- create_verification_contract(:email, account_address, contract_address) do
       Email.send_verification(email, verification)
     end
   end
@@ -20,18 +22,20 @@ defmodule Core.Auth do
   @spec create_phone_verification(binary, binary) :: :ok | {:error, binary}
   def create_phone_verification(phone, account_address) do
     with {:ok, %Verification{token: sms_code}} <- Verifications.create_verification(account_address, :phone),
-         :ok <- create_verification_contract(account_address, :phone),
+         {:ok, contract_address} = ContractAddresses.get("VerificationContractFactory"),
+         :ok <- create_verification_contract(:phone, account_address, contract_address),
          # todo: move message to resources
          {:ok, %{}} <- @messenger.send(phone, "Here is your code: #{sms_code}") do
       :ok
     end
   end
 
-  @spec create_verification_contract(binary, atom) :: :ok
-  defp create_verification_contract(account_address, type) do
+  @spec create_verification_contract(atom, binary, binary) :: :ok
+  defp create_verification_contract(type, account_address, contract_address) do
     Quorum.create_verification_contract(
-      account_address,
       type,
+      account_address,
+      contract_address,
       {Verifications, :update_verification_contract_address, [account_address, type]}
     )
   end

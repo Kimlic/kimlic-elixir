@@ -6,13 +6,21 @@ defmodule MobileApi.AuthControllerTest do
   import MobileApi.RequestDataFactory
   import Mox
 
+  alias Core.ContractAddresses
   alias Core.Verifications
-  alias Core.Verifications.{TokenGenerator, Verification}
+  alias Core.Verifications.TokenGenerator
+  alias Core.Verifications.Verification
 
   @moduletag :authorized
 
   @entity_type_email Verification.entity_type(:email)
   @entity_type_phone Verification.entity_type(:phone)
+
+  setup do
+    ContractAddresses.set_batch(%{"VerificationContractFactory" => generate(:account_address)})
+
+    :ok
+  end
 
   describe "create email verification" do
     test "success", %{conn: conn} do

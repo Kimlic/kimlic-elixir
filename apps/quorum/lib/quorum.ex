@@ -4,6 +4,7 @@ defmodule Quorum do
   """
 
   import Quorum.Contract
+
   alias Quorum.Jobs.TransactionCreate
 
   @type callback :: nil | {module :: atom, function :: atom, args :: list}
@@ -12,22 +13,22 @@ defmodule Quorum do
             when is_tuple(mfa) and tuple_size(mfa) == 3 and
                    (is_atom(elem(mfa, 0)) and is_atom(elem(mfa, 1)) and is_list(elem(mfa, 2)))
 
-  @spec create_verification_contract(binary, atom, callback) :: :ok
-  def create_verification_contract(account_address, :email, callback),
-    do: create_verification_transaction(account_address, "createEmailVerification", callback)
+  @spec create_verification_contract(atom, binary, binary, callback) :: :ok
+  def create_verification_contract(:email, account_address, contract_address, callback),
+    do: create_verification_transaction(account_address, contract_address, "createEmailVerification", callback)
 
-  @spec create_verification_contract(binary, atom, callback) :: :ok
-  def create_verification_contract(account_address, :phone, callback),
-    do: create_verification_transaction(account_address, "createPhoneVerification", callback)
+  @spec create_verification_contract(atom, binary, binary, callback) :: :ok
+  def create_verification_contract(:phone, account_address, contract_address, callback),
+    do: create_verification_transaction(account_address, contract_address, "createPhoneVerification", callback)
 
-  @spec create_verification_transaction(binary, binary, callback) :: :ok
-  defp create_verification_transaction(account_address, contract_function, callback) do
+  @spec create_verification_transaction(binary, binary, binary, callback) :: :ok
+  defp create_verification_transaction(account_address, contract_address, contract_function, callback) do
     data =
       :verification_factory
       |> contract()
       |> hash_data(contract_function, [account_address])
 
-    create_transaction(%{from: account_address, data: data}, callback, true)
+    create_transaction(%{from: account_address, to: contract_address, data: data}, callback, true)
   end
 
   @spec set_verification_result_transaction(binary, binary) :: :ok
