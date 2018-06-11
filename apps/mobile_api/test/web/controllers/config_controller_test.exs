@@ -11,7 +11,7 @@ defmodule MobileApi.ConfigControllerTest do
       request_params = %{"VerificationContractFactory" => address}
 
       assert %{status: 200} = post(conn, config_path(conn, :set_contracts_addresses), request_params)
-      assert ContractAddresses.get("VerificationContractFactory") == address
+      assert {:ok, ^address} = ContractAddresses.get("VerificationContractFactory")
     end
   end
 end
