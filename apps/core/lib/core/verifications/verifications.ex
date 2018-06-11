@@ -69,7 +69,7 @@ defmodule Core.Verifications do
     redis_key
     |> Redis.get()
     |> case do
-      {:ok, verification} -> {:ok, %Verification{redis_key: redis_key}}
+      {:ok, verification} -> {:ok, %Verification{verification | redis_key: redis_key}}
       err -> err
     end
   end
