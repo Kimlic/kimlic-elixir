@@ -3,7 +3,7 @@ defmodule Quorum.Contract do
 
   alias Quorum.ABI
 
-  @abi_dir Application.app_dir(:quorum, "priv/abi")
+  @abi_dir "priv/abi"
 
   @contract_account_storage :account_storage
   @contract_base_verification :base_verification
@@ -35,9 +35,13 @@ defmodule Quorum.Contract do
   end
 
   @spec contract_path(atom) :: binary
-  defp contract_path(@contract_account_storage), do: @abi_dir <> "/account_storage.json"
-  defp contract_path(@contract_verification_factory), do: @abi_dir <> "/verification_contract_factory.json"
-  defp contract_path(@contract_base_verification), do: @abi_dir <> "/base_verification.json"
+  defp contract_path(@contract_account_storage), do: Application.app_dir(:quorum, @abi_dir <> "/account_storage.json")
+
+  defp contract_path(@contract_verification_factory),
+    do: Application.app_dir(:quorum, @abi_dir <> "/verification_contract_factory.json")
+
+  defp contract_path(@contract_base_verification),
+    do: Application.app_dir(:quorum, @abi_dir <> "/base_verification.json")
 
   @spec add_prefix(binary, binary) :: binary
   defp add_prefix(string, prefix), do: prefix <> string
