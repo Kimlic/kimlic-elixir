@@ -43,6 +43,8 @@ defmodule Core.Verifications do
         _transaction_status,
         {:ok, contract_address}
       ) do
+    verification_type = String.to_atom(verification_type)
+
     with {:ok, verification} = get(account_address, verification_type),
          verification <- %Verification{verification | contract_address: contract_address},
          %Ecto.Changeset{valid?: true} = changeset <- verification |> Map.from_struct() |> Verification.changeset(),
