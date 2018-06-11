@@ -61,14 +61,19 @@ defmodule Core.Verifications do
 
   @spec get(binary, atom) :: {:ok, %Verification{}} | {:error, term}
   def get(account_address, type) do
-    type
-    |> Verification.entity_type()
-    |> Verification.redis_key(account_address)
+    redis_key =
+      type
+      |> Verification.entity_type()
+      |> Verification.redis_key(account_address)
+
+    redis_key
     |> Redis.get()
+    |> case do
+      {:ok, verification} -> {:ok, %Verification{verification | redis_key: redis_key}}
+      err -> err
+    end
   end
 
   @spec delete(%Verification{} | term) :: {:ok, non_neg_integer} | {:error, term}
-  def delete(%Verification{} = verification) do
-    Redis.delete(verification)
-  end
+  def delete(%Verification{} = verification), do: Redis.delete(verification)
 end
