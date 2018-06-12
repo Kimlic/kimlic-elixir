@@ -3,8 +3,13 @@ defmodule Core.ContractAddresses do
 
   alias Core.Clients.Redis
 
+  @available_keys [
+    "VerificationContractFactory"
+  ]
+
   @spec get(binary) :: {:ok, binary} | {:error, binary}
-  def get(contract_address), do: contract_address |> storage_key() |> Redis.get()
+  def get(contract_address) when contract_address in @available_keys,
+    do: contract_address |> storage_key() |> Redis.get()
 
   @spec set_batch(map) :: :ok | {:error, binary}
   def set_batch(contracts_addresses) when is_map(contracts_addresses) do
