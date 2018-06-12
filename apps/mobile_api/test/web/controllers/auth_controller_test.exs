@@ -30,12 +30,13 @@ defmodule MobileApi.AuthControllerTest do
 
       expect(TokenGeneratorMock, :generate, fn :email -> token end)
 
-      assert %{status: 201} =
-               post(
-                 conn,
+      assert %{"data" => %{}, "meta" => %{"code" => 201}} =
+               conn
+               |> post(
                  auth_path(conn, :create_email_verification),
                  data_for(:auth_create_email_verification, email, account_address)
                )
+               |> json_response(201)
 
       assert {:ok, %Verification{token: ^token, entity_type: @entity_type_email}} =
                Verifications.get(account_address, :email)
@@ -51,7 +52,7 @@ defmodule MobileApi.AuthControllerTest do
         "account_address" => account_address
       }
 
-      assert %{"status" => "ok"} =
+      assert %{"data" => %{"status" => "ok"}} =
                conn
                |> post(auth_path(conn, :verify_email), data)
                |> json_response(200)
@@ -113,7 +114,7 @@ defmodule MobileApi.AuthControllerTest do
     test "success", %{conn: conn} do
       %{account_address: account_address, token: token} = insert(:verification, %{entity_type: @entity_type_phone})
 
-      assert %{"status" => "ok"} =
+      assert %{"data" => %{"status" => "ok"}} =
                conn
                |> post(auth_path(conn, :verify_phone), %{
                  "code" => token,
