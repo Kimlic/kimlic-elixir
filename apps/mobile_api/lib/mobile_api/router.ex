@@ -10,6 +10,8 @@ defmodule MobileApi.Router do
 
   require Logger
 
+  ### Pipelines
+
   pipeline :api do
     plug(:accepts, ["json"])
   end
@@ -18,14 +20,18 @@ defmodule MobileApi.Router do
     plug(CheckAuthorization)
   end
 
+  pipeline :eview_response do
+    plug(EView)
+  end
+
   pipeline :create_phone_verification_limiter do
     plug(CreatePhoneVerificationLimiter)
   end
 
-  scope "/api", MobileApi do
-    pipe_through([:api, :authorized])
+  ### Endpoints
 
-    post("/quorum", QuorumController, :proxy)
+  scope "/api", MobileApi do
+    pipe_through([:api, :authorized, :eview_response])
 
     scope "/auth" do
       post("/email/send-verification", AuthController, :create_email_verification)
@@ -38,6 +44,12 @@ defmodule MobileApi.Router do
 
       post("/phone/verify", AuthController, :verify_phone)
     end
+  end
+
+  scope "/api", MobileApi do
+    pipe_through([:api, :authorized])
+
+    post("/quorum", QuorumController, :proxy)
   end
 
   scope "/config", MobileApi do
