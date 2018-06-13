@@ -5,19 +5,19 @@
       "description": "Kimlic",
       "documents": {
         "ID_CARD": {
-          "context": "face|document-front|document-back",
+          "context": ["face", "document-front", "document-back"],
           "description": "ID Card"
         },
         "PASSPORT": {
-          "context": "face|document-front",
+          "context": ["face", "document-front"],
           "description": "Passport"
         },
         "DRIVERS_LICENSE": {
-          "context": "face|document-front|document-back",
+          "context": ["face", "document-front", "document-back"],
           "description": "Drivers license"
         },
         "RESIDENCE_PERMIT_CARD": {
-          "context": "face|document-front|document-back",
+          "context": ["face", "document-front", "document-back"],
           "description": "Residence card"
         }
       }
