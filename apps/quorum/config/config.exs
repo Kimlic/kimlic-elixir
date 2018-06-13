@@ -6,7 +6,15 @@ config :quorum,
   authorization_salt: {:system, "AUTHORIZATION_SALT"},
   client: Ethereumex.HttpClient,
   proxy_client: Quorum.Proxy.Client,
-  allowed_rpc_methods: {:system, :list, "QUORUM_ALLOWED_RPC_METHODS", ["web3_clientVersion", "eth_sendTransaction"]}
+  allowed_rpc_methods:
+    {:system, :list, "QUORUM_ALLOWED_RPC_METHODS",
+     [
+       "web3_clientVersion",
+       "eth_call",
+       "eth_sendTransaction",
+       "eth_sendRawTransaction",
+       "eth_getTransactionCount"
+     ]}
 
 config :ethereumex, url: "http://localhost:22000"
 

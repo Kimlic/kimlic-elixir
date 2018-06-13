@@ -49,7 +49,8 @@ defmodule MobileApi.Router do
   end
 
   scope "/api", MobileApi do
-    pipe_through([:api, :authorized])
+    # ToDo: temporary removed auth for this endpoint until it implemented on iOs
+    pipe_through([:api])
 
     post("/quorum", QuorumController, :proxy)
   end
