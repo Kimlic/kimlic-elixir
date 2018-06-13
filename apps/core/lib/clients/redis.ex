@@ -2,7 +2,9 @@ defmodule Core.Clients.Redis do
   @moduledoc false
 
   import Ecto.Changeset
+
   alias Ecto.Changeset
+  alias Log
 
   @spec get(binary) :: {:ok, term} | {:error, binary}
   def get(key) when is_binary(key) do
@@ -12,6 +14,10 @@ defmodule Core.Clients.Redis do
       else
         {:ok, decode(encoded_value)}
       end
+    else
+      {:error, reason} = err ->
+        Log.error("[#{__MODULE__}] Fail to get value by key (#{key}) with error #{inspect(reason)}")
+        err
     end
   end
 
@@ -38,8 +44,12 @@ defmodule Core.Clients.Redis do
   @spec do_set(list) :: :ok | {:error, binary}
   defp do_set(params) do
     case Redix.command(:redix, params) do
-      {:ok, _} -> :ok
-      err -> err
+      {:ok, _} ->
+        :ok
+
+      {:error, reason} = err ->
+        Log.error("[#{__MODULE__}] Fail to set with params #{inspect(params)} with error #{inspect(reason)}")
+        err
     end
   end
 

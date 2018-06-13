@@ -10,6 +10,8 @@ defmodule MobileApi.Router do
 
   require Logger
 
+  ### Pipelines
+
   pipeline :api do
     plug(:accepts, ["json"])
   end
@@ -18,33 +20,39 @@ defmodule MobileApi.Router do
     plug(CheckAuthorization)
   end
 
+  pipeline :eview_response do
+    plug(EView)
+  end
+
   pipeline :create_phone_verification_limiter do
     plug(CreatePhoneVerificationLimiter)
   end
 
-  # ToDo: temporary removed auth for this endpoint until it implemented on iOs
+  ### Endpoints
+
   scope "/api", MobileApi do
-    pipe_through([:api])
-    post("/quorum", QuorumController, :proxy)
+    pipe_through([:api, :authorized, :eview_response])
+
+    scope "/verifications" do
+      post("/email", VerificationController, :create_email_verification)
+      post("/email/approve", VerificationController, :verify_email)
+
+      scope "/" do
+        pipe_through(:create_phone_verification_limiter)
+        post("/phone", VerificationController, :create_phone_verification)
+      end
+
+      post("/phone/approve", VerificationController, :verify_phone)
+
+      get("/video/vendors", VerificationVideoController, :get_vendors)
+    end
   end
 
   scope "/api", MobileApi do
-    pipe_through([:api, :authorized])
+    # ToDo: temporary removed auth for this endpoint until it implemented on iOs
+    pipe_through([:api])
 
-    # see ToDo above
-    # post("/quorum", QuorumController, :proxy)
-
-    scope "/auth" do
-      post("/email/send-verification", AuthController, :create_email_verification)
-      post("/email/verify", AuthController, :verify_email)
-
-      scope "/phone" do
-        pipe_through(:create_phone_verification_limiter)
-        post("/send-verification", AuthController, :create_phone_verification)
-      end
-
-      post("/phone/verify", AuthController, :verify_phone)
-    end
+    post("/quorum", QuorumController, :proxy)
   end
 
   scope "/config", MobileApi do

@@ -1,7 +1,7 @@
 defmodule MobileApi.Mixfile do
   use Mix.Project
 
-  @version "0.36.6"
+  @version "0.37.0"
 
   def project do
     [
@@ -37,6 +37,7 @@ defmodule MobileApi.Mixfile do
       {:jason, "~> 1.0"},
       {:confex, "~> 3.3.1"},
       {:phoenix, "~> 1.3.2"},
+      {:eview, "~> 0.12"},
       {:plug_logger_json, "~> 0.5"},
       {:cowboy, "~> 1.0"},
       {:hammer, "~> 5.0"},
