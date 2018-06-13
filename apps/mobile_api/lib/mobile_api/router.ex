@@ -22,10 +22,17 @@ defmodule MobileApi.Router do
     plug(CreatePhoneVerificationLimiter)
   end
 
+  # ToDo: temporary removed auth for this endpoint until it implemented on iOs
+  scope "/api", MobileApi do
+    pipe_through([:api])
+    post("/quorum", QuorumController, :proxy)
+  end
+
   scope "/api", MobileApi do
     pipe_through([:api, :authorized])
 
-    post("/quorum", QuorumController, :proxy)
+    # see ToDo above
+    # post("/quorum", QuorumController, :proxy)
 
     scope "/auth" do
       post("/email/send-verification", AuthController, :create_email_verification)
