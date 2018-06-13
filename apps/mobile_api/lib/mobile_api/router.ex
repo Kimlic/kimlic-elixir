@@ -44,6 +44,10 @@ defmodule MobileApi.Router do
 
       post("/phone/approve", VerificationController, :verify_phone)
     end
+
+    scope "/verification-video" do
+      get("/vendors", VerificationVideoController, :get_vendors)
+    end
   end
 
   scope "/api", MobileApi do
