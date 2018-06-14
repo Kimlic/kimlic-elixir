@@ -5,6 +5,14 @@
       {
         "name": "account",
         "type": "address"
+      },
+      {
+        "name": "coOwnerAddress",
+        "type": "address"
+      },
+      {
+        "name": "key",
+        "type": "string"
       }
     ],
     "name": "createEmailVerification",
@@ -24,6 +32,14 @@
       {
         "name": "account",
         "type": "address"
+      },
+      {
+        "name": "coOwnerAddress",
+        "type": "address"
+      },
+      {
+        "name": "key",
+        "type": "string"
       }
     ],
     "name": "createPhoneVerification",
@@ -31,6 +47,25 @@
       {
         "name": "createdContract",
         "type": "address"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "name": "key",
+        "type": "string"
+      }
+    ],
+    "name": "getVerificationContract",
+    "outputs": [
+      {
+        "name": "ContractAddress",
+        "type": "string"
       }
     ],
     "payable": false,
