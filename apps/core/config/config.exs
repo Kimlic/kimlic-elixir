@@ -19,6 +19,11 @@ config :core, :emails,
     subject: {:system, "EMAIL_CREATE_PROFILE_SUBJECT", "Kimlic - New user email verification"}
   }
 
+config :core, Core.Clients.Veriffme,
+  api_url: {:system, "VERIFFME_API_URL"},
+  auth_client: {:system, "VERIFFME_AUTH_CLIENT"},
+  api_secret: {:system, "VERIFFME_API_SECRET"}
+
 config :logger, :console,
   format: "$message\n",
   handle_otp_reports: true,
