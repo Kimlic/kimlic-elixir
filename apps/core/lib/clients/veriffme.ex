@@ -25,7 +25,7 @@ defmodule Core.Clients.Veriffme do
   Success status_code: 201
   """
   @spec create_session(binary, binary, binary, binary) :: api_response
-  def create_session(first_name, last_name, lang, timestamp) do
+  def create_session(first_name, last_name, lang, unix_timestamp) do
     request_data = %{
       "verification" => %{
         "person" => %{
@@ -34,7 +34,7 @@ defmodule Core.Clients.Veriffme do
         },
         "lang" => lang,
         "features" => ["selfid"],
-        "timestamp" => resolve_timestamp(timestamp)
+        "timestamp" => timestamp(unix_timestamp)
       }
     }
 
@@ -64,7 +64,7 @@ defmodule Core.Clients.Veriffme do
       "image" => %{
         "context" => context,
         "content" => image_base64,
-        "timestamp" => resolve_timestamp()
+        "timestamp" => timestamp()
       }
     }
 
@@ -90,7 +90,7 @@ defmodule Core.Clients.Veriffme do
     request_data = %{
       "verification" => %{
         "status" => "submitted",
-        "timestamp" => resolve_timestamp()
+        "timestamp" => timestamp()
       }
     }
 
@@ -122,9 +122,9 @@ defmodule Core.Clients.Veriffme do
     ]
   end
 
-  @spec resolve_timestamp(binary | nil) :: binary
-  defp resolve_timestamp(unix_time \\ nil) do
-    unix_time
+  @spec timestamp(binary | nil) :: binary
+  def timestamp(unix_timestamp \\ nil) do
+    unix_timestamp
     |> case do
       nil -> DateTime.utc_now()
       time when is_binary(time) -> time |> String.to_integer() |> DateTime.from_unix!()

@@ -39,12 +39,14 @@ defmodule MobileApi.ConnCase do
 
   @spec put_authorization_headers(Conn.t(), map) :: Conn.t()
   def put_authorization_headers(conn, %{authorized: true}) do
+    account_address = Core.Factory.generate(:account_address)
     auth_token = Ecto.UUID.generate()
     bearer_token = Quorum.BearerService.bearer(auth_token)
 
     conn
     |> Plug.Conn.put_req_header("authorization", "Bearer: #{bearer_token}")
     |> Plug.Conn.put_req_header("auth-secret-token", auth_token)
+    |> Plug.Conn.put_req_header("account-address", account_address)
   end
 
   def put_authorization_headers(conn, _tags) do

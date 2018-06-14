@@ -58,4 +58,7 @@ defmodule Core.Factory do
 
     "0x" <> account_address
   end
+
+  @spec generate(atom) :: binary
+  def generate(:unix_timestamp), do: DateTime.utc_now() |> DateTime.to_unix()
 end
