@@ -22,7 +22,6 @@ defmodule MobileApi do
       use Phoenix.Controller, namespace: MobileApi
       import Plug.Conn
       import MobileApi.Router.Helpers
-      import MobileApi.Services.HeaderResolver
     end
   end
 
