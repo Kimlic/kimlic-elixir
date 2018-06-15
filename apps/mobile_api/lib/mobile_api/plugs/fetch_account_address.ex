@@ -15,7 +15,7 @@ defmodule MobileApi.Plugs.FetchAccountAddress do
 
   @spec call(Conn.t(), Plug.opts()) :: Conn.t()
   def call(%Conn{} = conn, _opts) do
-    with {:ok, header} <- get_header(conn),
+    with {:ok, header} <- validate_required_header(conn),
          :ok <- validate_format(header) do
       assign(conn, :account_address, header)
     else
@@ -27,8 +27,8 @@ defmodule MobileApi.Plugs.FetchAccountAddress do
     end
   end
 
-  @spec get_header(Conn.t()) :: {:ok, binary} | {:error, binary}
-  defp get_header(conn) do
+  @spec validate_required_header(Conn.t()) :: {:ok, binary} | {:error, binary}
+  defp validate_required_header(conn) do
     case Conn.get_req_header(conn, @header) do
       [header] -> {:ok, header}
       _ -> {:error, "account-address header required"}
