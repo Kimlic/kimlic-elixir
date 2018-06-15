@@ -10,8 +10,8 @@ defmodule MobileApi.RequestDataFactory do
     "user_agents" => ["Mozilla/5.0 (Linux; Android 5.0.2; SM-G920F Build/LRX22G; wv) AppleWebK"]
   }
 
-  @spec data_for(atom, binary, binary) :: map
-  def data_for(:auth_create_email_verification, email, account_address) do
+  @spec data_for(atom, binary) :: map
+  def data_for(:create_email_verification, email) do
     %{
       "source_data" => %{
         "public_key" => @public_key,
@@ -19,7 +19,6 @@ defmodule MobileApi.RequestDataFactory do
         "device_fingerprint" => @device_fingerprint
       },
       "blockchain_data" => %{
-        "account_address" => account_address,
         "user_account_transaction" => %{
           "data" => "transaction_data_generated_on_mobile"
         }
@@ -27,8 +26,8 @@ defmodule MobileApi.RequestDataFactory do
     }
   end
 
-  @spec data_for(atom, binary, binary) :: map
-  def data_for(:auth_create_phone_verification, account_address, phone) do
+  @spec data_for(atom, binary) :: map
+  def data_for(:create_phone_verification, phone) do
     %{
       "source_data" => %{
         "public_key" => @public_key,
@@ -36,7 +35,6 @@ defmodule MobileApi.RequestDataFactory do
         "device_fingerprint" => @device_fingerprint
       },
       "blockchain_data" => %{
-        "account_address" => account_address,
         "user_account_transaction" => %{
           "data" => "transaction_data_generated_on_mobile"
         }

@@ -9,6 +9,7 @@ defmodule MobileApi.DigitalVerificationControllerTest do
   alias Ecto.UUID
 
   @moduletag :authorized
+  @moduletag :account_address
 
   describe "create session" do
     test "success", %{conn: conn} do
@@ -39,6 +40,8 @@ defmodule MobileApi.DigitalVerificationControllerTest do
                conn
                |> post(digital_verification_path(conn, :create_session, vendor_id), request_data)
                |> json_response(200)
+
+      # todo: add redis check
     end
 
     test "fail with veriffme", %{conn: conn} do

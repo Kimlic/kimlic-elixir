@@ -5,6 +5,8 @@ defmodule MobileApi.ConfigControllerTest do
 
   alias Core.ContractAddresses
 
+  @moduletag :account_address
+
   describe "set contracts addresses" do
     test "success", %{conn: conn} do
       address = generate(:account_address)

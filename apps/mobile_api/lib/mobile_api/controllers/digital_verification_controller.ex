@@ -14,13 +14,7 @@ defmodule MobileApi.DigitalVerificationController do
 
   @spec create_session(Conn.t(), map) :: Conn.t()
   def create_session(conn, %{"vendor_id" => _} = params) do
-    account_address =
-      case Conn.get_req_header(conn, "account-address") do
-        [value] -> value
-        _ -> nil
-      end
-
-    with {:ok, session_id} <- DigitalVerifications.create_session(account_address, params) do
+    with {:ok, session_id} <- DigitalVerifications.create_session(conn.assigns.account_address, params) do
       json(conn, %{session_id: session_id})
     end
   end

@@ -7,6 +7,7 @@ defmodule MobileApi.FallbackController do
 
   alias EView.Views.Error
   alias EView.Views.ValidationError
+  alias MobileApi.ErrorView
 
   @typep fallback_param_t :: nil | tuple | Ecto.Changeset.t()
 
@@ -19,10 +20,10 @@ defmodule MobileApi.FallbackController do
     |> render(Error, :"404")
   end
 
-  def call(conn, {:error, {:"422", error}}) do
+  def call(conn, {:error, {:unprocessable_entity, error}}) do
     conn
     |> put_status(422)
-    |> render(ValidationError, :"422", %{message: error})
+    |> render(ErrorView, :"422", %{message: error})
   end
 
   def call(conn, %Ecto.Changeset{valid?: false} = changeset), do: call(conn, {:error, changeset})

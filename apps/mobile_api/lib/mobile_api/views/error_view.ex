@@ -9,7 +9,11 @@ defmodule MobileApi.ErrorView do
   end
 
   def render("401.json", _assigns) do
-    %{errors: %{detail: "Unauthorized"}}
+    %{detail: "Unauthorized"}
+  end
+
+  def render("422.json", %{message: message}) do
+    %{detail: message}
   end
 
   @spec template_not_found(binary, map) :: map
