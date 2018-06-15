@@ -38,4 +38,10 @@ defmodule MobileApi.FallbackController do
     |> put_status(:internal_server_error)
     |> render(Error, :"500", %{message: message})
   end
+
+  def call(conn, {:error, {:getaway_timeout, message}}) do
+    conn
+    |> put_status(504)
+    |> render(Error, :"500", %{message: message})
+  end
 end

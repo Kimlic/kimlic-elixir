@@ -2,12 +2,14 @@ use Mix.Config
 
 config :core, :dependencies,
   token_generator: Core.Verifications.TokenGenerator,
-  messenger: Core.Clients.Messenger
+  messenger: Core.Clients.Messenger,
+  veriffme: Core.Clients.Veriffme
 
 config :core,
   verifications_ttl: [
     email: {:system, :integer, "VERIFICATION_EMAIL_TTL", :timer.hours(24)},
-    phone: {:system, :integer, "VERIFICATION_PHONE_TTL", :timer.hours(24)}
+    phone: {:system, :integer, "VERIFICATION_PHONE_TTL", :timer.hours(24)},
+    digital: {:system, :integer, "VERIFICATION_DIGITAL_TTL", :timer.hours(24)}
   ]
 
 config :core, messenger_message_from: {:system, "MESSAGER_MESSAGE_FROM", "Kimlic"}

@@ -1,7 +1,7 @@
 defmodule MobileApi.VerificationControllerTest do
   @moduledoc false
 
-  use MobileApi.ConnCase, async: true
+  use MobileApi.ConnCase, async: false
 
   import MobileApi.RequestDataFactory
   import Mox
