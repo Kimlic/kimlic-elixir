@@ -5,11 +5,13 @@ defmodule MobileApi.DigitalVerificationController do
 
   alias Core.Verifications.DigitalVerifications
   alias Core.Verifications.VerificationVendors
+  alias MobileApi.Plugs.RequestValidator
   alias Plug.Conn
 
   action_fallback(MobileApi.FallbackController)
 
-  # todo: validate request, (validate timestamp to be less than hour ago)
+  plug(RequestValidator, [validator: MobileApi.Requests.CreateSessionRequest] when action in [:create_session])
+
   @spec create_session(Conn.t(), map) :: Conn.t()
   def create_session(conn, %{"vendor_id" => _} = params) do
     account_address =
