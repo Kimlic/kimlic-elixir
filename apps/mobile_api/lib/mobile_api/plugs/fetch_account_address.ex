@@ -4,7 +4,7 @@ defmodule MobileApi.Plugs.FetchAccountAddress do
   import Plug.Conn
   import Phoenix.Controller, only: [render: 4]
 
-  alias MobileApi.ErrorView
+  alias EView.Views.Error
   alias Plug.Conn
 
   @header "account-address"
@@ -15,18 +15,31 @@ defmodule MobileApi.Plugs.FetchAccountAddress do
 
   @spec call(Conn.t(), Plug.opts()) :: Conn.t()
   def call(%Conn{} = conn, _opts) do
-    with [account_address] <- Conn.get_req_header(conn, @header),
-         true <- address_valid?(account_address) do
-      assign(conn, :account_address, account_address)
+    with {:ok, header} <- get_header(conn),
+         :ok <- validate_format(header) do
+      assign(conn, :account_address, header)
     else
-      _ ->
+      {:error, err} ->
         conn
-        |> put_status(422)
-        |> render(ErrorView, "422.json", %{message: "Check account address header is present and valid"})
+        |> put_status(400)
+        |> render(Error, "400.json", %{message: err})
         |> halt()
     end
   end
 
-  @spec address_valid?(binary) :: boolean
-  def address_valid?(address), do: Regex.match?(@address_regex, address)
+  @spec get_header(Conn.t()) :: {:ok, binary} | {:error, binary}
+  defp get_header(conn) do
+    case Conn.get_req_header(conn, @header) do
+      [header] -> {:ok, header}
+      _ -> {:error, "account-address header required"}
+    end
+  end
+
+  @spec validate_format(binary) :: :ok | {:error, binary}
+  defp validate_format(header) do
+    case Regex.match?(@address_regex, header) do
+      true -> :ok
+      false -> {:error, "Invalid account-address header format"}
+    end
+  end
 end

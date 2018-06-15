@@ -21,7 +21,7 @@ defmodule MobileApi.Plugs.FetchAccountAddressTest do
     end
 
     test "account address is missing", %{conn: conn} do
-      assert %{status: 422, assigns: %{message: _}} = FetchAccountAddress.call(conn, [])
+      assert %{status: 400, assigns: %{message: _}} = FetchAccountAddress.call(conn, [])
     end
 
     test "account address is invalid", %{conn: conn} do
@@ -33,7 +33,7 @@ defmodule MobileApi.Plugs.FetchAccountAddressTest do
       ]
 
       ptest [address: string(min: 40, max: 45, chars: :utf, must_have: invalid_addresses)], repeat_for: 1_000 do
-        %{status: 422, assigns: %{message: _}} =
+        %{status: 400, assigns: %{message: _}} =
           conn
           |> put_req_header("account-address", "0x" <> address)
           |> FetchAccountAddress.call([])
