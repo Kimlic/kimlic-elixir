@@ -101,7 +101,6 @@ defmodule Quorum.ABI.TypeEncoder do
   """
   @spec encode(list, FunctionSelector.t()) :: binary
   def encode(data, function_selector) do
-    IO.inspect({:encode, data, function_selector.types})
     encode_method_id(function_selector) <> encode_raw(data, function_selector.types)
   end
 
@@ -130,23 +129,13 @@ defmodule Quorum.ABI.TypeEncoder do
     kec =
       function_selector
       |> FunctionSelector.encode()
-#      |> :keccakf1600.sha3_256()
-
-    case kec do
-      "createEmailVerification(address,address,string)" ->  Base.decode16!("b1b5dcf5", case: :lower)
-      "getVerificationContract(string)" -> Base.decode16!("8575e5a5", case: :lower)
-      s ->
-        <<init::binary-size(4), _rest::binary>> = :keccakf1600.sha3_256(s)
-        init
-    end
-#    IO.inspect(kec)
-#    System.halt()
+      |> :keccakf1600.sha3_256()
 
     # Take first four bytes
-#    <<init::binary-size(4), _rest::binary>> = kec
+    <<init::binary-size(4), _rest::binary>> = kec
 
     # That's our method id
-#    init
+    init
   end
 
   @spec do_encode([FunctionSelector.type()], [any()], [binary()]) :: binary()
@@ -177,7 +166,6 @@ defmodule Quorum.ABI.TypeEncoder do
   end
 
   defp encode_type(:string, [data | rest]) do
-    IO.inspect({data, byte_size(data)})
     {encode_uint(byte_size(data), 256) <> encode_bytes(data), rest}
   end
 
@@ -240,7 +228,7 @@ defmodule Quorum.ABI.TypeEncoder do
 
   @spec encode_bytes(term) :: binary
   def encode_bytes(bytes) do
-    bytes |> pad(byte_size(bytes), :right)
+    pad(bytes, byte_size(bytes), :right)
   end
 
   # Note, we'll accept a binary or an integer here, so long as the
@@ -253,7 +241,7 @@ defmodule Quorum.ABI.TypeEncoder do
     if byte_size(bin) > size_in_bytes,
       do: raise("Data overflow encoding uint, data `#{data}` cannot fit in #{size_in_bytes * 8} bits")
 
-    bin |> pad(size_in_bytes, :left)
+    pad(bin, size_in_bytes, :left)
   end
 
   @spec pad(binary, integer, atom) :: binary

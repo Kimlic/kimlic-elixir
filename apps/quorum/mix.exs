@@ -29,7 +29,7 @@ defmodule Quorum.MixProject do
 
   defp deps do
     [
-      {:keccakf1600, "~> 2.0.0"},
+      {:keccakf1600, "~> 2.0.0", hex: :keccakf1600_orig},
       {:jason, "~> 1.0"},
       {:confex, "~> 3.3.1"},
       {:task_bunny, "~> 0.3.2"},

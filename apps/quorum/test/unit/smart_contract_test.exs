@@ -6,40 +6,41 @@ defmodule Quorum.Unit.SmartContractTest do
 
   @tag :pending
   test "create Email verification contract" do
-#    assert {:ok, account_address} = QuorumHttpClient.request("personal_newAccount", ["p@ssW0rd"], [])
+    # assert {:ok, account_address} = QuorumHttpClient.request("personal_newAccount", ["p@ssW0rd"], [])
 
     verif_contract_address = "0x8e21e0f68fa040601dab389add2a98331d2ad674"
 
     account_address = "0x63b1b67b599ba2de0d04287102c8b2ae85e209b3"
     assert {:ok, _} = QuorumHttpClient.request("personal_unlockAccount", [account_address, "p@ssW0rd"], [])
 
-    return_key = "test"
+    return_key = "279d063e-8ff9-461a-9866-cd0df83d9af9"
 
-    data = Contract.hash_data(:verification_factory, "createEmailVerification", [account_address, account_address, return_key])
+    data =
+      Contract.hash_data(:verification_factory, "createEmailVerification", [
+        account_address,
+        account_address,
+        return_key
+      ])
 
-#    data = "0xb1b5dcf5000000000000000000000000ca35b7d915458ef540ade6068dfe2f44e8fa733c000000000000000000000000ca35b7d915458ef540ade6068dfe2f44e8fa733c000000000000000000000000000000000000000000000000000000000000006000000000000000000000000000000000000000000000000000000000000000047465737400000000000000000000000000000000000000000000000000000000"
-    assert {:ok, transaction_hash} = QuorumHttpClient.eth_send_transaction(%{from: account_address, data: data, to: verif_contract_address, gasPrice: "0x0", gas: "0x500000"})
+    assert {:ok, transaction_hash} =
+             QuorumHttpClient.eth_send_transaction(%{
+               from: account_address,
+               data: data,
+               to: verif_contract_address,
+               gasPrice: "0x0",
+               gas: "0x500000"
+             })
 
     :timer.sleep(50)
     assert {:ok, map} = QuorumHttpClient.eth_get_transaction_receipt(transaction_hash, [])
-    IO.inspect(map, label: "\nResponse: createEmailVerification")
     assert is_map(map), "Expected map from Quorum.eth_get_transaction_receipt, get: #{inspect(map)}"
 
-    data = Contract.hash_data(:verification_factory, "getVerificationContract", [return_key])
-
-
-    IO.inspect(data)
-    System.halt()
+    data = Contract.hash_data(:verification_factory, "getVerificationContract", [{return_key}])
 
     :timer.sleep(50)
-#    dats = "0x8575e5a5000000000000000000000000000000000000000000000000000000000000002431303032383262322d366538632d346663302d623633652d31623963383266643662613300000000000000000000000000000000000000000000000000000000
-#    dat1 = "0x8575e5a500000000000000000000000000000000000000000000000000000000000000047465737400000000000000000000000000000000000000000000000000000000"
-#    data = "0x8575e5a50000000000000000000#00000000000000000000000000000000000000000002000000000000000000000000000000000000000000000000000000000000000047465737400000000000000000000000000000000000000000000000000000000"
 
-    assert {:ok, map} = QuorumHttpClient.eth_call(%{data: data, to: verif_contract_address})
-    IO.inspect(map, label: "\nResponse: getVerificationContract")
-    System.halt()
-    assert is_map(map), "Expected map from Quorum.debug_traceTransaction, get: #{inspect(map)}"
+    assert {:ok, address} = QuorumHttpClient.eth_call(%{data: data, to: verif_contract_address})
+    assert is_binary(address), "Expected address from Quorum.getVerificationContract, get: #{inspect(address)}"
   end
 
   describe "deploy contract and fetch method" do
