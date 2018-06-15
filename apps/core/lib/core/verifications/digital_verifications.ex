@@ -28,7 +28,7 @@ defmodule Core.Verifications.DigitalVerifications do
       {:ok, session_id}
     else
       err ->
-        Log.error("[#{__MODULE__}] Fail to create veriffme session: #{inspect(err)}")
+        Log.error("[#{__MODULE__}] Veriffme session creation failed: #{inspect(err)}")
         {:error, {:getaway_timeout, "Fail to create verification session"}}
     end
   end
@@ -36,7 +36,7 @@ defmodule Core.Verifications.DigitalVerifications do
   @spec save_verification(binary, binary) :: {:ok, %DigitalVerification{}} | {:error, binary}
   defp save_verification(account_address, session_id) do
     changeset = DigitalVerification.changeset(%{account_address: account_address, session_id: session_id})
-    ttl = Confex.fetch_env!(:core, :verifications_ttl)[:digest]
+    ttl = Confex.fetch_env!(:core, :verifications_ttl)[:digital]
 
     Redis.upsert(changeset, ttl)
   end
