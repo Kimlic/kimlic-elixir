@@ -1,4 +1,6 @@
 defmodule Quorum.Proxy.Client do
+  @moduledoc false
+
   alias Ethereumex.Config
 
   @spec call_rpc(map) :: {:ok, map} | {:error, map}

@@ -1,5 +1,9 @@
 defmodule Quorum.ABI do
-  alias Quorum.ABI.{FunctionSelector, Parser, TypeEncoder}
+  @moduledoc false
+
+  alias Quorum.ABI.FunctionSelector
+  alias Quorum.ABI.Parser
+  alias Quorum.ABI.TypeEncoder
 
   @spec encode(binary, list) :: binary
   def encode(function_signature, data) when is_binary(function_signature) do

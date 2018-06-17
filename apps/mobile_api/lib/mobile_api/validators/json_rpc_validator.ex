@@ -1,7 +1,11 @@
 defmodule MobileApi.JSONRPCValidator do
+  @moduledoc false
+
   import Ecto.Changeset
 
   defmodule Request do
+    @moduledoc false
+
     use Ecto.Schema
 
     @primary_key false
@@ -12,6 +16,8 @@ defmodule MobileApi.JSONRPCValidator do
   end
 
   defmodule RequestBatch do
+    @moduledoc false
+
     use Ecto.Schema
 
     @primary_key false
