@@ -1,4 +1,6 @@
 defmodule MobileApi.Application do
+  @moduledoc false
+
   use Application
 
   alias Confex.Resolver

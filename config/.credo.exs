@@ -12,7 +12,7 @@
         {Credo.Check.Design.DuplicatedCode, nodes_threshold: 3},
         {Credo.Check.Design.TagTODO, exit_status: 0},
         {Credo.Check.Readability.MaxLineLength, priority: :low, max_length: 120},
-        {Credo.Check.Readability.ModuleDoc, false},
+        {Credo.Check.Readability.ModuleDoc, exit_status: 4},
         {Credo.Check.Readability.Specs, exit_status: 4},
       ]
     }

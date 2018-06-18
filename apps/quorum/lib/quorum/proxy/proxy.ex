@@ -1,7 +1,9 @@
 defmodule Quorum.Proxy do
-  @quorum_proxy_client Application.get_env(:quorum, :proxy_client)
+  @moduledoc false
 
   alias HTTPoison.Response
+
+  @quorum_proxy_client Application.get_env(:quorum, :proxy_client)
 
   @spec proxy(map) :: {:ok, map} | {:error, map}
   def proxy(%{"_json" => batch_methods} = payload) when is_list(batch_methods) do

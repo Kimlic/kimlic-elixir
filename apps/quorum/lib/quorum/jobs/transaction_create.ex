@@ -1,5 +1,8 @@
 defmodule Quorum.Jobs.TransactionCreate do
+  @moduledoc false
+
   use TaskBunny.Job
+
   alias Log
   alias Quorum.Jobs.TransactionStatus
 

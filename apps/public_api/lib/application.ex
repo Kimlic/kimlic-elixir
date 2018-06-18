@@ -1,4 +1,6 @@
 defmodule PublicApi.Application do
+  @moduledoc false
+
   use Application
 
   @spec start(Application.start_type(), list) :: Supervisor.on_start()
