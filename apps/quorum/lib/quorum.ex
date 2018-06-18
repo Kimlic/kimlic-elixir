@@ -10,7 +10,7 @@ defmodule Quorum do
   @type callback :: nil | {module :: atom, function :: atom, args :: list}
 
   @gas "0x500000"
-  @gasPrice "0x0"
+  @gas_price "0x0"
 
   @quorum_client Application.get_env(:quorum, :client)
 
@@ -110,7 +110,7 @@ defmodule Quorum do
   end
 
   @spec put_gas(map) :: map
-  defp put_gas(message), do: Map.merge(%{gasPrice: @gasPrice, gas: @gas}, message)
+  defp put_gas(message), do: Map.merge(%{gasPrice: @gas_price, gas: @gas}, message)
 
   defp prepare_callback(%{callback: {module, function, args}} = meta),
     do: Map.put(meta, :callback, %{m: module, f: function, a: args})
