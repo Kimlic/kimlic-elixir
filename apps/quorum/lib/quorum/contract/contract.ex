@@ -10,11 +10,6 @@ defmodule Quorum.Contract do
   @contract_base_verification :base_verification
   @contract_verification_factory :verification_factory
 
-  @spec contract(atom) :: atom
-  def contract(:account_storage), do: @contract_account_storage
-  def contract(:verification_factory), do: @contract_verification_factory
-  def contract(:base_verification), do: @contract_base_verification
-
   @doc """
   Special case for getVerificationContract because of {:tuple, [:string]} ABI description
   For String type required head with 32 bytes, ABI library will generate it only for tuple type
@@ -54,13 +49,13 @@ defmodule Quorum.Contract do
   end
 
   @spec contract_path(atom) :: binary
-  defp contract_path(@contract_account_storage), do: Application.app_dir(:quorum, @abi_dir <> "/account_storage.json")
+  defp contract_path(@contract_account_storage), do: Application.app_dir(:quorum, @abi_dir <> "/AccountStorage.json")
 
   defp contract_path(@contract_verification_factory),
-    do: Application.app_dir(:quorum, @abi_dir <> "/verification_contract_factory.json")
+    do: Application.app_dir(:quorum, @abi_dir <> "/VerificationContractFactory.json")
 
   defp contract_path(@contract_base_verification),
-    do: Application.app_dir(:quorum, @abi_dir <> "/base_verification.json")
+    do: Application.app_dir(:quorum, @abi_dir <> "/BaseVerification.json")
 
   @spec add_prefix(binary, binary) :: binary
   defp add_prefix(string, prefix), do: prefix <> string
