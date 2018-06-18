@@ -12,7 +12,7 @@ defmodule Quorum.Unit.SmartContractTest do
     kimlic_ap_address = "0x63b1b67b599ba2de0d04287102c8b2ae85e209b3"
     verification_contract_factory_address = "0x8e21e0f68fa040601dab389add2a98331d2ad674"
 
-    assert {:ok, _} = QuorumHttpClient.request("personal_unlockAccount", [account_address, "p@ssW0rd"], [])
+    assert {:ok, _} = QuorumHttpClient.request("personal_unlockAccount", [account_address, "p@ssW0rd"], []) |> IO.inspect()
 
     index = 1
     return_key = UUID.uuid4()
