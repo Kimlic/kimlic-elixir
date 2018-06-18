@@ -6,6 +6,7 @@ defmodule MobileApi.VerificationControllerTest do
   import MobileApi.RequestDataFactory
   import Mox
 
+  alias Core.Clients.Redis
   alias Core.ContractAddresses
   alias Core.Verifications
   alias Core.Verifications.TokenGenerator
@@ -41,6 +42,25 @@ defmodule MobileApi.VerificationControllerTest do
 
       assert {:ok, %Verification{token: ^token, entity_type: @entity_type_email}} =
                Verifications.get(account_address, :email)
+    end
+
+    test "error on getting VerificationContractFactory", %{conn: conn} do
+      Redis.flush()
+
+      token = TokenGenerator.generate(:email)
+      email = "test#{token}@email.com"
+
+      expect(TokenGeneratorMock, :generate, fn :email -> token end)
+
+      assert %{"error" => %{"type" => "internal_error", "message" => error_message}} =
+               conn
+               |> post(
+                 verification_path(conn, :create_email_verification),
+                 data_for(:create_email_verification, email)
+               )
+               |> json_response(500)
+
+      assert true = String.contains?(error_message, "VerificationContractFactory")
     end
   end
 
