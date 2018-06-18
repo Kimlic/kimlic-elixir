@@ -5,6 +5,7 @@ defmodule MobileApi.QuorumControllerTest do
   import Mox
 
   @moduletag :authorized
+  @moduletag :account_address
 
   describe "proxy request to Quorum" do
     test "success", %{conn: conn} do

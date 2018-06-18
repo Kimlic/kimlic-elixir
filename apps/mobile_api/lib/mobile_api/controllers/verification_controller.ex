@@ -4,6 +4,7 @@ defmodule MobileApi.VerificationController do
   use MobileApi, :controller
 
   alias Core.Verifications
+  alias Plug.Conn
 
   action_fallback(MobileApi.FallbackController)
 
@@ -11,9 +12,8 @@ defmodule MobileApi.VerificationController do
   @spec create_email_verification(Conn.t(), map) :: Conn.t()
   def create_email_verification(conn, params) do
     email = get_in(params, ["source_data", "email"])
-    account_address = get_in(params, ["blockchain_data", "account_address"])
 
-    with :ok <- Verifications.create_email_verification(email, account_address) do
+    with :ok <- Verifications.create_email_verification(email, conn.assigns.account_address) do
       conn
       |> put_status(201)
       |> json(%{})
@@ -23,7 +23,7 @@ defmodule MobileApi.VerificationController do
   # todo: validate request
   @spec verify_email(Conn.t(), map) :: Conn.t()
   def verify_email(conn, params) do
-    with :ok <- Verifications.verify(:email, params["account_address"], params["token"]) do
+    with :ok <- Verifications.verify(:email, conn.assigns.account_address, params["token"]) do
       json(conn, %{status: "ok"})
     end
   end
@@ -31,10 +31,9 @@ defmodule MobileApi.VerificationController do
   # todo: validate request
   @spec create_phone_verification(Conn.t(), map) :: Conn.t()
   def create_phone_verification(conn, params) do
-    account_address = get_in(params, ["blockchain_data", "account_address"])
     phone = get_in(params, ["source_data", "phone"])
 
-    with :ok <- Verifications.create_phone_verification(phone, account_address) do
+    with :ok <- Verifications.create_phone_verification(phone, conn.assigns.account_address) do
       conn
       |> put_status(201)
       |> json(%{})
@@ -44,7 +43,7 @@ defmodule MobileApi.VerificationController do
   # todo: validate request
   @spec verify_phone(Conn.t(), map) :: Conn.t()
   def verify_phone(conn, params) do
-    with :ok <- Verifications.verify(:phone, params["account_address"], params["code"]) do
+    with :ok <- Verifications.verify(:phone, conn.assigns.account_address, params["code"]) do
       json(conn, %{status: "ok"})
     end
   end

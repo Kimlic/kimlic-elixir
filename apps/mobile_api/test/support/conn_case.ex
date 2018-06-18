@@ -32,10 +32,22 @@ defmodule MobileApi.ConnCase do
 
     conn =
       Phoenix.ConnTest.build_conn()
+      |> put_account_address(tags)
       |> put_authorization_headers(tags)
 
     {:ok, conn: conn}
   end
+
+  @spec put_account_address(Conn.t(), map) :: Conn.t()
+  def put_account_address(conn, %{account_address: true}) do
+    account_address = Core.Factory.generate(:account_address)
+
+    conn
+    |> Plug.Conn.put_req_header("account-address", account_address)
+    |> Plug.Conn.assign(:account_address, account_address)
+  end
+
+  def put_account_address(conn, _tags), do: conn
 
   @spec put_authorization_headers(Conn.t(), map) :: Conn.t()
   def put_authorization_headers(conn, %{authorized: true}) do
@@ -47,7 +59,5 @@ defmodule MobileApi.ConnCase do
     |> Plug.Conn.put_req_header("auth-secret-token", auth_token)
   end
 
-  def put_authorization_headers(conn, _tags) do
-    conn
-  end
+  def put_authorization_headers(conn, _tags), do: conn
 end

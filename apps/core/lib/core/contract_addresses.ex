@@ -7,9 +7,21 @@ defmodule Core.ContractAddresses do
     "VerificationContractFactory"
   ]
 
-  @spec get(binary) :: {:ok, binary} | {:error, binary}
-  def get(contract_address) when contract_address in @available_keys,
-    do: contract_address |> storage_key() |> Redis.get()
+  @spec get(binary) :: {:ok, binary} | {:error, binary} | {:error, {:internal_error, binary}}
+  def get(contract_address_key) when contract_address_key in @available_keys do
+    contract_address_key
+    |> storage_key()
+    |> Redis.get()
+    |> case do
+      {:error, :not_found} ->
+        message = "Can't get contract address key #{contract_address_key}"
+        Log.error("[#{__MODULE__}] #{message}")
+        {:error, {:internal_error, message}}
+
+      result ->
+        result
+    end
+  end
 
   @spec set_batch(map) :: :ok | {:error, binary}
   def set_batch(contracts_addresses) when is_map(contracts_addresses) do

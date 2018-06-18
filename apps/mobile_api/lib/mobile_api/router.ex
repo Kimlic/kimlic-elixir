@@ -6,6 +6,7 @@ defmodule MobileApi.Router do
 
   alias MobileApi.Plugs.CheckAuthorization
   alias MobileApi.Plugs.CreatePhoneVerificationLimiter
+  alias MobileApi.Plugs.FetchAccountAddress
   alias Plug.LoggerJSON
 
   require Logger
@@ -13,6 +14,11 @@ defmodule MobileApi.Router do
   ### Pipelines
 
   pipeline :api do
+    plug(:accepts, ["json"])
+    plug(FetchAccountAddress)
+  end
+
+  pipeline :accepts_json do
     plug(:accepts, ["json"])
   end
 
@@ -44,7 +50,8 @@ defmodule MobileApi.Router do
 
       post("/phone/approve", VerificationController, :verify_phone)
 
-      get("/video/vendors", VerificationVideoController, :get_vendors)
+      post("/digital/:vendor_id/sessions", DigitalVerificationController, :create_session)
+      get("/digital/vendors", DigitalVerificationController, :get_vendors)
     end
   end
 
@@ -56,7 +63,7 @@ defmodule MobileApi.Router do
   end
 
   scope "/config", MobileApi do
-    pipe_through([:api])
+    pipe_through([:accepts_json])
 
     post("/contracts_addresses", ConfigController, :set_contracts_addresses)
   end

@@ -2,7 +2,8 @@ use Mix.Config
 
 config :core, :dependencies,
   token_generator: TokenGeneratorMock,
-  messenger: MessengerMock
+  messenger: MessengerMock,
+  veriffme: VeriffmeMock
 
 config :core, Redix, "redis://localhost:6379/1"
 

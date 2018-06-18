@@ -20,7 +20,7 @@ defmodule Core.Verifications do
   @spec create_email_verification(binary, binary) :: :ok | {:error, binary}
   def create_email_verification(email, account_address) do
     with {:ok, verification} <- create_verification(account_address, :email),
-         {:ok, contract_address} = ContractAddresses.get("VerificationContractFactory"),
+         {:ok, contract_address} <- ContractAddresses.get("VerificationContractFactory"),
          :ok <- create_verification_contract(:email, account_address, contract_address) do
       Email.send_verification(email, verification)
     end
@@ -29,7 +29,7 @@ defmodule Core.Verifications do
   @spec create_phone_verification(binary, binary) :: :ok | {:error, binary}
   def create_phone_verification(phone, account_address) do
     with {:ok, %Verification{token: sms_code}} <- create_verification(account_address, :phone),
-         {:ok, contract_address} = ContractAddresses.get("VerificationContractFactory"),
+         {:ok, contract_address} <- ContractAddresses.get("VerificationContractFactory"),
          :ok <- create_verification_contract(:phone, account_address, contract_address),
          # todo: move message to resources
          {:ok, %{}} <- @messenger.send(phone, "Here is your code: #{sms_code}") do

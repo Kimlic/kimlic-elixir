@@ -1,7 +1,7 @@
 defmodule MobileApi.Mixfile do
   use Mix.Project
 
-  @version "0.38.1"
+  @version "0.40.7"
 
   def project do
     [
@@ -41,7 +41,8 @@ defmodule MobileApi.Mixfile do
       {:plug_logger_json, "~> 0.5"},
       {:cowboy, "~> 1.0"},
       {:hammer, "~> 5.0"},
-      {:hammer_backend_redis, "~> 5.0"}
+      {:hammer_backend_redis, "~> 5.0"},
+      {:quixir, "~> 0.9", only: :test}
     ]
   end
 end
