@@ -20,7 +20,7 @@ defmodule Core.Verifications do
   @spec create_email_verification(binary, binary) :: :ok | {:error, binary}
   def create_email_verification(email, account_address) do
     with {:ok, verification} <- create_verification(account_address, :email),
-         {:ok, contract_address} = ContractAddresses.get("VerificationContractFactory"),
+         {:ok, contract_address} <- ContractAddresses.get("VerificationContractFactory"),
          :ok <- create_verification_contract(:email, account_address, contract_address) do
       Email.send_verification(email, verification)
     end
