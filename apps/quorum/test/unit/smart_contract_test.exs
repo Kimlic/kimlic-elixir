@@ -12,7 +12,7 @@ defmodule Quorum.Unit.SmartContractTest do
     kimlic_ap_address = "0x63b1b67b599ba2de0d04287102c8b2ae85e209b3"
     verification_contract_factory_address = "0x8e21e0f68fa040601dab389add2a98331d2ad674"
 
-    assert {:ok, _} = QuorumHttpClient.request("personal_unlockAccount", [account_address, "p@ssW0rd"], []) |> IO.inspect()
+    assert {:ok, _} = QuorumHttpClient.request("personal_unlockAccount", [account_address, "p@ssW0rd"], [])
 
     index = 1
     return_key = UUID.uuid4()
@@ -38,7 +38,7 @@ defmodule Quorum.Unit.SmartContractTest do
     :timer.sleep(50)
     assert {:ok, map} = QuorumHttpClient.eth_get_transaction_receipt(transaction_hash, [])
     assert is_map(map), "Expected map from Quorum.eth_get_transaction_receipt, get: #{inspect(map)}"
-    assert "0x1" == map["status"], "Invalid transaction status. Expected \"0x1\", get: #{inspect map["status"]}}"
+    assert "0x1" == map["status"], "Invalid transaction status. Expected \"0x1\", get: #{inspect(map["status"])}}"
 
     data = Contract.hash_data(:verification_factory, "getVerificationContract", [{return_key}])
 

@@ -7,7 +7,7 @@ defmodule MobileApi.RequestDataFactory do
   def data_for(:create_email_verification, email) do
     %{
       "email" => email,
-      "index" => :rand.uniform(1000),
+      "index" => :rand.uniform(1000)
     }
   end
 
@@ -15,7 +15,7 @@ defmodule MobileApi.RequestDataFactory do
   def data_for(:create_phone_verification, phone) do
     %{
       "phone" => phone,
-      "index" => :rand.uniform(1000),
+      "index" => :rand.uniform(1000)
     }
   end
 
