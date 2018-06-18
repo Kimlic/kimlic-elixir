@@ -5,7 +5,6 @@ defmodule Core.Verifications do
 
   alias __MODULE__
   alias Core.Clients.Redis
-  alias Core.ContractAddresses
   alias Core.Email
   alias Core.Verifications.Verification
   alias Log
@@ -17,20 +16,18 @@ defmodule Core.Verifications do
 
   ### Business
 
-  @spec create_email_verification(binary, binary) :: :ok | {:error, binary}
-  def create_email_verification(email, account_address) do
+  @spec create_email_verification(binary, binary, integer) :: :ok | {:error, binary}
+  def create_email_verification(email, account_address, index) do
     with {:ok, verification} <- create_verification(account_address, :email),
-         {:ok, contract_address} <- ContractAddresses.get("VerificationContractFactory"),
-         :ok <- create_verification_contract(:email, account_address, contract_address) do
+         :ok <- create_verification_contract(:email, account_address, index) do
       Email.send_verification(email, verification)
     end
   end
 
-  @spec create_phone_verification(binary, binary) :: :ok | {:error, binary}
-  def create_phone_verification(phone, account_address) do
+  @spec create_phone_verification(binary, binary, integer) :: :ok | {:error, binary}
+  def create_phone_verification(phone, account_address, index) do
     with {:ok, %Verification{token: sms_code}} <- create_verification(account_address, :phone),
-         {:ok, contract_address} <- ContractAddresses.get("VerificationContractFactory"),
-         :ok <- create_verification_contract(:phone, account_address, contract_address),
+         :ok <- create_verification_contract(:phone, account_address, index),
          # todo: move message to resources
          {:ok, %{}} <- @messenger.send(phone, "Here is your code: #{sms_code}") do
       :ok
@@ -49,11 +46,11 @@ defmodule Core.Verifications do
   end
 
   @spec create_verification_contract(atom, binary, binary) :: :ok
-  defp create_verification_contract(type, account_address, contract_address) do
+  defp create_verification_contract(type, account_address, index) do
     Quorum.create_verification_contract(
       type,
       account_address,
-      contract_address,
+      index,
       {__MODULE__, :update_verification_contract_address, [account_address, type]}
     )
   end
