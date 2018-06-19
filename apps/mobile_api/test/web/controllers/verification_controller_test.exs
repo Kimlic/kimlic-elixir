@@ -51,6 +51,11 @@ defmodule MobileApi.VerificationControllerTest do
 
   describe "verify email" do
     test "success", %{conn: conn} do
+      expect(QuorumClientMock, :request, fn method, _params, _opts ->
+        assert "personal_unlockAccount" == method
+        {:ok, true}
+      end)
+
       account_address = get_account_address(conn)
       %{token: token} = insert(:verification, %{account_address: account_address})
 
@@ -123,6 +128,11 @@ defmodule MobileApi.VerificationControllerTest do
 
   describe "verify phone" do
     test "success", %{conn: conn} do
+      expect(QuorumClientMock, :request, fn method, _params, _opts ->
+        assert "personal_unlockAccount" == method
+        {:ok, true}
+      end)
+
       account_address = get_account_address(conn)
       %{token: token} = insert(:verification, %{entity_type: @entity_type_phone, account_address: account_address})
 

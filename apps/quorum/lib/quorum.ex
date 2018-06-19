@@ -62,9 +62,9 @@ defmodule Quorum do
   @spec set_verification_result_transaction(binary) :: :ok
   def set_verification_result_transaction(contract_address) do
     data = hash_data(:base_verification, "setVerificationResult", [{true}])
-
     kimlic_ap_address = "0x6ad58c4fd879b94400eef71e40747ac743b6031f"
     kimlic_ap_password = "Kimlicp@ssw0rd"
+
     @quorum_client.request("personal_unlockAccount", [kimlic_ap_address, kimlic_ap_password], [])
 
     create_transaction(%{from: kimlic_ap_address, to: contract_address, data: data})
