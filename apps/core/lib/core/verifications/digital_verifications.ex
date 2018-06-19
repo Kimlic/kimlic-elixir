@@ -49,12 +49,14 @@ defmodule Core.Verifications.DigitalVerifications do
   end
 
   @spec upload_media(binary, map) :: :ok | {:error, atom | binary}
-  def upload_media(account_address, %{"vendor_id" => _vendor_id, "session_id" => session_id} = params) do
+  def upload_media(account_address, %{"session_id" => session_id, "document_payload" => document_payload} = params) do
     with :ok <- VerificationVendors.check_context_items(params),
          :ok <- check_verification_session(account_address, session_id),
-         :ok <- do_upload_media(params) do
+         :ok <- veriffme_upload_media(session_id, document_payload),
+         :ok <- veriffme_close_session(session_id) do
       :ok
     else
+      {:error, _} = err -> err
       _ -> {:error, :not_found}
     end
   end
@@ -67,14 +69,6 @@ defmodule Core.Verifications.DigitalVerifications do
     |> case do
       {:ok, %DigitalVerification{session_id: session_id}} when session_id == request_session_id -> :ok
       _ -> {:error, :not_found}
-    end
-  end
-
-  @spec do_upload_media(map) :: :ok
-  defp do_upload_media(%{"session_id" => session_id, "document_payload" => document_payload}) do
-    with :ok <- veriffme_upload_media(session_id, document_payload),
-         :ok <- veriffme_close_session(session_id) do
-      :ok
     end
   end
 
@@ -104,7 +98,7 @@ defmodule Core.Verifications.DigitalVerifications do
 
   @spec veriffme_close_session(binary) :: :ok | {:error, {:internal_error, binary}}
   defp veriffme_close_session(session_id) do
-    with {:ok, %HTTPoison.Response{body: body}} <- @veriffme_client.close_session(session_id),
+    with {:ok, %HTTPoison.Response{body: body, status_code: 200}} <- @veriffme_client.close_session(session_id),
          {:ok, %{"status" => "success", "verification" => %{"status" => "submitted"}}} <- Jason.decode(body) do
       :ok
     else
