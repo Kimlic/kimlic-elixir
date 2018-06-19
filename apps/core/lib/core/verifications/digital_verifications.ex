@@ -51,8 +51,9 @@ defmodule Core.Verifications.DigitalVerifications do
   @spec upload_media(binary, map) :: :ok | {:error, atom | binary}
   def upload_media(account_address, %{"vendor_id" => _vendor_id, "session_id" => session_id} = params) do
     with :ok <- VerificationVendors.check_context_items(params),
-         :ok <- check_verification_session(account_address, session_id) do
-      do_upload_media(params)
+         :ok <- check_verification_session(account_address, session_id),
+         :ok <- do_upload_media(params) do
+      :ok
     else
       _ -> {:error, :not_found}
     end
@@ -71,18 +72,46 @@ defmodule Core.Verifications.DigitalVerifications do
 
   @spec do_upload_media(map) :: :ok
   defp do_upload_media(%{"session_id" => session_id, "document_payload" => document_payload}) do
+    with :ok <- veriffme_upload_media(session_id, document_payload),
+         :ok <- veriffme_close_session(session_id) do
+      :ok
+    end
+  end
+
+  @spec veriffme_upload_media(binary, map) :: :ok | {:error, {:internal_error, binary}}
+  defp veriffme_upload_media(session_id, document_payload) do
     document_payload
     |> Enum.to_list()
     |> Task.async_stream(fn {context, %{"content" => image_base64, "timestamp" => timestamp}} ->
-      with {:ok, %HTTPoison.Response{body: body}} <-
-             @veriffme_client.upload_media(session_id, context, image_base64, timestamp),
+      with {:ok, %{body: body}} <- @veriffme_client.upload_media(session_id, context, image_base64, timestamp),
            {:ok, %{"status" => "success"}} <- Jason.decode(body) do
         :ok
-      else
-        _ -> Log.error("[#{__MODULE__}] Upload media on veriffme fail, session_id: #{session_id}, context: #{context}")
       end
     end)
-    |> Stream.run()
+    |> Enum.reduce_while(:ok, fn
+      {:ok, :ok}, acc -> {:cont, acc}
+      item, _ -> {:halt, item}
+    end)
+    |> case do
+      :ok ->
+        :ok
+
+      err ->
+        Log.error("[#{__MODULE__}] Fail to upload media on veriffme. Error: #{inspect(err)}")
+        {:error, {:internal_error, "Fail to upload media on verification"}}
+    end
+  end
+
+  @spec veriffme_close_session(binary) :: :ok | {:error, {:internal_error, binary}}
+  defp veriffme_close_session(session_id) do
+    with {:ok, %HTTPoison.Response{body: body}} <- @veriffme_client.close_session(session_id),
+         {:ok, %{"status" => "success", "verification" => %{"status" => "submitted"}}} <- Jason.decode(body) do
+      :ok
+    else
+      err ->
+        Log.error("[#{__MODULE__}] Fail to sumbit veriffme session. Error: #{inspect(err)}")
+        {:error, {:internal_error, "Fail to close session"}}
+    end
   end
 
   ### Callbacks
