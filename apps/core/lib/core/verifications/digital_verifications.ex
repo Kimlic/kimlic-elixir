@@ -3,6 +3,7 @@ defmodule Core.Verifications.DigitalVerifications do
 
   alias Core.Clients.Redis
   alias Core.Verifications.DigitalVerification
+  alias Core.Verifications.VerificationVendors
 
   @veriffme_client Application.get_env(:core, :dependencies)[:veriffme]
 
@@ -45,6 +46,43 @@ defmodule Core.Verifications.DigitalVerifications do
   defp create_contract(_account_address) do
     # todo: call quorum
     :ok
+  end
+
+  @spec upload_media(binary, map) :: :ok | {:error, atom | binary}
+  def upload_media(account_address, %{"vendor_id" => _vendor_id, "session_id" => session_id} = params) do
+    with :ok <- VerificationVendors.check_context_items(params),
+         :ok <- check_verification_session(account_address, session_id) do
+      do_upload_media(params)
+    else
+      _ -> {:error, :not_found}
+    end
+  end
+
+  @spec check_verification_session(binary, binary) :: :ok | {:error, atom}
+  defp check_verification_session(account_address, request_session_id) do
+    account_address
+    |> DigitalVerification.redis_key()
+    |> Redis.get()
+    |> case do
+      {:ok, %DigitalVerification{session_id: session_id}} when session_id == request_session_id -> :ok
+      _ -> {:error, :not_found}
+    end
+  end
+
+  @spec do_upload_media(map) :: :ok
+  defp do_upload_media(%{"session_id" => session_id, "document_payload" => document_payload}) do
+    document_payload
+    |> Enum.to_list()
+    |> Task.async_stream(fn {context, %{"content" => image_base64, "timestamp" => timestamp}} ->
+      with {:ok, %HTTPoison.Response{body: body}} <-
+             @veriffme_client.upload_media(session_id, context, image_base64, timestamp),
+           {:ok, %{"status" => "success"}} <- Jason.decode(body) do
+        :ok
+      else
+        _ -> Log.error("[#{__MODULE__}] Upload media on veriffme fail, session_id: #{session_id}, context: #{context}")
+      end
+    end)
+    |> Stream.run()
   end
 
   ### Callbacks

@@ -10,7 +10,9 @@ defmodule MobileApi.RequestDataFactory do
     "user_agents" => ["Mozilla/5.0 (Linux; Android 5.0.2; SM-G920F Build/LRX22G; wv) AppleWebK"]
   }
 
-  @spec data_for(atom, binary) :: map
+  @spec data_for(atom, binary | map) :: map
+  def data_for(factory, params \\ %{})
+
   def data_for(:create_email_verification, email) do
     %{
       "source_data" => %{
@@ -42,13 +44,34 @@ defmodule MobileApi.RequestDataFactory do
     }
   end
 
-  @spec data_for(atom, map) :: map
-  def data_for(:verification_digital_create_session, params \\ %{}) do
+  def data_for(:verification_digital_create_session, params) do
     %{
       "first_name" => "John",
       "last_name" => "Doe",
       "lang" => "en",
       "timestamp" => generate(:unix_timestamp)
+    }
+    |> Map.merge(params)
+  end
+
+  def data_for(:digital_verification_upload_media, params) do
+    %{
+      "country" => "US",
+      "document_type" => "ID_CARD",
+      "document_payload" => %{
+        "face" => %{
+          "content" => "base64 encoded image (png|jpg|jpeg)",
+          "timestamp" => generate(:unix_timestamp)
+        },
+        "document-front" => %{
+          "content" => "base64 encoded image (png|jpg|jpeg)",
+          "timestamp" => generate(:unix_timestamp)
+        },
+        "document-back" => %{
+          "content" => "base64 encoded image (png|jpg|jpeg)",
+          "timestamp" => generate(:unix_timestamp)
+        }
+      }
     }
     |> Map.merge(params)
   end

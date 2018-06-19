@@ -19,6 +19,14 @@ defmodule MobileApi.DigitalVerificationController do
     end
   end
 
+  # todo: validate request
+  @spec upload_media(Conn.t(), map) :: Conn.t()
+  def upload_media(conn, %{"vendor_id" => _, "session_id" => _} = params) do
+    with :ok <- DigitalVerifications.upload_media(conn.assigns.account_address, params) do
+      json(conn, %{status: "ok"})
+    end
+  end
+
   @spec get_vendors(Conn.t(), map) :: Conn.t()
   def get_vendors(conn, _params) do
     json(conn, VerificationVendors.all())

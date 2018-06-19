@@ -58,13 +58,13 @@ defmodule Core.Clients.Veriffme do
   }
   Success status_code: 200
   """
-  @spec upload_media(binary, binary, binary) :: api_response
-  def upload_media(session_id, context, image_base64) when context in @contexts do
+  @spec upload_media(binary, binary, binary, binary) :: api_response
+  def upload_media(session_id, context, image_base64, unix_timestamp) when context in @contexts do
     request_data = %{
       "image" => %{
         "context" => context,
         "content" => image_base64,
-        "timestamp" => timestamp()
+        "timestamp" => timestamp(unix_timestamp)
       }
     }
 

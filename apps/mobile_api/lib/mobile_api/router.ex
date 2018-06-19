@@ -51,6 +51,8 @@ defmodule MobileApi.Router do
       post("/phone/approve", VerificationController, :verify_phone)
 
       post("/digital/:vendor_id/sessions", DigitalVerificationController, :create_session)
+      post("/digital/:vendor_id/sessions/:session_id/media", DigitalVerificationController, :upload_media)
+
       get("/digital/vendors", DigitalVerificationController, :get_vendors)
     end
   end

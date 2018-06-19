@@ -3,15 +3,27 @@ defmodule Core.Factory do
 
   alias Core.Clients.Redis
   alias Core.Verifications.TokenGenerator
+  alias Core.Verifications.DigitalVerification
   alias Core.Verifications.Verification
+  alias Ecto.UUID
 
   @spec build(atom, map) :: %Verification{} | term
   def build(entity_atom, params \\ %{}), do: :erlang.apply(__MODULE__, entity_atom, [params])
 
   @spec insert(atom, map) :: {:ok, term} | {:error, binary}
-  def insert(:verification, params \\ %{}) do
+  def insert(atom, params \\ %{})
+
+  def insert(:verification, params) do
     params
     |> verification()
+    |> changeset(Verification)
+    |> redis_insert()
+  end
+
+  def insert(:digital_verification, params) do
+    params
+    |> digital_verification()
+    |> changeset(DigitalVerification)
     |> redis_insert()
   end
 
@@ -28,20 +40,33 @@ defmodule Core.Factory do
 
   @spec verification(map) :: %Verification{}
   def verification(params \\ %{}) do
-    data = %{
+    %{
       entity_type: Verification.entity_type(:email),
       account_address: generate(:account_address),
       token: "123456",
       contract_address: generate(:account_address),
       status: Verification.status(:new)
     }
-
-    data
     |> Map.merge(params)
-    |> Verification.changeset()
+  end
+
+  @spec digital_verification(map) :: %DigitalVerification{}
+  def digital_verification(params \\ %{}) do
+    %{
+      account_address: generate(:account_address),
+      session_id: UUID.generate(),
+      contract_address: nil
+    }
+    |> Map.merge(params)
+  end
+
+  @spec changeset(map, module) :: Ecto.Changeset.t()
+  defp changeset(data, entity_module) do
+    data
+    |> entity_module.changeset()
     |> case do
       %{valid?: true} = changeset -> changeset
-      _ -> raise "Changeset of Verification is not valid in `Core.Factory`"
+      _ -> raise "Changeset of #{entity_module} is not valid in `Core.Factory`"
     end
   end
 
