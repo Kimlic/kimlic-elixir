@@ -31,11 +31,11 @@ defmodule Quorum do
     return_key = UUID.uuid4()
 
     # ToDo: fetch Kimlic AP address from BC
-    kimlic_ap_address = "0x63b1b67b599ba2de0d04287102c8b2ae85e209b3"
-    kimlic_ap_password = "p@ssW0rd"
+    kimlic_ap_address = "0x6ad58c4fd879b94400eef71e40747ac743b6031f"
+    kimlic_ap_password = "Kimlicp@ssw0rd"
 
     # ToDo: fetch VerificationContractFactory address from BC
-    verification_contract_factory_address = "0x8e21e0f68fa040601dab389add2a98331d2ad674"
+    verification_contract_factory_address = "0x2d819f3832ec0fecc8eec4efe4e1a596878b2079"
 
     meta = %{
       callback: callback,
@@ -45,11 +45,7 @@ defmodule Quorum do
 
     data =
       hash_data(:verification_factory, contract_func, [
-        account_address,
-        kimlic_ap_address,
-        index,
-        account_address,
-        return_key
+        {account_address, kimlic_ap_address, index, account_address, return_key}
       ])
 
     transaction_data = %{
@@ -63,11 +59,15 @@ defmodule Quorum do
     create_transaction(transaction_data, meta)
   end
 
-  @spec set_verification_result_transaction(binary, binary) :: :ok
-  def set_verification_result_transaction(account_address, contract_address) do
-    data = hash_data(:base_verification, "setVerificationResult", [true])
+  @spec set_verification_result_transaction(binary) :: :ok
+  def set_verification_result_transaction(contract_address) do
+    data = hash_data(:base_verification, "setVerificationResult", [{true}])
 
-    create_transaction(%{from: account_address, to: contract_address, data: data})
+    kimlic_ap_address = "0x6ad58c4fd879b94400eef71e40747ac743b6031f"
+    kimlic_ap_password = "Kimlicp@ssw0rd"
+    @quorum_client.request("personal_unlockAccount", [kimlic_ap_address, kimlic_ap_password], [])
+
+    create_transaction(%{from: kimlic_ap_address, to: contract_address, data: data})
   end
 
   @doc """

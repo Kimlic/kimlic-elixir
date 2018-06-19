@@ -10,19 +10,6 @@ defmodule Quorum.Contract do
   @contract_base_verification :base_verification
   @contract_verification_factory :verification_factory
 
-  @doc """
-  Special case for getVerificationContract because of {:tuple, [:string]} ABI description
-  For String type required head with 32 bytes, ABI library will generate it only for tuple type
-  """
-  @spec hash_data(atom, binary, list) :: binary
-  def hash_data(:verification_factory, "getVerificationContract", params) do
-    params
-    |> Enum.map(&string_to_tuple/1)
-    |> TypeEncoder.encode_raw([{:tuple, [:string]}])
-    |> Base.encode16(case: :lower)
-    |> add_prefix("0x8575e5a5")
-  end
-
   @spec hash_data(atom, binary, list) :: binary
   def hash_data(contract, function, params) do
     contract

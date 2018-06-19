@@ -19,8 +19,9 @@ defmodule Core.Verifications do
   @spec create_email_verification(binary, binary, integer) :: :ok | {:error, binary}
   def create_email_verification(email, account_address, index) do
     with {:ok, verification} <- create_verification(account_address, :email),
-         :ok <- create_verification_contract(:email, account_address, index) do
-      Email.send_verification(email, verification)
+         :ok <- create_verification_contract(:email, account_address, index),
+         :ok <- Email.send_verification(email, verification) do
+      {:ok, verification}
     end
   end
 
@@ -57,12 +58,11 @@ defmodule Core.Verifications do
 
   @spec verify(atom, binary, binary) :: :ok | {:error, term}
   def verify(verification_type, account_address, token) when allowed_type_atom(verification_type) do
-    with {:ok, %Verification{contract_address: contract_address} = verification} <-
-           Verifications.get(account_address, verification_type),
-         {_, "0x" <> _} <- {:contract_address_set, contract_address},
+    with {:ok, %Verification{} = verification} <- Verifications.get(account_address, verification_type),
+         {_, "0x" <> _} <- {:contract_address_set, verification.contract_address},
          {_, true} <- {:verification_access, can_access_verification?(verification, account_address, token)},
          {:ok, 1} <- Verifications.delete(verification),
-         :ok <- Quorum.set_verification_result_transaction(account_address, contract_address) do
+         :ok <- Quorum.set_verification_result_transaction(verification.contract_address) do
       :ok
     else
       {:contract_address_set, _} -> {:error, :not_found}

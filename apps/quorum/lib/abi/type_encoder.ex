@@ -101,7 +101,9 @@ defmodule Quorum.ABI.TypeEncoder do
   """
   @spec encode(list, FunctionSelector.t()) :: binary
   def encode(data, function_selector) do
-    encode_method_id(function_selector) <> encode_raw(data, function_selector.types)
+    # crooked nail
+    types = [tuple: function_selector.types]
+    encode_method_id(function_selector) <> encode_raw(data, types)
   end
 
   @doc """
@@ -152,7 +154,12 @@ defmodule Quorum.ABI.TypeEncoder do
     {encode_uint(data, size), rest}
   end
 
-  defp encode_type(:address, [data | rest]), do: {data, rest}
+  defp encode_type(:address, ["0x" <> address | rest]) do
+    {address, _} = Integer.parse(address, 16)
+    encode_type({:uint, 160}, [address] ++ rest)
+  end
+
+  defp encode_type(:address, data), do: encode_type({:uint, 160}, data)
 
   defp encode_type(:bool, [data | rest]) do
     value =
