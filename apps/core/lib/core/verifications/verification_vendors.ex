@@ -44,7 +44,7 @@ defmodule Core.Verifications.VerificationVendors do
   defp validate_country(countries, country) do
     case country in countries do
       true -> :ok
-      false -> {:error, "Country doesn't exists"}
+      false -> {:error, "Country doesn't exist"}
     end
   end
 
