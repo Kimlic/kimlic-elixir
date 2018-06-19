@@ -71,7 +71,7 @@ defmodule Quorum.Jobs.TransactionStatus do
   defp fetch_verification_contract_address(params, attempt \\ 1) do
     case @quorum_client.eth_call(params, "latest", []) do
       {:ok, response} ->
-        {:ok, String.replace(response, "000000000000000000000000", "")}
+        {:ok, String.replace(response, String.duplicate("0", 24), "")}
 
       {:error, err} ->
         case attempt do
