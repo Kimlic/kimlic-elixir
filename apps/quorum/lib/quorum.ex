@@ -9,36 +9,65 @@ defmodule Quorum do
 
   @type callback :: nil | {module :: atom, function :: atom, args :: list}
 
+  @gas "0x500000"
+  @gas_price "0x0"
+
+  @quorum_client Application.get_env(:quorum, :client)
+
   defguardp is_callback(mfa)
             when is_tuple(mfa) and tuple_size(mfa) == 3 and
                    (is_atom(elem(mfa, 0)) and is_atom(elem(mfa, 1)) and is_list(elem(mfa, 2)))
 
-  @spec create_verification_contract(atom, binary, binary, callback) :: :ok
-  def create_verification_contract(:email, account_address, contract_address, callback),
-    do: create_verification_transaction(account_address, contract_address, "createEmailVerification", callback)
+  @spec create_verification_contract(atom, binary, integer, callback) :: :ok
+  def create_verification_contract(:email, account_address, index, callback),
+    do: create_verification_transaction(account_address, index, "createEmailVerification", callback)
 
-  @spec create_verification_contract(atom, binary, binary, callback) :: :ok
-  def create_verification_contract(:phone, account_address, contract_address, callback),
-    do: create_verification_transaction(account_address, contract_address, "createPhoneVerification", callback)
+  @spec create_verification_contract(atom, binary, integer, callback) :: :ok
+  def create_verification_contract(:phone, account_address, index, callback),
+    do: create_verification_transaction(account_address, index, "createPhoneVerification", callback)
 
   @spec create_verification_transaction(binary, binary, binary, callback) :: :ok
-  defp create_verification_transaction(account_address, contract_address, contract_function, callback) do
-    data =
-      :verification_factory
-      |> contract()
-      |> hash_data(contract_function, [account_address])
+  defp create_verification_transaction(account_address, index, contract_func, callback) when is_callback(callback) do
+    return_key = UUID.uuid4()
 
-    create_transaction(%{from: account_address, to: contract_address, data: data}, callback, true)
+    # ToDo: fetch Kimlic AP address from BC
+    kimlic_ap_address = "0x6ad58c4fd879b94400eef71e40747ac743b6031f"
+    kimlic_ap_password = "Kimlicp@ssw0rd"
+
+    # ToDo: fetch VerificationContractFactory address from BC
+    verification_contract_factory_address = "0x2d819f3832ec0fecc8eec4efe4e1a596878b2079"
+
+    meta = %{
+      callback: callback,
+      verification_contract_return_key: return_key,
+      verification_contract_factory_address: verification_contract_factory_address
+    }
+
+    data =
+      hash_data(:verification_factory, contract_func, [
+        {account_address, kimlic_ap_address, index, account_address, return_key}
+      ])
+
+    transaction_data = %{
+      from: kimlic_ap_address,
+      to: verification_contract_factory_address,
+      data: data
+    }
+
+    @quorum_client.request("personal_unlockAccount", [kimlic_ap_address, kimlic_ap_password], [])
+
+    create_transaction(transaction_data, meta)
   end
 
-  @spec set_verification_result_transaction(binary, binary) :: :ok
-  def set_verification_result_transaction(account_address, contract_address) do
-    data =
-      :base_verification
-      |> contract()
-      |> hash_data("setVerificationResult", [true])
+  @spec set_verification_result_transaction(binary) :: :ok
+  def set_verification_result_transaction(contract_address) do
+    data = hash_data(:base_verification, "setVerificationResult", [{true}])
+    kimlic_ap_address = "0x6ad58c4fd879b94400eef71e40747ac743b6031f"
+    kimlic_ap_password = "Kimlicp@ssw0rd"
 
-    create_transaction(%{from: account_address, to: contract_address, data: data})
+    @quorum_client.request("personal_unlockAccount", [kimlic_ap_address, kimlic_ap_password], [])
+
+    create_transaction(%{from: kimlic_ap_address, to: contract_address, data: data})
   end
 
   @doc """
@@ -72,23 +101,23 @@ defmodule Quorum do
       end
 
   """
-  @spec create_transaction(map, callback, boolean) :: :ok
-  def create_transaction(transaction_data, callback \\ nil, provide_return_value \\ false)
-      when is_nil(callback) or is_tuple(callback) do
-    %{transaction_data: transaction_data}
-    |> put_callback(callback)
-    |> put_provide_return_value(provide_return_value)
-    |> TransactionCreate.enqueue!()
+  @spec create_transaction(map, map) :: :ok
+  def create_transaction(transaction_data, meta \\ %{}) do
+    TransactionCreate.enqueue!(%{
+      meta: prepare_callback(meta),
+      transaction_data: put_gas(transaction_data)
+    })
   end
 
-  @spec put_provide_return_value(map, boolean) :: map
-  defp put_provide_return_value(message, true), do: Map.put(message, :provide_return_value, true)
-  defp put_provide_return_value(message, _), do: message
+  @spec put_gas(map) :: map
+  defp put_gas(message), do: Map.merge(%{gasPrice: @gas_price, gas: @gas}, message)
 
-  @spec put_provide_return_value(map, callback) :: map
-  defp put_callback(message, {module, function, args} = callback) when is_callback(callback),
-    do: Map.put(message, :callback, %{m: module, f: function, a: args})
+  defp prepare_callback(%{callback: {module, function, args}} = meta),
+    do: Map.put(meta, :callback, %{m: module, f: function, a: args})
 
-  @spec put_provide_return_value(map, nil) :: map
-  defp put_callback(message, nil), do: Map.put(message, :callback, nil)
+  defp prepare_callback(%{callback: callback}) do
+    raise "Invalid callback format. Requires: {module, function, args} tuple, get: #{inspect(callback)}}"
+  end
+
+  defp prepare_callback(meta), do: meta
 end

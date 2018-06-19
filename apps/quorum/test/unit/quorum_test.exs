@@ -25,30 +25,36 @@ defmodule Quorum.Unit.QuorumTest do
 
   describe "create verification_contract" do
     test "success" do
+      expect(QuorumClientMock, :request, fn method, _params, _opts ->
+        assert "personal_unlockAccount" == method
+        {:ok, true}
+      end)
+
       expect(QuorumClientMock, :eth_send_transaction, fn _params, _opts ->
         {:ok, "0x9b4f4029f7e13575d5f4eab2c65ccc43b21aa67f4cf0746c4500b6c80a23fc23"}
       end)
 
       expect(QuorumClientMock, :eth_get_transaction_receipt, fn _params, _opts ->
-        {:ok, %{"transactionHash" => "0x9b4f4029f7e13575d5f4eab2c65ccc43b21aa67f4cf0746"}}
+        {:ok, %{"status" => "0x1"}}
       end)
 
-      expect(QuorumClientMock, :request, fn method, _params, _opts ->
-        assert "debug_traceTransaction" == method
-        {:ok, %{"returnValue" => "0x9b4f4029f7e13575d5f4eab2c65ccc43b21aa67f4cf0555"}}
+      # get
+      expect(QuorumClientMock, :eth_call, fn params, _block, _opts ->
+        assert Map.has_key?(params, :data)
+        assert Map.has_key?(params, :to)
+        {:ok, "0x9b4f4029f7e13575d5f4eab2c65ccc43b21aa67f4cfa200"}
       end)
 
       expect(QuorumClientMock, :eth_get_logs, fn status, return_value ->
-        assert %{"transactionHash" => _} = status
-        assert {:ok, "0x9b4f4029f7e13575d5f4eab2c65ccc43b21aa67f4cf0555"} = return_value
+        assert %{"status" => _} = status
+        assert {:ok, "0x9b4f4029f7e13575d5f4eab2c65ccc43b21aa67f4cfa200"} = return_value
       end)
 
-      # ToDo: too short address, ABI compile raise error: Data overflow encoding uint, data cannot fit in 160 bits
       account_address = "0x6cc3a44428c1722ee2fd2eb6d72387f4bc62449c"
-      contract_address = "0x6cc3a44428c1722ee2fd2eb6d72387f4bc62449c"
+      index = 1
 
       callback = {QuorumClientMock, :eth_get_logs, []}
-      assert :ok = Quorum.create_verification_contract(:email, account_address, contract_address, callback)
+      assert :ok = Quorum.create_verification_contract(:email, account_address, index, callback)
 
       # Ensure that queue contain message for create transaction job
       assert {transaction_payload, _queue_metadata} = pop(@queue_transaction_create)
@@ -98,7 +104,7 @@ defmodule Quorum.Unit.QuorumTest do
       callback = {QuorumClientMock, :eth_get_logs, ["callback"]}
 
       # Start Create transaction job
-      assert :ok = Quorum.create_transaction(transaction_data, callback, false)
+      assert :ok = Quorum.create_transaction(transaction_data, %{callback: callback})
 
       # Ensure that queue contain message for create transaction job
       assert {transaction_payload, _queue_metadata} = pop(@queue_transaction_create)
@@ -130,7 +136,7 @@ defmodule Quorum.Unit.QuorumTest do
     transaction_data = %{from: "0xaf438474fda68a51c5f3b04eb08d6b27a879ba14"}
 
     # Start Create transaction job
-    assert :ok = Quorum.create_transaction(transaction_data, nil, false)
+    assert :ok = Quorum.create_transaction(transaction_data)
 
     # Ensure that queue contain message for create transaction job
     assert {transaction_payload, _queue_metadata} = pop(@queue_transaction_create)

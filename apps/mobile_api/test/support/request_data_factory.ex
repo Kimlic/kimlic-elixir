@@ -3,44 +3,22 @@ defmodule MobileApi.RequestDataFactory do
 
   import Core.Factory
 
-  @public_key "AAAAB3NzaC1yc2EAAAABIwAAAQEAklOUpkDHrfHY17SbrmTIpNLTGK9Tjom/BWDSUGPl+nafzlHDTYW7hdI4yZ5ew18JH4JW9jbhUFrviQzM7xlELEVf4h9lFX5QVkbPppSwg0cda3Pbv7kOdJ/MTyBlWXFCR+HAo3FXRitBqxiX1nKhXpHAZsMciLq8V6RjsNAQwdsdMFvSlVK/7XAt3FaoJoAsncM1Q9x5+3V0Ww68/eIFmb1zuUFljQJKprrX88XypNDvjYNby6vw/Pb0rwert/EnmZ+AW4OZPnTPI89ZPmVMLuayrD2cE86Z/il8b+gw3r3+1nKatmIkjn2so1d01QraTlMqVSsbxNrRFi9wrf+M7Q=="
-  @device_fingerprint %{
-    "dhcp_fingerprint" => "1,33,3,6,12,15,28,51,58,59,119",
-    "dhcp_vendor" => "dhcpcd-5.5.6",
-    "user_agents" => ["Mozilla/5.0 (Linux; Android 5.0.2; SM-G920F Build/LRX22G; wv) AppleWebK"]
-  }
-
   @spec data_for(atom, binary | map) :: map
   def data_for(factory, params \\ %{})
 
+  @spec data_for(atom, binary) :: map
   def data_for(:create_email_verification, email) do
     %{
-      "source_data" => %{
-        "public_key" => @public_key,
-        "email" => email,
-        "device_fingerprint" => @device_fingerprint
-      },
-      "blockchain_data" => %{
-        "user_account_transaction" => %{
-          "data" => "transaction_data_generated_on_mobile"
-        }
-      }
+      "email" => email,
+      "index" => :rand.uniform(1000)
     }
   end
 
   @spec data_for(atom, binary) :: map
   def data_for(:create_phone_verification, phone) do
     %{
-      "source_data" => %{
-        "public_key" => @public_key,
-        "phone" => phone,
-        "device_fingerprint" => @device_fingerprint
-      },
-      "blockchain_data" => %{
-        "user_account_transaction" => %{
-          "data" => "transaction_data_generated_on_mobile"
-        }
-      }
+      "phone" => phone,
+      "index" => :rand.uniform(1000)
     }
   end
 

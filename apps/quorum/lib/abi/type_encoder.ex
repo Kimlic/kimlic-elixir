@@ -101,7 +101,9 @@ defmodule Quorum.ABI.TypeEncoder do
   """
   @spec encode(list, FunctionSelector.t()) :: binary
   def encode(data, function_selector) do
-    encode_method_id(function_selector) <> encode_raw(data, function_selector.types)
+    # crooked nail
+    types = [tuple: function_selector.types]
+    encode_method_id(function_selector) <> encode_raw(data, types)
   end
 
   @doc """
@@ -152,7 +154,12 @@ defmodule Quorum.ABI.TypeEncoder do
     {encode_uint(data, size), rest}
   end
 
-  defp encode_type(:address, [data | rest]), do: {data, rest}
+  defp encode_type(:address, ["0x" <> address | rest]) do
+    {address, _} = Integer.parse(address, 16)
+    encode_type({:uint, 160}, [address] ++ rest)
+  end
+
+  defp encode_type(:address, data), do: encode_type({:uint, 160}, data)
 
   defp encode_type(:bool, [data | rest]) do
     value =
@@ -228,7 +235,7 @@ defmodule Quorum.ABI.TypeEncoder do
 
   @spec encode_bytes(term) :: binary
   def encode_bytes(bytes) do
-    bytes |> pad(byte_size(bytes), :right)
+    pad(bytes, byte_size(bytes), :right)
   end
 
   # Note, we'll accept a binary or an integer here, so long as the
@@ -241,7 +248,7 @@ defmodule Quorum.ABI.TypeEncoder do
     if byte_size(bin) > size_in_bytes,
       do: raise("Data overflow encoding uint, data `#{data}` cannot fit in #{size_in_bytes * 8} bits")
 
-    bin |> pad(size_in_bytes, :left)
+    pad(bin, size_in_bytes, :left)
   end
 
   @spec pad(binary, integer, atom) :: binary

@@ -1,21 +1,87 @@
 defmodule Quorum.Jobs.TransactionStatus do
   use TaskBunny.Job
   alias Log
+  alias Quorum.Contract
 
   @quorum_client Application.get_env(:quorum, :client)
 
   @spec perform(map) :: :ok | :retry | {:error, term}
-  def perform(%{"transaction_hash" => transaction_hash, "callback" => callback} = message) do
+  def perform(%{"transaction_hash" => transaction_hash, "meta" => meta}) do
     case @quorum_client.eth_get_transaction_receipt(transaction_hash, []) do
-      {:ok, status} when is_map(status) ->
-        maybe_callback(callback, status, fetch_return_value(transaction_hash, message))
+      {:ok, %{"status" => "0x1"} = status} ->
+        Log.info("Quorum.eth_get_transaction_receipt response for #{transaction_hash}}: #{inspect(status)}}")
+
+        maybe_callback(meta, status, transaction_hash)
+
+      {:ok, %{"status" => status} = resp} ->
+        msg =
+          "Quorum.eth_get_transaction_receipt transaction status is `#{status}}`" <>
+            "for tx `#{transaction_hash}`. Response: #{inspect(resp)}"
+
+        Log.error(msg)
+        {:reject, msg}
 
       {:ok, _} ->
         :retry
 
       err ->
-        Log.error("Quorum.sendTransaction failed: #{inspect(err)}")
+        Log.error("Quorum.eth_get_transaction_receipt failed for tx `#{transaction_hash}` with: #{inspect(err)}")
         err
+    end
+  end
+
+  @spec maybe_callback(map, map, binary) :: :ok
+  defp maybe_callback(%{"callback" => %{"m" => module, "f" => function, "a" => args}} = meta, status, transaction_hash) do
+    merged_args =
+      args
+      |> Kernel.++([status])
+      |> put_verification_contract_address(transaction_hash, meta)
+
+    Kernel.apply(String.to_atom(module), String.to_atom(function), merged_args)
+
+    :ok
+  end
+
+  @spec maybe_callback(map, map, binary) :: :ok
+  defp maybe_callback(_meta, _, _), do: :ok
+
+  @spec put_verification_contract_address(list, binary, map) :: list
+  defp put_verification_contract_address(args, transaction_hash, %{
+         "verification_contract_return_key" => return_key,
+         "verification_contract_factory_address" => contract_factory_address
+       }) do
+    data = Contract.hash_data(:verification_factory, "getVerificationContract", [{return_key}])
+    params = %{data: data, to: contract_factory_address}
+
+    case fetch_verification_contract_address(params) do
+      {:ok, _} = resp ->
+        Kernel.++(args, [resp])
+
+      {:error, err} = resp ->
+        msg = "Cannot get Verification Contract address for transaction `#{transaction_hash}`. Error: #{inspect(err)}"
+        Log.error(msg)
+        Kernel.++(args, [resp])
+    end
+  end
+
+  @spec put_verification_contract_address(list, term, term) :: list
+  defp put_verification_contract_address(args, _, _), do: args
+
+  @spec fetch_verification_contract_address(map, integer) :: {:ok, binary} | {:error, map}
+  defp fetch_verification_contract_address(params, attempt \\ 1) do
+    case @quorum_client.eth_call(params, "latest", []) do
+      {:ok, response} ->
+        {:ok, String.replace(response, String.duplicate("0", 24), "")}
+
+      {:error, err} ->
+        case attempt do
+          3 ->
+            {:error, err}
+
+          _ ->
+            :timer.sleep(50)
+            fetch_verification_contract_address(params, attempt + 1)
+        end
     end
   end
 
@@ -28,40 +94,4 @@ defmodule Quorum.Jobs.TransactionStatus do
     |> Enum.map(&(&1 * 1000))
     |> Enum.at(failed_count - 1, 1000)
   end
-
-  @spec fetch_return_value(binary, map) :: atom
-  defp fetch_return_value(transaction_hash, %{"provide_return_value" => _}),
-    do: do_fetch_return_value(transaction_hash, 1)
-
-  @spec fetch_return_value(term, term) :: atom
-  defp fetch_return_value(_, _), do: :not_required
-
-  @spec do_fetch_return_value(binary, integer) :: {:error, binary}
-  defp do_fetch_return_value(_transaction_hash, 4), do: {:error, "failed_fetch_return_value"}
-
-  @spec do_fetch_return_value(binary, integer) :: {:ok, binary}
-  defp do_fetch_return_value(transaction_hash, attempt) do
-    case @quorum_client.request("debug_traceTransaction", [transaction_hash], []) do
-      {:ok, response} ->
-        {:ok, Map.get(response, "returnValue")}
-
-      {:error, err} ->
-        Log.error("Cannot fetch returnValue from Quorum for transaction `#{transaction_hash}`. Error: #{inspect(err)}")
-        :timer.sleep(50)
-        do_fetch_return_value(transaction_hash, attempt + 1)
-    end
-  end
-
-  @spec maybe_callback(map, map, term) :: atom
-  defp maybe_callback(%{"m" => module, "f" => function, "a" => args}, status, return_value) do
-    Kernel.apply(String.to_atom(module), String.to_atom(function), prepare_args(args, status, return_value))
-    :ok
-  end
-
-  @spec maybe_callback(term, term, term) :: atom
-  defp maybe_callback(_mfa, _status, _return_value), do: :ok
-
-  @spec prepare_args(list, map, term) :: list
-  defp prepare_args(args, transaction_status, :not_required), do: args ++ [transaction_status]
-  defp prepare_args(args, transaction_status, return_value), do: args ++ [transaction_status, return_value]
 end

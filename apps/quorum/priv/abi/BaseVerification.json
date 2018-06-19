@@ -1,11 +1,39 @@
 [
   {
+    "constant": true,
+    "inputs": [],
+    "name": "verificator",
+    "outputs": [
+      {
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "constant": false,
     "inputs": [],
     "name": "renounceOwnership",
     "outputs": [],
     "payable": false,
     "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [],
+    "name": "isVerified",
+    "outputs": [
+      {
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -37,17 +65,17 @@
     "type": "function"
   },
   {
-    "constant": false,
-    "inputs": [
+    "constant": true,
+    "inputs": [],
+    "name": "coOwner",
+    "outputs": [
       {
-        "name": "verificationResult",
-        "type": "bool"
+        "name": "",
+        "type": "address"
       }
     ],
-    "name": "setVerificationResult",
-    "outputs": [],
     "payable": false,
-    "stateMutability": "nonpayable",
+    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -65,18 +93,44 @@
     "type": "function"
   },
   {
+    "constant": true,
+    "inputs": [],
+    "name": "dataIndex",
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [
       {
-        "name": "context",
+        "name": "contextStorage",
         "type": "address"
+      },
+      {
+        "name": "rewardAmount",
+        "type": "uint256"
       },
       {
         "name": "account",
         "type": "address"
       },
       {
-        "name": "rewardAmount",
+        "name": "coOwnerAddress",
+        "type": "address"
+      },
+      {
+        "name": "index",
         "type": "uint256"
+      },
+      {
+        "name": "verificatorAddress",
+        "type": "address"
       },
       {
         "name": "fieldName",
@@ -115,5 +169,19 @@
     ],
     "name": "OwnershipTransferred",
     "type": "event"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "name": "verificationResult",
+        "type": "bool"
+      }
+    ],
+    "name": "setVerificationResult",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
   }
 ]
