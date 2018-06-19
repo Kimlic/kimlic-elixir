@@ -2,7 +2,6 @@ defmodule Quorum.Contract do
   @moduledoc false
 
   alias Quorum.ABI
-  alias Quorum.ABI.TypeEncoder
 
   @abi_dir "priv/abi"
 
@@ -20,11 +19,6 @@ defmodule Quorum.Contract do
     |> Base.encode16(case: :lower)
     |> add_prefix("0x")
   end
-
-  @spec string_to_tuple(binary) :: tuple
-  defp string_to_tuple(string) when is_binary(string), do: {string}
-  @spec string_to_tuple(term) :: term
-  defp string_to_tuple(value), do: value
 
   @spec load_abi(atom) :: [map]
   defp load_abi(contract) do
