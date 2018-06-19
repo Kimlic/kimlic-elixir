@@ -143,7 +143,4 @@ defmodule MobileApi.VerificationControllerTest do
              |> json_response(404)
     end
   end
-
-  @spec get_account_address(Plug.Conn.t()) :: binary
-  defp get_account_address(%{assigns: %{account_address: account_address}}), do: account_address
 end
