@@ -60,15 +60,15 @@ defmodule MobileApi.RequestDataFactory do
       "document_type" => "ID_CARD",
       "document_payload" => %{
         "face" => %{
-          "content" => "base64 encoded image (png|jpg|jpeg)",
+          "content" => "data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs=",
           "timestamp" => generate(:unix_timestamp)
         },
         "document-front" => %{
-          "content" => "base64 encoded image (png|jpg|jpeg)",
+          "content" => "data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs=",
           "timestamp" => generate(:unix_timestamp)
         },
         "document-back" => %{
-          "content" => "base64 encoded image (png|jpg|jpeg)",
+          "content" => "data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs=",
           "timestamp" => generate(:unix_timestamp)
         }
       }
