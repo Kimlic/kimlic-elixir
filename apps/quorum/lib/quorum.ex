@@ -5,6 +5,7 @@ defmodule Quorum do
 
   import Quorum.Contract
 
+  alias Quorum.Contract.Context
   alias Quorum.Jobs.TransactionCreate
 
   @type callback :: nil | {module :: atom, function :: atom, args :: list}
@@ -29,13 +30,9 @@ defmodule Quorum do
   @spec create_verification_transaction(binary, binary, binary, callback) :: :ok
   defp create_verification_transaction(account_address, index, contract_func, callback) when is_callback(callback) do
     return_key = UUID.uuid4()
-
-    # ToDo: fetch Kimlic AP address from BC
-    kimlic_ap_address = "0x6ad58c4fd879b94400eef71e40747ac743b6031f"
-    kimlic_ap_password = "Kimlicp@ssw0rd"
-
-    # ToDo: fetch VerificationContractFactory address from BC
-    verification_contract_factory_address = "0x2d819f3832ec0fecc8eec4efe4e1a596878b2079"
+    kimlic_ap_address = Context.get_kimlic_attestation_party_address()
+    kimlic_ap_password = Confex.fetch_env!(:quorum, :kimlil_ap_password)
+    verification_contract_factory_address = Context.get_verification_contract_factory_address()
 
     meta = %{
       callback: callback,
@@ -43,15 +40,13 @@ defmodule Quorum do
       verification_contract_factory_address: verification_contract_factory_address
     }
 
-    data =
-      hash_data(:verification_factory, contract_func, [
-        {account_address, kimlic_ap_address, index, account_address, return_key}
-      ])
-
     transaction_data = %{
       from: kimlic_ap_address,
       to: verification_contract_factory_address,
-      data: data
+      data:
+        hash_data(:verification_factory, contract_func, [
+          {account_address, kimlic_ap_address, index, account_address, return_key}
+        ])
     }
 
     @quorum_client.request("personal_unlockAccount", [kimlic_ap_address, kimlic_ap_password], [])
@@ -62,8 +57,8 @@ defmodule Quorum do
   @spec set_verification_result_transaction(binary) :: :ok
   def set_verification_result_transaction(contract_address) do
     data = hash_data(:base_verification, "setVerificationResult", [{true}])
-    kimlic_ap_address = "0x6ad58c4fd879b94400eef71e40747ac743b6031f"
-    kimlic_ap_password = "Kimlicp@ssw0rd"
+    kimlic_ap_address = Context.get_kimlic_attestation_party_address()
+    kimlic_ap_password = Confex.fetch_env!(:quorum, :kimlil_ap_password)
 
     @quorum_client.request("personal_unlockAccount", [kimlic_ap_address, kimlic_ap_password], [])
 
