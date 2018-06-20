@@ -97,6 +97,29 @@ defmodule MobileApi.VerificationControllerTest do
                Verifications.get(account_address, :phone)
     end
 
+    test "fail to send sms", %{conn: conn} do
+      phone = generate(:phone)
+      error_message = "Fail to send sms"
+      expect(TokenGeneratorMock, :generate, fn :phone -> TokenGenerator.generate(:phone) end)
+
+      expect(MessengerMock, :send, fn ^phone, _message ->
+        {:error, {:internal_error, error_message}}
+      end)
+
+      expect(QuorumClientMock, :request, fn method, _params, _opts ->
+        assert "personal_unlockAccount" == method
+        {:ok, true}
+      end)
+
+      assert %{"error" => %{"message" => ^error_message}} =
+               conn
+               |> post(
+                 verification_path(conn, :create_phone_verification),
+                 data_for(:create_phone_verification, phone)
+               )
+               |> json_response(500)
+    end
+
     test "with limited requests", %{conn: conn} do
       phone = generate(:phone)
       token = TokenGenerator.generate(:phone)

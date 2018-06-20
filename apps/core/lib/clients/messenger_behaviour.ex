@@ -1,6 +1,8 @@
 defmodule Core.Clients.MessengerBehaviour do
   @moduledoc false
 
-  @callback send(binary, binary) :: {:ok, %ExTwilio.Message{}} | {:error, binary, integer}
-  @callback send(binary, binary, binary) :: {:ok, %ExTwilio.Message{}} | {:error, binary, integer}
+  @type send_response_t :: {:ok, %ExTwilio.Message{}} | {:error, {:internal_error, binary}}
+
+  @callback send(binary, binary) :: send_response_t
+  @callback send(binary, binary, binary) :: send_response_t
 end
