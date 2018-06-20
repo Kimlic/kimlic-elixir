@@ -60,7 +60,7 @@ defmodule MobileApi.Router do
   scope "/api", MobileApi do
     pipe_through([:accepts_json])
 
-    post("/verifications/digital/result", DigitalVerificationController, :verification_result_webhook)
+    post("/verifications/digital/decision", DigitalVerificationController, :verification_result_webhook)
   end
 
   scope "/api", MobileApi do
