@@ -1,16 +1,20 @@
 defmodule Core.Verifications.DigitalVerifications do
   @moduledoc false
 
+  alias __MODULE__
   alias Core.Clients.Redis
   alias Core.Verifications.DigitalVerification
   alias Core.Verifications.VerificationVendors
 
   @veriffme_client Application.get_env(:core, :dependencies)[:veriffme]
 
+  @verification_status_new DigitalVerification.status(:new)
+  @verification_code_success 9001
+
   @spec create_session(binary, map) :: {:ok, binary} | {:error, binary}
   def create_session(account_address, params) do
     with {:ok, session_id} <- create_session_on_veriffme(params),
-         {:ok, _verification} <- save_verification(account_address, session_id),
+         {:ok, _verification} <- insert(%{account_address: account_address, session_id: session_id}),
          :ok <- create_contract(account_address) do
       {:ok, session_id}
     end
@@ -34,14 +38,6 @@ defmodule Core.Verifications.DigitalVerifications do
     end
   end
 
-  @spec save_verification(binary, binary) :: {:ok, %DigitalVerification{}} | {:error, binary}
-  defp save_verification(account_address, session_id) do
-    changeset = DigitalVerification.changeset(%{account_address: account_address, session_id: session_id})
-    ttl = Confex.fetch_env!(:core, :verifications_ttl)[:digital]
-
-    Redis.upsert(changeset, ttl)
-  end
-
   @spec create_contract(binary) :: :ok
   defp create_contract(_account_address) do
     # todo: call quorum
@@ -49,25 +45,14 @@ defmodule Core.Verifications.DigitalVerifications do
   end
 
   @spec upload_media(binary, map) :: :ok | {:error, atom | binary}
-  def upload_media(account_address, %{"session_id" => session_id, "document_payload" => document_payload} = params) do
+  def upload_media(_account_address, %{"session_id" => session_id, "document_payload" => document_payload} = params) do
     with :ok <- VerificationVendors.check_context_items(params),
-         :ok <- check_verification_session(account_address, session_id),
+         {:ok, _verification} <- DigitalVerifications.get(session_id),
          :ok <- veriffme_upload_media(session_id, document_payload),
          :ok <- veriffme_close_session(session_id) do
       :ok
     else
       {:error, _} = err -> err
-      _ -> {:error, :not_found}
-    end
-  end
-
-  @spec check_verification_session(binary, binary) :: :ok | {:error, atom}
-  defp check_verification_session(account_address, request_session_id) do
-    account_address
-    |> DigitalVerification.redis_key()
-    |> Redis.get()
-    |> case do
-      {:ok, %DigitalVerification{session_id: session_id}} when session_id == request_session_id -> :ok
       _ -> {:error, :not_found}
     end
   end
@@ -108,10 +93,65 @@ defmodule Core.Verifications.DigitalVerifications do
     end
   end
 
+  @spec update_status(map) :: :ok | {:error, atom}
+  def update_status(params) do
+    with {:ok, _verification} <- do_update_status(params) do
+      # todo: call quorum
+      :ok
+    end
+  end
+
+  @spec do_update_status(map) :: :ok | {:error, atom}
+  defp do_update_status(%{
+         "status" => "success",
+         "verification" => %{"id" => session_id, "status" => "approved", "code" => @verification_code_success}
+       }) do
+    with {:ok, %{status: @verification_status_new} = verification} <- DigitalVerifications.get(session_id),
+         {:ok, verification} <- update(verification, %{status: DigitalVerification.status(:passed)}) do
+      {:ok, verification}
+    else
+      _ -> {:error, :not_found}
+    end
+  end
+
+  @spec do_update_status(map) :: {:ok, %DigitalVerification{}} | {:error, atom}
+  defp do_update_status(%{"verification" => %{"id" => session_id}}) do
+    with {:ok, %{status: @verification_status_new} = verification} <- DigitalVerifications.get(session_id),
+         {:ok, verification} <- update(verification, %{status: DigitalVerification.status(:failed)}) do
+      {:ok, verification}
+    else
+      _ -> {:error, :not_found}
+    end
+  end
+
   ### Callbacks
 
   @spec update_contract_address(binary, term, term) :: :ok
   def update_contract_address(_account_address, _transaction_status, {:ok, _contract_address}) do
     # todo: update verification
+  end
+
+  ### Quering
+
+  @spec get(binary) :: {:ok, %DigitalVerification{}} | {:error, :not_found}
+  def get(session_id) when is_binary(session_id) do
+    session_id
+    |> DigitalVerification.redis_key()
+    |> Redis.get()
+  end
+
+  @spec insert(map) :: {:ok, %DigitalVerification{}} | {:error, binary}
+  defp insert(params) when is_map(params) do
+    params
+    |> DigitalVerification.changeset()
+    |> Redis.upsert()
+  end
+
+  @spec update(%DigitalVerification{}, map) :: {:ok, %DigitalVerification{}} | {:error, binary}
+  defp update(verification, params) when is_map(params) do
+    verification
+    |> Map.from_struct()
+    |> Map.merge(params)
+    |> insert()
   end
 end

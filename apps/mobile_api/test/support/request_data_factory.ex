@@ -75,4 +75,42 @@ defmodule MobileApi.RequestDataFactory do
     }
     |> Map.merge(params)
   end
+
+  def data_for(:digital_verification_result_webhook, params) do
+    %{
+      "status" => "success",
+      "verification" => %{
+        "id" => "f04bdb47-d3be-4b28-b028-a652feb060b5",
+        "status" => "approved",
+        "code" => 9001,
+        "acceptanceTime" => "2017-01-18T12:22:50.239Z",
+        "person" => %{
+          "firstName" => "TestName",
+          "lastName" => "TestName",
+          "idNumber" => "1234567890"
+        },
+        "document" => %{
+          "number" => "B01234567",
+          "type" => "PASSPORT",
+          "validFrom" => "2015-11-11",
+          "validUntil" => "2021-12-09"
+        },
+        "additionalVerifiedData" => %{
+          "citizenship" => "FI",
+          "residency" => "Melbourne"
+        },
+        "comment" => [
+          %{
+            "type" => "video_call_comment",
+            "comment" => "Person is from Bangladesh",
+            "timestamp" => "2016-05-19T08:30:25.597Z"
+          }
+        ]
+      },
+      "technicalData" => %{
+        "ip" => "186.153.67.122"
+      }
+    }
+    |> Map.merge(params)
+  end
 end

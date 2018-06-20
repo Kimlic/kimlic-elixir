@@ -58,6 +58,12 @@ defmodule MobileApi.Router do
   end
 
   scope "/api", MobileApi do
+    pipe_through([:accepts_json])
+
+    post("/verifications/digital/result", DigitalVerificationController, :verification_result_webhook)
+  end
+
+  scope "/api", MobileApi do
     # ToDo: temporary removed auth for this endpoint until it implemented on iOs
     pipe_through([:api])
 

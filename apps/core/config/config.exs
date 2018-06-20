@@ -8,8 +8,7 @@ config :core, :dependencies,
 config :core,
   verifications_ttl: [
     email: {:system, :integer, "VERIFICATION_EMAIL_TTL", :timer.hours(24)},
-    phone: {:system, :integer, "VERIFICATION_PHONE_TTL", :timer.hours(24)},
-    digital: {:system, :integer, "VERIFICATION_DIGITAL_TTL", :timer.hours(24)}
+    phone: {:system, :integer, "VERIFICATION_PHONE_TTL", :timer.hours(24)}
   ]
 
 config :core, messenger_message_from: {:system, "MESSAGER_MESSAGE_FROM", "Kimlic"}
