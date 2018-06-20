@@ -27,6 +27,14 @@ defmodule MobileApi.DigitalVerificationController do
     end
   end
 
+  # todo: validate request
+  @spec verification_result_webhook(Conn.t(), map) :: Conn.t()
+  def verification_result_webhook(conn, params) do
+    with :ok <- DigitalVerifications.update_status(params) do
+      json(conn, %{})
+    end
+  end
+
   @spec get_vendors(Conn.t(), map) :: Conn.t()
   def get_vendors(conn, _params) do
     json(conn, VerificationVendors.all())
