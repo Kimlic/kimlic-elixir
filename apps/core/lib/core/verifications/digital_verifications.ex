@@ -113,12 +113,12 @@ defmodule Core.Verifications.DigitalVerifications do
   end
 
   @spec get_verification_data_from_result(map) :: map
-  def get_verification_data_from_result(%{"code" => code, "status" => result_status})
+  def get_verification_data_from_result(%{"code" => code, "status" => veriffme_status})
       when code == @verification_code_success do
     %{
       status: DigitalVerification.status(:passed),
-      result_code: code,
-      result_status: result_status
+      veriffme_code: code,
+      veriffme_status: veriffme_status
     }
   end
 
@@ -126,10 +126,10 @@ defmodule Core.Verifications.DigitalVerifications do
   def get_verification_data_from_result(verification_result) do
     %{
       status: DigitalVerification.status(:failed),
-      result_code: verification_result["code"],
-      result_status: verification_result["status"],
-      result_reason: verification_result["reason"],
-      result_comments: verification_result["comments"]
+      veriffme_code: verification_result["code"],
+      veriffme_status: verification_result["status"],
+      veriffme_reason: verification_result["reason"],
+      veriffme_comments: verification_result["comments"]
     }
   end
 

@@ -253,7 +253,7 @@ defmodule MobileApi.DigitalVerificationControllerTest do
              |> json_response(200)
 
       status_failed = DigitalVerification.status(:failed)
-      assert {:ok, %{status: ^status_failed, result_code: ^fail_code}} = DigitalVerifications.get(session_id)
+      assert {:ok, %{status: ^status_failed, veriffme_code: ^fail_code}} = DigitalVerifications.get(session_id)
     end
 
     test "verification not found on second call", %{conn: conn} do
