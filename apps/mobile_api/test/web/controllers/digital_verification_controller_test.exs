@@ -228,6 +228,7 @@ defmodule MobileApi.DigitalVerificationControllerTest do
 
     test "verification declined", %{conn: conn} do
       session_id = UUID.generate()
+      fail_code = 9102
       insert(:digital_verification, %{account_address: get_account_address(conn), session_id: session_id})
 
       request_data =
@@ -235,7 +236,15 @@ defmodule MobileApi.DigitalVerificationControllerTest do
           "verification" => %{
             "id" => session_id,
             "status" => "declined",
-            "code" => 9102
+            "code" => fail_code,
+            "reason" => "Person has not been verified",
+            "comment" => [
+              %{
+                "type" => "video_call_comment",
+                "comment" => "Person is from Bangladesh",
+                "timestamp" => "2018-05-19T08:30:25.597Z"
+              }
+            ]
           }
         })
 
@@ -244,7 +253,7 @@ defmodule MobileApi.DigitalVerificationControllerTest do
              |> json_response(200)
 
       status_failed = DigitalVerification.status(:failed)
-      assert {:ok, %{status: ^status_failed}} = DigitalVerifications.get(session_id)
+      assert {:ok, %{status: ^status_failed, result_code: ^fail_code}} = DigitalVerifications.get(session_id)
     end
 
     test "verification not found on second call", %{conn: conn} do

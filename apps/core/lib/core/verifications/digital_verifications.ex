@@ -9,6 +9,7 @@ defmodule Core.Verifications.DigitalVerifications do
   @veriffme_client Application.get_env(:core, :dependencies)[:veriffme]
 
   @verification_status_new DigitalVerification.status(:new)
+
   @verification_code_success 9001
 
   @spec create_session(binary, map) :: {:ok, binary} | {:error, binary}
@@ -102,33 +103,34 @@ defmodule Core.Verifications.DigitalVerifications do
   end
 
   @spec do_update_status(map) :: :ok | {:error, atom}
-  defp do_update_status(%{
-         "status" => "success",
-         "verification" => %{"id" => session_id, "status" => "approved", "code" => @verification_code_success}
-       }) do
+  defp do_update_status(%{"verification" => %{"id" => session_id} = verification_result}) do
     with {:ok, %{status: @verification_status_new} = verification} <- DigitalVerifications.get(session_id),
-         {:ok, verification} <- Redis.update(verification, %{status: DigitalVerification.status(:passed)}) do
-      {:ok, verification}
+         {:ok, _verification} <- Redis.update(verification, get_verification_data_from_result(verification_result)) do
+      :ok
     else
       _ -> {:error, :not_found}
     end
   end
 
-  @spec do_update_status(map) :: {:ok, %DigitalVerification{}} | {:error, atom}
-  defp do_update_status(%{"verification" => %{"id" => session_id}}) do
-    with {:ok, %{status: @verification_status_new} = verification} <- DigitalVerifications.get(session_id),
-         {:ok, verification} <- Redis.update(verification, %{status: DigitalVerification.status(:failed)}) do
-      {:ok, verification}
-    else
-      _ -> {:error, :not_found}
-    end
+  @spec get_verification_data_from_result(map) :: map
+  def get_verification_data_from_result(%{"code" => code, "status" => result_status})
+      when code == @verification_code_success do
+    %{
+      status: DigitalVerification.status(:passed),
+      result_code: code,
+      result_status: result_status
+    }
   end
 
-  @spec do_update_status(term) :: {:error, :not_found}
-  defp do_update_status(_) do
-    Log.error("[#{__MODULE__}] Invalid request format from veriffme")
-
-    {:error, :not_found}
+  @spec get_verification_data_from_result(map) :: map
+  def get_verification_data_from_result(verification_result) do
+    %{
+      status: DigitalVerification.status(:failed),
+      result_code: verification_result["code"],
+      result_status: verification_result["status"],
+      result_reason: verification_result["reason"],
+      result_comments: verification_result["comments"]
+    }
   end
 
   ### Callbacks

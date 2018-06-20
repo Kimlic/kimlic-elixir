@@ -6,7 +6,7 @@ defmodule Core.Verifications.DigitalVerification do
   alias Ecto.Changeset
 
   @required_fields ~w(account_address session_id)a
-  @optional_fileds ~w(status contract_address)a
+  @optional_fileds ~w(status contract_address result_code result_status result_reason result_comments)a
 
   @status_new "NEW"
   @status_passed "PASSED"
@@ -22,8 +22,12 @@ defmodule Core.Verifications.DigitalVerification do
     field(:redis_key, :string, virtual: true)
     field(:account_address, :string)
     field(:session_id, :string)
-    field(:status, :string, default: @status_new)
     field(:contract_address, :string)
+    field(:status, :string, default: @status_new)
+    field(:result_code, :integer)
+    field(:result_status, :string)
+    field(:result_reason, :string)
+    field(:result_comments, {:array, :map})
   end
 
   @spec changeset(map) :: Ecto.Changeset.t()
