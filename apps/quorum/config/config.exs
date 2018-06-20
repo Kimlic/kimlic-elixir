@@ -6,6 +6,8 @@ config :quorum,
   authorization_salt: {:system, "AUTHORIZATION_SALT"},
   client: Ethereumex.HttpClient,
   proxy_client: Quorum.Proxy.Client,
+  kimlil_ap_password: {:system, "KIMLIC_AP_PASSWORD"},
+  context_storage_address: {:system, "CONTEXT_STORAGE_ADDRESS"},
   allowed_rpc_methods:
     {:system, :list, "QUORUM_ALLOWED_RPC_METHODS",
      [

@@ -11,9 +11,12 @@ defmodule Quorum.MixProject do
       config_path: "../../config/config.exs",
       deps_path: "../../deps",
       lockfile: "../../mix.lock",
-      elixirc_paths: elixirc_paths(Mix.env()),
       elixir: "~> 1.6",
+      elixirc_paths: elixirc_paths(Mix.env()),
+      compilers: Mix.compilers(),
+      build_embedded: Mix.env() == :prod,
       start_permanent: Mix.env() == :prod,
+      preferred_cli_env: [coveralls: :test],
       deps: deps()
     ]
   end
