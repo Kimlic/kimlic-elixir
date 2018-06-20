@@ -107,7 +107,7 @@ defmodule Core.Verifications.DigitalVerifications do
          "verification" => %{"id" => session_id, "status" => "approved", "code" => @verification_code_success}
        }) do
     with {:ok, %{status: @verification_status_new} = verification} <- DigitalVerifications.get(session_id),
-         {:ok, verification} <- update(verification, %{status: DigitalVerification.status(:passed)}) do
+         {:ok, verification} <- Redis.update(verification, %{status: DigitalVerification.status(:passed)}) do
       {:ok, verification}
     else
       _ -> {:error, :not_found}
@@ -117,11 +117,18 @@ defmodule Core.Verifications.DigitalVerifications do
   @spec do_update_status(map) :: {:ok, %DigitalVerification{}} | {:error, atom}
   defp do_update_status(%{"verification" => %{"id" => session_id}}) do
     with {:ok, %{status: @verification_status_new} = verification} <- DigitalVerifications.get(session_id),
-         {:ok, verification} <- update(verification, %{status: DigitalVerification.status(:failed)}) do
+         {:ok, verification} <- Redis.update(verification, %{status: DigitalVerification.status(:failed)}) do
       {:ok, verification}
     else
       _ -> {:error, :not_found}
     end
+  end
+
+  @spec do_update_status(term) :: {:error, :not_found}
+  defp do_update_status(_) do
+    Log.error("[#{__MODULE__}] Invalid request format from veriffme")
+
+    {:error, :not_found}
   end
 
   ### Callbacks
@@ -145,13 +152,5 @@ defmodule Core.Verifications.DigitalVerifications do
     params
     |> DigitalVerification.changeset()
     |> Redis.upsert()
-  end
-
-  @spec update(%DigitalVerification{}, map) :: {:ok, %DigitalVerification{}} | {:error, binary}
-  defp update(verification, params) when is_map(params) do
-    verification
-    |> Map.from_struct()
-    |> Map.merge(params)
-    |> insert()
   end
 end

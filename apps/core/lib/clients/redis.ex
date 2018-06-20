@@ -32,6 +32,15 @@ defmodule Core.Clients.Redis do
     end
   end
 
+  @spec update(struct, map | %{}, pos_integer | nil) :: {:ok, term} | {:error, binary}
+  def update(entity, params \\ %{}, ttl_seconds \\ nil) when is_map(entity) and is_map(params) do
+    entity
+    |> Map.from_struct()
+    |> Map.merge(params)
+    |> entity.__struct__.changeset()
+    |> upsert(ttl_seconds)
+  end
+
   @spec set(binary, term, pos_integer | nil) :: :ok | {:error, atom}
   def set(key, value, ttl_seconds \\ nil)
 
