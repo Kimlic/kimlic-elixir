@@ -7,8 +7,16 @@ defmodule Core.Email do
 
   @spec send_verification(binary, %Verification{}) :: :ok | {:error, binary}
   def send_verification(email, %Verification{token: token}) do
-    with {:ok, _} <- email |> CreateProfileEmail.mail(token) |> Mailer.deliver() do
-      :ok
+    email
+    |> CreateProfileEmail.mail(token)
+    |> Mailer.deliver()
+    |> case do
+      {:ok, _} ->
+        :ok
+
+      {:error, error_data} ->
+        Log.error("[#{__MODULE__}] Fail to send email. Error: #{inspect(error_data)}")
+        {:error, {:internal_error, "Fail to send email"}}
     end
   end
 end
