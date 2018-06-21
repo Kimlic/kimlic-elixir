@@ -1,16 +1,16 @@
-defmodule MobileApi.DigitalVerificationController do
+defmodule AttestationApi.DigitalVerificationController do
   @moduledoc false
 
-  use MobileApi, :controller
+  use AttestationApi, :controller
 
-  alias Core.Verifications.DigitalVerifications
-  alias Core.Verifications.VerificationVendors
-  alias MobileApi.Plugs.RequestValidator
+  alias AttestationApi.DigitalVerifications
+  alias AttestationApi.DigitalVerifications.VerificationVendors
+  alias AttestationApi.Plugs.RequestValidator
   alias Plug.Conn
 
-  action_fallback(MobileApi.FallbackController)
+  action_fallback(AttestationApi.FallbackController)
 
-  plug(RequestValidator, [validator: MobileApi.Requests.CreateSessionRequest] when action in [:create_session])
+  plug(RequestValidator, [validator: AttestationApi.Requests.CreateSessionRequest] when action in [:create_session])
 
   @spec create_session(Conn.t(), map) :: Conn.t()
   def create_session(conn, %{"vendor_id" => _} = params) do

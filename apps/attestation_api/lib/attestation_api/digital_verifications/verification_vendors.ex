@@ -1,6 +1,6 @@
-defmodule Core.Verifications.VerificationVendors do
+defmodule AttestationApi.DigitalVerifications.VerificationVendors do
   @moduledoc """
-  Manages video verification vendors
+  Manages digital verification vendors
   """
 
   @spec all :: map

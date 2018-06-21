@@ -1,13 +1,13 @@
-defmodule MobileApi.FallbackController do
+defmodule AttestationApi.FallbackController do
   @moduledoc """
   This controller should be used as `action_fallback` in rest of controllers to remove duplicated error handling.
   """
 
-  use MobileApi, :controller
+  use AttestationApi, :controller
 
+  alias AttestationApi.ErrorView
   alias EView.Views.Error
   alias EView.Views.ValidationError
-  alias MobileApi.ErrorView
 
   @typep fallback_param_t :: nil | tuple | Ecto.Changeset.t()
 
