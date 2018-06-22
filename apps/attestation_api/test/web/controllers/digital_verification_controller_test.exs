@@ -1,14 +1,14 @@
-defmodule MobileApi.DigitalVerificationControllerTest do
+defmodule AttestationApi.DigitalVerificationControllerTest do
   @moduledoc false
 
-  use MobileApi.ConnCase, async: false
+  use AttestationApi.ConnCase, async: false
 
-  import MobileApi.RequestDataFactory
+  import AttestationApi.RequestDataFactory
   import Mox
 
   alias Ecto.UUID
-  alias Core.Verifications.DigitalVerification
-  alias Core.Verifications.DigitalVerifications
+  alias AttestationApi.DigitalVerifications.DigitalVerification
+  alias AttestationApi.DigitalVerifications
 
   @moduletag :authorized
   @moduletag :account_address

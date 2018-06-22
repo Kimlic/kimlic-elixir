@@ -1,4 +1,4 @@
-defmodule MobileApi.Requests.CreateSessionRequest do
+defmodule AttestationApi.Requests.CreateSessionRequest do
   @moduledoc false
 
   use Ecto.Schema

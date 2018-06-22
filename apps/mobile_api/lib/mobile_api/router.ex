@@ -49,18 +49,7 @@ defmodule MobileApi.Router do
       end
 
       post("/phone/approve", VerificationController, :verify_phone)
-
-      post("/digital/:vendor_id/sessions", DigitalVerificationController, :create_session)
-      post("/digital/:vendor_id/sessions/:session_id/media", DigitalVerificationController, :upload_media)
-
-      get("/digital/vendors", DigitalVerificationController, :get_vendors)
     end
-  end
-
-  scope "/api", MobileApi do
-    pipe_through([:accepts_json])
-
-    post("/verifications/digital/decision", DigitalVerificationController, :verification_result_webhook)
   end
 
   scope "/api", MobileApi do
@@ -70,6 +59,7 @@ defmodule MobileApi.Router do
     post("/quorum", QuorumController, :proxy)
   end
 
+  # ToDo: completly remove this functionality
   scope "/config", MobileApi do
     pipe_through([:accepts_json])
 
@@ -88,7 +78,7 @@ defmodule MobileApi.Router do
       })
     end)
 
-    send_resp(conn, 500, Jason.encode!(%{errors: %{detail: "Internal server error"}}))
+    send_resp(conn, 500, Jason.encode!("Internal server error"))
   end
 
   defp handle_errors(_, _), do: nil

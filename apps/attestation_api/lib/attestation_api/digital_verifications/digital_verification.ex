@@ -1,4 +1,4 @@
-defmodule Core.Verifications.DigitalVerification do
+defmodule AttestationApi.DigitalVerifications.DigitalVerification do
   @moduledoc false
 
   use Ecto.Schema

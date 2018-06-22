@@ -1,21 +1,21 @@
-defmodule Core.Factory do
+defmodule AttestationApi.Factory do
   @moduledoc false
 
   alias Core.Clients.Redis
   alias Core.Verifications.TokenGenerator
-  alias Core.Verifications.Verification
+  alias AttestationApi.DigitalVerifications.DigitalVerification
   alias Ecto.UUID
 
-  @spec build(atom, map) :: %Verification{} | term
+  @spec build(atom, map) :: %DigitalVerification{} | term
   def build(entity_atom, params \\ %{}), do: :erlang.apply(__MODULE__, entity_atom, [params])
 
   @spec insert(atom, map) :: {:ok, term} | {:error, binary}
   def insert(atom, params \\ %{})
 
-  def insert(:verification, params) do
+  def insert(:digital_verification, params) do
     params
-    |> verification()
-    |> changeset(Verification)
+    |> digital_verification()
+    |> changeset(DigitalVerification)
     |> redis_insert()
   end
 
@@ -30,14 +30,12 @@ defmodule Core.Factory do
 
   ### Factories
 
-  @spec verification(map) :: %Verification{}
-  def verification(params \\ %{}) do
+  @spec digital_verification(map) :: %DigitalVerification{}
+  def digital_verification(params \\ %{}) do
     %{
-      entity_type: Verification.entity_type(:email),
       account_address: generate(:account_address),
-      token: "123456",
-      contract_address: generate(:account_address),
-      status: Verification.status(:new)
+      session_id: UUID.generate(),
+      contract_address: nil
     }
     |> Map.merge(params)
   end

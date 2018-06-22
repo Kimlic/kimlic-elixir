@@ -1,10 +1,10 @@
-defmodule Core.Verifications.DigitalVerifications do
+defmodule AttestationApi.DigitalVerifications do
   @moduledoc false
 
   alias __MODULE__
+  alias AttestationApi.DigitalVerifications.DigitalVerification
+  alias AttestationApi.DigitalVerifications.VerificationVendors
   alias Core.Clients.Redis
-  alias Core.Verifications.DigitalVerification
-  alias Core.Verifications.VerificationVendors
 
   @veriffme_client Application.get_env(:core, :dependencies)[:veriffme]
 
