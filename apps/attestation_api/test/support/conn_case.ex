@@ -29,6 +29,12 @@ defmodule AttestationApi.ConnCase do
   end
 
   setup tags do
+    :ok = Ecto.Adapters.SQL.Sandbox.checkout(AttestationApi.Repo)
+
+    unless tags[:async] do
+      Ecto.Adapters.SQL.Sandbox.mode(AttestationApi.Repo, {:shared, self()})
+    end
+
     conn =
       Phoenix.ConnTest.build_conn()
       |> put_account_address(tags)

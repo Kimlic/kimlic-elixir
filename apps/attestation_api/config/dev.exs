@@ -7,7 +7,9 @@ config :attestation_api, AttestationApi.Endpoint,
   check_origin: false,
   watchers: []
 
-config :attestation_api, AttestationApi.Repo, url: "postgres://postgres:postgres@localhost:5432/attestation_api_dev"
+config :attestation_api, AttestationApi.Repo,
+  url: "postgres://postgres:postgres@localhost:5432/attestation_api_dev",
+  pool_size: 10
 
 config :logger, :console, format: "[$level] $message\n"
 

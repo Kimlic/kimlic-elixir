@@ -221,7 +221,7 @@ defmodule AttestationApi.DigitalVerificationControllerTest do
              |> json_response(200)
 
       status_passed = DigitalVerification.status(:passed)
-      assert {:ok, %{status: ^status_passed}} = DigitalVerifications.get(session_id)
+      assert %{status: ^status_passed} = DigitalVerifications.get(session_id)
     end
 
     test "verification declined", %{conn: conn} do
@@ -251,7 +251,7 @@ defmodule AttestationApi.DigitalVerificationControllerTest do
              |> json_response(200)
 
       status_failed = DigitalVerification.status(:failed)
-      assert {:ok, %{status: ^status_failed, veriffme_code: ^fail_code}} = DigitalVerifications.get(session_id)
+      assert %{status: ^status_failed, veriffme_code: ^fail_code} = DigitalVerifications.get(session_id)
     end
 
     test "verification not found on second call", %{conn: conn} do

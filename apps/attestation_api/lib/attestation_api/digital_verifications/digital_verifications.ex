@@ -50,7 +50,7 @@ defmodule AttestationApi.DigitalVerifications do
   @spec upload_media(binary, map) :: :ok | {:error, atom | binary}
   def upload_media(_account_address, %{"session_id" => session_id, "document_payload" => document_payload} = params) do
     with :ok <- VerificationVendors.check_context_items(params),
-         {:ok, _verification} <- DigitalVerifications.get(session_id),
+         %{} = _verification <- DigitalVerifications.get(session_id),
          :ok <- veriffme_upload_media(session_id, document_payload),
          :ok <- veriffme_close_session(session_id) do
       :ok
@@ -106,7 +106,7 @@ defmodule AttestationApi.DigitalVerifications do
 
   @spec do_update_status(map) :: :ok | {:error, atom}
   defp do_update_status(%{"verification" => %{"id" => session_id} = verification_result}) do
-    with {:ok, %{status: @verification_status_new} = verification} <- DigitalVerifications.get(session_id),
+    with %{status: @verification_status_new} = verification <- DigitalVerifications.get(session_id),
          {:ok, _verification} <- update(verification, get_verification_data_from_result(verification_result)) do
       :ok
     else
@@ -148,7 +148,7 @@ defmodule AttestationApi.DigitalVerifications do
   def get(session_id) when is_binary(session_id) do
     DigitalVerification
     |> where([dv], dv.session_id == ^session_id)
-    |> Repo.first_or_fail()
+    |> Repo.one()
   end
 
   @spec insert(map) :: {:ok, %DigitalVerification{}} | {:error, binary}
