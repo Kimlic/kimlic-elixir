@@ -50,7 +50,7 @@ defmodule AttestationApi.DigitalVerifications do
   @spec upload_media(binary, map) :: :ok | {:error, atom | binary}
   def upload_media(_account_address, %{"session_id" => session_id, "document_payload" => document_payload} = params) do
     with :ok <- VerificationVendors.check_context_items(params),
-         %{} = _verification <- DigitalVerifications.get(session_id),
+         %DigitalVerification{} <- DigitalVerifications.get(session_id),
          :ok <- veriffme_upload_media(session_id, document_payload),
          :ok <- veriffme_close_session(session_id) do
       :ok
