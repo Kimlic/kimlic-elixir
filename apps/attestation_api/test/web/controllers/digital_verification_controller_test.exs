@@ -47,8 +47,6 @@ defmodule AttestationApi.DigitalVerificationControllerTest do
                conn
                |> post(digital_verification_path(conn, :create_session, vendor_id), request_data)
                |> json_response(200)
-
-      # todo: add redis check
     end
 
     test "fail with veriffme", %{conn: conn} do

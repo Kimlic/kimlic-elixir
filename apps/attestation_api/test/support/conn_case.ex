@@ -29,8 +29,6 @@ defmodule AttestationApi.ConnCase do
   end
 
   setup tags do
-    Core.Clients.Redis.flush()
-
     conn =
       Phoenix.ConnTest.build_conn()
       |> put_account_address(tags)

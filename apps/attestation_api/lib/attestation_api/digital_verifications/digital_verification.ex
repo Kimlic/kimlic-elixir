@@ -3,7 +3,6 @@ defmodule AttestationApi.DigitalVerifications.DigitalVerification do
 
   use Ecto.Schema
   import Ecto.Changeset
-  alias Ecto.Changeset
 
   @required_fields ~w(account_address session_id)a
   @optional_fileds ~w(status contract_address veriffme_code veriffme_status veriffme_reason veriffme_comments)a
@@ -17,9 +16,8 @@ defmodule AttestationApi.DigitalVerifications.DigitalVerification do
   def status(:passed), do: @status_passed
   def status(:failed), do: @status_failed
 
-  @primary_key false
-  embedded_schema do
-    field(:redis_key, :string, virtual: true)
+  @primary_key {:id, :binary_id, autogenerate: true}
+  schema "digital_verifications" do
     field(:account_address, :string)
     field(:session_id, :string)
     field(:contract_address, :string)
@@ -28,23 +26,16 @@ defmodule AttestationApi.DigitalVerifications.DigitalVerification do
     field(:veriffme_status, :string)
     field(:veriffme_reason, :string)
     field(:veriffme_comments, {:array, :map})
+    timestamps()
   end
 
   @spec changeset(map) :: Ecto.Changeset.t()
-  def changeset(params) do
-    %__MODULE__{}
+  def changeset(params) when is_map(params), do: changeset(%__MODULE__{}, params)
+
+  @spec changeset(__MODULE__, map) :: Ecto.Changeset.t()
+  def changeset(%__MODULE__{} = entity, params) do
+    entity
     |> cast(params, @required_fields ++ @optional_fileds)
     |> validate_required(@required_fields)
-    |> put_redis_key()
   end
-
-  @spec put_redis_key(Ecto.Changeset.t()) :: Ecto.Changeset.t()
-  def put_redis_key(%Changeset{valid?: true} = changeset) do
-    {_, session_id} = fetch_field(changeset, :session_id)
-
-    put_change(changeset, :redis_key, redis_key(session_id))
-  end
-
-  @spec redis_key(binary) :: binary
-  def redis_key(session_id), do: "verification:digital:#{session_id}"
 end
