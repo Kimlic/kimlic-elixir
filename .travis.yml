@@ -9,7 +9,9 @@ services:
 - docker
 - redis-server
 - rabbitmq
+- postgresql
 addons:
+  postgresql: "10.4"
   apt:
     update: true
     packages:
