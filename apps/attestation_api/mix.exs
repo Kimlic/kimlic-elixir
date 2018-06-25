@@ -13,7 +13,8 @@ defmodule AttestationApi.Mixfile do
       elixirc_paths: elixirc_paths(Mix.env()),
       compilers: [:phoenix] ++ Mix.compilers(),
       start_permanent: Mix.env() == :prod,
-      deps: deps()
+      deps: deps(),
+      aliases: aliases()
     ]
   end
 
@@ -39,6 +40,21 @@ defmodule AttestationApi.Mixfile do
       {:ecto, "~> 2.2"},
       {:postgrex, ">= 0.0.0"},
       {:eview, "~> 0.12"}
+    ]
+  end
+
+  defp aliases do
+    [
+      "ecto.setup": [
+        "ecto.create",
+        "ecto.migrate"
+      ],
+      "ecto.reset": ["ecto.drop", "ecto.setup"],
+      test: [
+        "ecto.create --quiet",
+        "ecto.migrate",
+        "test"
+      ]
     ]
   end
 end

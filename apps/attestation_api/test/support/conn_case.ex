@@ -29,7 +29,11 @@ defmodule AttestationApi.ConnCase do
   end
 
   setup tags do
-    Core.Clients.Redis.flush()
+    :ok = Ecto.Adapters.SQL.Sandbox.checkout(AttestationApi.Repo)
+
+    unless tags[:async] do
+      Ecto.Adapters.SQL.Sandbox.mode(AttestationApi.Repo, {:shared, self()})
+    end
 
     conn =
       Phoenix.ConnTest.build_conn()

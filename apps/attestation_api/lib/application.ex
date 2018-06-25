@@ -9,7 +9,8 @@ defmodule AttestationApi.Application do
     import Supervisor.Spec
 
     children = [
-      supervisor(AttestationApi.Endpoint, [])
+      supervisor(AttestationApi.Endpoint, []),
+      supervisor(AttestationApi.Repo, [])
     ]
 
     opts = [strategy: :one_for_one, name: AttestationApi.Supervisor]

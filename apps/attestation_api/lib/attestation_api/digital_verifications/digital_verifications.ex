@@ -1,10 +1,12 @@
 defmodule AttestationApi.DigitalVerifications do
   @moduledoc false
 
+  import Ecto.Query, except: [update: 2]
+
   alias __MODULE__
   alias AttestationApi.DigitalVerifications.DigitalVerification
   alias AttestationApi.DigitalVerifications.VerificationVendors
-  alias Core.Clients.Redis
+  alias AttestationApi.Repo
 
   @veriffme_client Application.get_env(:core, :dependencies)[:veriffme]
 
@@ -48,7 +50,7 @@ defmodule AttestationApi.DigitalVerifications do
   @spec upload_media(binary, map) :: :ok | {:error, atom | binary}
   def upload_media(_account_address, %{"session_id" => session_id, "document_payload" => document_payload} = params) do
     with :ok <- VerificationVendors.check_context_items(params),
-         {:ok, _verification} <- DigitalVerifications.get(session_id),
+         %DigitalVerification{} <- DigitalVerifications.get(session_id),
          :ok <- veriffme_upload_media(session_id, document_payload),
          :ok <- veriffme_close_session(session_id) do
       :ok
@@ -104,8 +106,8 @@ defmodule AttestationApi.DigitalVerifications do
 
   @spec do_update_status(map) :: :ok | {:error, atom}
   defp do_update_status(%{"verification" => %{"id" => session_id} = verification_result}) do
-    with {:ok, %{status: @verification_status_new} = verification} <- DigitalVerifications.get(session_id),
-         {:ok, _verification} <- Redis.update(verification, get_verification_data_from_result(verification_result)) do
+    with %{status: @verification_status_new} = verification <- DigitalVerifications.get(session_id),
+         {:ok, _verification} <- update(verification, get_verification_data_from_result(verification_result)) do
       :ok
     else
       _ -> {:error, :not_found}
@@ -144,15 +146,22 @@ defmodule AttestationApi.DigitalVerifications do
 
   @spec get(binary) :: {:ok, %DigitalVerification{}} | {:error, :not_found}
   def get(session_id) when is_binary(session_id) do
-    session_id
-    |> DigitalVerification.redis_key()
-    |> Redis.get()
+    DigitalVerification
+    |> where([dv], dv.session_id == ^session_id)
+    |> Repo.one()
   end
 
   @spec insert(map) :: {:ok, %DigitalVerification{}} | {:error, binary}
   defp insert(params) when is_map(params) do
     params
     |> DigitalVerification.changeset()
-    |> Redis.upsert()
+    |> Repo.insert()
+  end
+
+  @spec update(%DigitalVerification{}, map) :: {:ok, %DigitalVerification{}} | {:error, binary}
+  defp update(%DigitalVerification{} = entity, params) do
+    entity
+    |> DigitalVerification.changeset(params)
+    |> Repo.update()
   end
 end

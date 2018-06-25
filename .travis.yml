@@ -9,7 +9,9 @@ services:
 - docker
 - redis-server
 - rabbitmq
+- postgresql
 addons:
+  postgresql: "9.6"
   apt:
     update: true
     packages:
@@ -37,6 +39,8 @@ branches:
 before_install:
 # Expose RabbitMQ to Docker container
 - sudo ./bin/ci/init-rabbitmq.sh
+# Expose Postgres
+- sudo ./bin/ci/init-db.sh
 before_script:
 # Create test user for rabbitMQ
 #  - rabbitmqctl add_user test test
