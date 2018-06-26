@@ -2,13 +2,13 @@ defmodule Core.Email do
   @moduledoc false
 
   alias Core.Clients.Mailer
-  alias Core.Email.Views.CreateProfileEmail
+  alias Core.Email.Views.EmailVerification
   alias Core.Verifications.Verification
 
   @spec send_verification(binary, %Verification{}) :: :ok | {:error, binary}
   def send_verification(email, %Verification{token: token}) do
     email
-    |> CreateProfileEmail.mail(token)
+    |> EmailVerification.mail(token)
     |> Mailer.deliver()
     |> case do
       {:ok, _} ->
