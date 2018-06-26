@@ -4,6 +4,7 @@ defmodule MobileApi.Plugs.Authorization do
   import Plug.Conn
   import Phoenix.Controller, only: [render: 3]
 
+  alias EView.Views.Error
   alias Plug.Conn
   alias Quorum.BearerService
 
@@ -20,7 +21,7 @@ defmodule MobileApi.Plugs.Authorization do
       _ ->
         conn
         |> put_status(:unauthorized)
-        |> render(MobileApi.ErrorView, "401.json")
+        |> render(Error, "401.json")
         |> halt()
     end
   end
