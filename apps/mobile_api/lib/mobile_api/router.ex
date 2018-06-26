@@ -66,7 +66,9 @@ defmodule MobileApi.Router do
       })
     end)
 
-    send_resp(conn, 500, Jason.encode!("Internal server error"))
+    conn
+    |> put_resp_header("content-type", "application/json; charset=utf-8")
+    |> send_resp(500, Jason.encode!(%{message: "Internal server error", detail: inspect(reason)}))
   end
 
   defp handle_errors(_, _), do: nil

@@ -6,7 +6,7 @@ config :mobile_api, MobileApi.Endpoint,
   load_from_system_env: true,
   url: [host: "localhost"],
   secret_key_base: "ghZOO+R91Vccb2LL2mwvwDIzuJ75zidmln2nZFpaCnyoRGxjX/q1K5/tzZ3nLn/b",
-  render_errors: [view: MobileApi.ErrorView, accepts: ~w(json)]
+  render_errors: [view: EView.Views.PhoenixError, accepts: ~w(json)]
 
 config :mobile_api,
   rate_limit_create_phone_verification_timeout:
