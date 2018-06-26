@@ -4,8 +4,8 @@ defmodule MobileApi.Plugs.Authorization do
   import Plug.Conn
   import Phoenix.Controller, only: [render: 3]
 
-  alias Plug.Conn
   alias EView.Views.Error
+  alias Plug.Conn
   alias Quorum.BearerService
 
   @spec init(Plug.opts()) :: Plug.opts()
