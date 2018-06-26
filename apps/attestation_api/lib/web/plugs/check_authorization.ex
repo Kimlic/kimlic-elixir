@@ -1,4 +1,4 @@
-defmodule AttestationApi.Plugs.CheckAuthorization do
+defmodule AttestationApi.Plugs.Authorization do
   @moduledoc false
 
   import Plug.Conn

@@ -1,4 +1,4 @@
-defmodule MobileApi.Plugs.FetchAccountAddress do
+defmodule MobileApi.Plugs.AccountAddress do
   @moduledoc false
 
   import Plug.Conn

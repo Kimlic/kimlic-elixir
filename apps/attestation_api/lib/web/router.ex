@@ -4,8 +4,8 @@ defmodule AttestationApi.Router do
   use AttestationApi, :router
   use Plug.ErrorHandler
 
-  alias AttestationApi.Plugs.CheckAuthorization
-  alias AttestationApi.Plugs.FetchAccountAddress
+  alias AttestationApi.Plugs.Authorization
+  alias AttestationApi.Plugs.AccountAddress
   alias Plug.LoggerJSON
 
   require Logger
@@ -14,11 +14,11 @@ defmodule AttestationApi.Router do
 
   pipeline :api do
     plug(:accepts, ["json"])
-    plug(FetchAccountAddress)
+    plug(AccountAddress)
   end
 
   pipeline :authorized do
-    plug(CheckAuthorization)
+    plug(Authorization)
   end
 
   pipeline :eview_response do

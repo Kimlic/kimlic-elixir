@@ -4,9 +4,9 @@ defmodule MobileApi.Router do
   use MobileApi, :router
   use Plug.ErrorHandler
 
-  alias MobileApi.Plugs.CheckAuthorization
-  alias MobileApi.Plugs.CreatePhoneVerificationLimiter
-  alias MobileApi.Plugs.FetchAccountAddress
+  alias MobileApi.Plugs.AccountAddress
+  alias MobileApi.Plugs.Authorization
+  alias MobileApi.Plugs.PhoneVerificationLimiter
   alias Plug.LoggerJSON
 
   require Logger
@@ -15,29 +15,25 @@ defmodule MobileApi.Router do
 
   pipeline :api do
     plug(:accepts, ["json"])
-    plug(FetchAccountAddress)
-  end
-
-  pipeline :accepts_json do
-    plug(:accepts, ["json"])
-  end
-
-  pipeline :authorized do
-    plug(CheckAuthorization)
-  end
-
-  pipeline :eview_response do
     plug(EView)
+    plug(AccountAddress)
+    plug(Authorization)
+  end
+
+  pipeline :quorum_proxy do
+    plug(:accepts, ["json"])
+    # ToDo: temporary commented auth for this endpoint until it implemented on iOs
+    # plug(Authorization)
   end
 
   pipeline :create_phone_verification_limiter do
-    plug(CreatePhoneVerificationLimiter)
+    plug(PhoneVerificationLimiter)
   end
 
   ### Endpoints
 
   scope "/api", MobileApi do
-    pipe_through([:api, :authorized, :eview_response])
+    pipe_through(:api)
 
     scope "/verifications" do
       post("/email", VerificationController, :create_email_verification)
@@ -53,17 +49,9 @@ defmodule MobileApi.Router do
   end
 
   scope "/api", MobileApi do
-    # ToDo: temporary removed auth for this endpoint until it implemented on iOs
-    pipe_through([:api])
+    pipe_through(:quorum_proxy)
 
     post("/quorum", QuorumController, :proxy)
-  end
-
-  # ToDo: completly remove this functionality
-  scope "/config", MobileApi do
-    pipe_through([:accepts_json])
-
-    post("/contracts_addresses", ConfigController, :set_contracts_addresses)
   end
 
   @spec handle_errors(Plug.Conn.t(), map) :: Plug.Conn.t()

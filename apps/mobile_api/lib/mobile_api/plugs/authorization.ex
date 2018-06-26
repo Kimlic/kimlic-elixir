@@ -1,4 +1,4 @@
-defmodule MobileApi.Plugs.CheckAuthorization do
+defmodule MobileApi.Plugs.Authorization do
   @moduledoc false
 
   import Plug.Conn

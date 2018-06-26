@@ -6,7 +6,6 @@ defmodule MobileApi.VerificationControllerTest do
   import MobileApi.RequestDataFactory
   import Mox
 
-  alias Core.ContractAddresses
   alias Core.Verifications
   alias Core.Verifications.TokenGenerator
   alias Core.Verifications.Verification
@@ -33,7 +32,6 @@ defmodule MobileApi.VerificationControllerTest do
 
   setup do
     use QuorumContextExpect
-    ContractAddresses.set_batch(%{"VerificationContractFactory" => generate(:account_address)})
     :ok
   end
 

@@ -1,4 +1,4 @@
-defmodule MobileApi.Plugs.CreatePhoneVerificationLimiter do
+defmodule MobileApi.Plugs.PhoneVerificationLimiter do
   @moduledoc false
 
   import Plug.Conn

@@ -1,4 +1,4 @@
-defmodule AttestationApi.Plugs.FetchAccountAddress do
+defmodule AttestationApi.Plugs.AccountAddress do
   @moduledoc false
 
   import Plug.Conn

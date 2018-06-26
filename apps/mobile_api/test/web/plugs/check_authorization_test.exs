@@ -1,11 +1,11 @@
-defmodule MobileApi.CheckAuthorizationTest do
+defmodule MobileApi.AuthorizationTest do
   @moduledoc false
 
   use MobileApi.ConnCase, async: true
   import Plug.Conn
 
   alias Ecto.UUID
-  alias MobileApi.Plugs.CheckAuthorization
+  alias MobileApi.Plugs.Authorization
   alias Quorum.BearerService
 
   describe "user unauthorized" do
@@ -13,14 +13,14 @@ defmodule MobileApi.CheckAuthorizationTest do
       assert %{status: 401} =
                conn
                |> put_req_header("auth-secret-token", UUID.generate())
-               |> CheckAuthorization.call([])
+               |> Authorization.call([])
     end
 
     test "auth secret token is missing", %{conn: conn} do
       assert %{status: 401} =
                conn
                |> put_req_header("authorization", "Bearer: #{UUID.generate()}")
-               |> CheckAuthorization.call([])
+               |> Authorization.call([])
     end
 
     test "invalid credentials", %{conn: conn} do
@@ -28,7 +28,7 @@ defmodule MobileApi.CheckAuthorizationTest do
                conn
                |> put_req_header("authorization", "Bearer: #{UUID.generate()}")
                |> put_req_header("auth-secret-token", UUID.generate())
-               |> CheckAuthorization.call([])
+               |> Authorization.call([])
     end
   end
 
@@ -41,7 +41,7 @@ defmodule MobileApi.CheckAuthorizationTest do
                conn
                |> put_req_header("authorization", "Bearer: #{bearer}")
                |> put_req_header("auth-secret-token", auth_secret_token)
-               |> CheckAuthorization.call([])
+               |> Authorization.call([])
     end
   end
 end
