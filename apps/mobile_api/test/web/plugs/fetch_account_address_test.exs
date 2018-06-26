@@ -1,4 +1,4 @@
-defmodule MobileApi.Plugs.FetchAccountAddressTest do
+defmodule MobileApi.Plugs.AccountAddressTest do
   @moduledoc false
 
   use MobileApi.ConnCase, async: true
@@ -8,7 +8,7 @@ defmodule MobileApi.Plugs.FetchAccountAddressTest do
   import Pollution.VG
 
   alias Core.Factory
-  alias MobileApi.Plugs.FetchAccountAddress
+  alias MobileApi.Plugs.AccountAddress
 
   describe "testing account address plug" do
     test "success", %{conn: conn} do
@@ -17,11 +17,11 @@ defmodule MobileApi.Plugs.FetchAccountAddressTest do
       assert %{assigns: %{account_address: ^account_address}} =
                conn
                |> put_req_header("account-address", account_address)
-               |> FetchAccountAddress.call([])
+               |> AccountAddress.call([])
     end
 
     test "account address is missing", %{conn: conn} do
-      assert %{status: 400, assigns: %{message: _}} = FetchAccountAddress.call(conn, [])
+      assert %{status: 400, assigns: %{message: _}} = AccountAddress.call(conn, [])
     end
 
     test "account address is invalid", %{conn: conn} do
@@ -36,7 +36,7 @@ defmodule MobileApi.Plugs.FetchAccountAddressTest do
         %{status: 400, assigns: %{message: _}} =
           conn
           |> put_req_header("account-address", "0x" <> address)
-          |> FetchAccountAddress.call([])
+          |> AccountAddress.call([])
       end
     end
   end
