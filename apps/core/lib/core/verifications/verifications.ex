@@ -58,11 +58,11 @@ defmodule Core.Verifications do
 
   @spec verify(atom, binary, binary) :: :ok | {:error, term}
   def verify(verification_type, account_address, token) when allowed_type_atom(verification_type) do
-    with {:ok, %Verification{} = verification} <- Verifications.get(account_address, verification_type),
+    with {:ok, %Verification{} = verification} <- Verifications.get(verification_type, account_address),
          {_, "0x" <> _} <- {:contract_address_set, verification.contract_address},
          {_, true} <- {:verification_access, can_access_verification?(verification, account_address, token)},
-         {:ok, 1} <- Verifications.delete(verification),
-         :ok <- Quorum.set_verification_result_transaction(verification.contract_address) do
+         :ok <- Quorum.set_verification_result_transaction(verification.contract_address),
+         {:ok, 1} <- Verifications.delete(verification) do
       :ok
     else
       {:contract_address_set, _} -> {:error, :not_found}
@@ -95,7 +95,7 @@ defmodule Core.Verifications do
       ) do
     verification_type = String.to_atom(verification_type)
 
-    with {:ok, verification} = Verifications.get(account_address, verification_type),
+    with {:ok, verification} = Verifications.get(verification_type, account_address),
          verification <- %Verification{verification | contract_address: contract_address},
          %Ecto.Changeset{valid?: true} = changeset <- verification |> Map.from_struct() |> Verification.changeset(),
          {:ok, _} <- Redis.upsert(changeset, verification_ttl(verification_type)) do
@@ -117,18 +117,10 @@ defmodule Core.Verifications do
   end
 
   @spec get(binary, atom) :: {:ok, %Verification{}} | {:error, term}
-  def get(account_address, type) do
-    redis_key =
-      type
-      |> Verification.entity_type()
-      |> Verification.redis_key(account_address)
-
-    redis_key
+  def get(type, account_address) do
+    type
+    |> Verification.redis_key(account_address)
     |> Redis.get()
-    |> case do
-      {:ok, verification} -> {:ok, %Verification{verification | redis_key: redis_key}}
-      err -> err
-    end
   end
 
   @spec delete(%Verification{} | term) :: {:ok, non_neg_integer} | {:error, term}
