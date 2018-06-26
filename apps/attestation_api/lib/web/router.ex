@@ -4,8 +4,8 @@ defmodule AttestationApi.Router do
   use AttestationApi, :router
   use Plug.ErrorHandler
 
-  alias AttestationApi.Plugs.Authorization
   alias AttestationApi.Plugs.AccountAddress
+  alias AttestationApi.Plugs.Authorization
   alias Plug.LoggerJSON
 
   require Logger
