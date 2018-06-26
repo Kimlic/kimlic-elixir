@@ -4,7 +4,6 @@ defmodule Core.Factory do
   alias Core.Clients.Redis
   alias Core.Verifications.TokenGenerator
   alias Core.Verifications.Verification
-  alias Ecto.UUID
 
   @spec build(atom, map) :: %Verification{} | term
   def build(entity_atom, params \\ %{}), do: :erlang.apply(__MODULE__, entity_atom, [params])

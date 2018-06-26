@@ -4,9 +4,17 @@ defmodule MobileApi.VerificationController do
   use MobileApi, :controller
 
   alias Core.Verifications
+  alias MobileApi.ApproveValidator
+  alias MobileApi.FallbackController
+  alias MobileApi.Plugs.RequestValidator
   alias Plug.Conn
 
-  action_fallback(MobileApi.FallbackController)
+  action_fallback(FallbackController)
+
+  plug(
+    RequestValidator,
+    [validator: ApproveValidator, error_handler: FallbackController] when action in ~w(verify_email verify_phone)a
+  )
 
   # todo: validate request
   @spec create_email_verification(Conn.t(), map) :: Conn.t()
@@ -23,7 +31,7 @@ defmodule MobileApi.VerificationController do
   # todo: validate request
   @spec verify_email(Conn.t(), map) :: Conn.t()
   def verify_email(conn, params) do
-    with :ok <- Verifications.verify(:email, conn.assigns.account_address, params["token"]) do
+    with :ok <- Verifications.verify(:email, conn.assigns.account_address, params["code"]) do
       json(conn, %{status: "ok"})
     end
   end
