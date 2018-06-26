@@ -8,7 +8,7 @@ defmodule Core.Email do
   @spec send_verification(binary, %Verification{}) :: :ok | {:error, binary}
   def send_verification(email, %Verification{token: token}) do
     email
-    |> EmailVerification.mail(token)
+    |> EmailVerification.render(token)
     |> Mailer.deliver()
     |> case do
       {:ok, _} ->

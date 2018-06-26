@@ -9,8 +9,8 @@ defmodule Core.Email.Views.EmailVerification do
 
   EEx.function_from_file(:def, :create_profile_email, @template, [:code])
 
-  @spec mail(binary, binary) :: Swoosh.Email.t()
-  def mail(email, code) do
+  @spec render(binary, binary) :: Swoosh.Email.t()
+  def render(email, code) do
     email_data = Confex.fetch_env!(:core, :emails)[:create_profile_email]
     mail_html = __MODULE__.create_profile_email(code)
 
