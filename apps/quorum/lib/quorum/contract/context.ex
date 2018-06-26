@@ -12,7 +12,7 @@ defmodule Quorum.Contract.Context do
   end
 
   def get_kimlic_attestation_party_address do
-    "0x11eb6f7653566343d9f1fb712b864b75ed1f6652"
+    Confex.fetch_env!(:quorum, :kimlil_ap_address)
   end
 
   defp get_context_address do
