@@ -2,8 +2,7 @@ use Mix.Config
 
 config :core, :dependencies,
   token_generator: Core.Verifications.TokenGenerator,
-  messenger: Core.Clients.Messenger,
-  veriffme: Core.Clients.Veriffme
+  messenger: Core.Clients.Messenger
 
 config :core,
   verifications_ttl: [
@@ -19,11 +18,6 @@ config :core, :emails,
     from_name: {:system, "EMAIL_CREATE_PROFILE_FROM_NAME", "Kimlic"},
     subject: {:system, "EMAIL_CREATE_PROFILE_SUBJECT", "Kimlic - New user email verification"}
   }
-
-config :core, Core.Clients.Veriffme,
-  api_url: {:system, "VERIFFME_API_URL"},
-  auth_client: {:system, "VERIFFME_AUTH_CLIENT"},
-  api_secret: {:system, "VERIFFME_API_SECRET"}
 
 config :logger, :console,
   format: "$message\n",

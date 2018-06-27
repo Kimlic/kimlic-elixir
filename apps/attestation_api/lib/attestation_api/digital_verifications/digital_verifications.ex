@@ -8,7 +8,7 @@ defmodule AttestationApi.DigitalVerifications do
   alias AttestationApi.DigitalVerifications.VerificationVendors
   alias AttestationApi.Repo
 
-  @veriffme_client Application.get_env(:core, :dependencies)[:veriffme]
+  @veriffme_client Application.get_env(:attestation_api, :dependencies)[:veriffme]
 
   @verification_status_new DigitalVerification.status(:new)
 

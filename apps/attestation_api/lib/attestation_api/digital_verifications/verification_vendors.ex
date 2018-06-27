@@ -5,7 +5,7 @@ defmodule AttestationApi.DigitalVerifications.VerificationVendors do
 
   @spec all :: map
   def all do
-    :core
+    :attestation_api
     |> Application.app_dir("priv/verification_providers.json")
     |> File.read!()
     |> Jason.decode!()
