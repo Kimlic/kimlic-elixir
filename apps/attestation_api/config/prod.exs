@@ -2,8 +2,14 @@ use Mix.Config
 
 config :attestation_api, AttestationApi.Endpoint,
   load_from_system_env: true,
-  url: [host: "example.com", port: 80],
-  cache_static_manifest: "priv/static/cache_manifest.json"
+  http: [port: {:system, "ATTESTATION_API_PORT", "80"}],
+  url: [
+    host: {:system, "ATTESTATION_API_HOST", "localhost"},
+    port: {:system, "ATTESTATION_API_PORT", "80"}
+  ],
+  secret_key_base: {:system, "ATTESTATION_API_SECRET_KEY"},
+  debug_errors: false,
+  code_reloader: false
 
 config :attestation_api, AttestationApi.Repo, url: "${POSTGRES_URI}"
 
