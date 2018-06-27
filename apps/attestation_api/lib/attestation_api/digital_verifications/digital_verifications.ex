@@ -5,7 +5,7 @@ defmodule AttestationApi.DigitalVerifications do
 
   alias __MODULE__
   alias AttestationApi.DigitalVerifications.DigitalVerification
-  alias AttestationApi.DigitalVerifications.VerificationVendors
+  alias AttestationApi.DigitalVerifications.DigitalVerificationDocument
   alias AttestationApi.Repo
 
   @veriffme_client Application.get_env(:attestation_api, :dependencies)[:veriffme]
@@ -47,70 +47,33 @@ defmodule AttestationApi.DigitalVerifications do
     :ok
   end
 
-  @spec upload_media(binary, map) :: :ok | {:error, atom | binary}
-  def upload_media(_account_address, %{"session_id" => session_id, "document_payload" => document_payload} = params) do
-    with :ok <- VerificationVendors.check_context_items(params),
-         %DigitalVerification{} <- DigitalVerifications.get(session_id),
-         :ok <- veriffme_upload_media(session_id, document_payload),
-         :ok <- veriffme_close_session(session_id) do
-      :ok
-    else
-      {:error, _} = err -> err
-      _ -> {:error, :not_found}
-    end
-  end
-
-  @spec veriffme_upload_media(binary, map) :: :ok | {:error, {:internal_error, binary}}
-  defp veriffme_upload_media(session_id, document_payload) do
-    document_payload
-    |> Enum.to_list()
-    |> Task.async_stream(fn {context, %{"content" => image_base64, "timestamp" => timestamp}} ->
-      with {:ok, %{body: body}} <- @veriffme_client.upload_media(session_id, context, image_base64, timestamp),
-           {:ok, %{"status" => "success"}} <- Jason.decode(body) do
-        :ok
-      end
-    end)
-    |> Enum.reduce_while(:ok, fn
-      {:ok, :ok}, acc -> {:cont, acc}
-      item, _ -> {:halt, item}
-    end)
-    |> case do
-      :ok ->
-        :ok
-
-      err ->
-        Log.error("[#{__MODULE__}] Fail to upload media on veriffme. Error: #{inspect(err)}")
-        {:error, {:internal_error, "Fail to upload media on verification"}}
-    end
-  end
-
-  @spec veriffme_close_session(binary) :: :ok | {:error, {:internal_error, binary}}
-  defp veriffme_close_session(session_id) do
-    with {:ok, %HTTPoison.Response{body: body, status_code: 200}} <- @veriffme_client.close_session(session_id),
-         {:ok, %{"status" => "success", "verification" => %{"status" => "submitted"}}} <- Jason.decode(body) do
-      :ok
-    else
-      err ->
-        Log.error("[#{__MODULE__}] Fail to sumbit veriffme session. Error: #{inspect(err)}")
-        {:error, {:internal_error, "Fail to close session"}}
-    end
-  end
-
-  @spec update_status(map) :: :ok | {:error, atom}
-  def update_status(params) do
-    with {:ok, _verification} <- do_update_status(params) do
+  @spec handle_verification_result(map) :: :ok | {:error, atom}
+  def handle_verification_result(params) do
+    with {:ok, verification} <- update_status(params),
+         :ok <- remove_verificaiton_documents(verification) do
       # todo: call quorum
       :ok
     end
   end
 
-  @spec do_update_status(map) :: :ok | {:error, atom}
-  defp do_update_status(%{"verification" => %{"id" => session_id} = verification_result}) do
+  @spec update_status(map) :: :ok | {:error, atom}
+  defp update_status(%{"verification" => %{"id" => session_id} = verification_result}) do
     with %{status: @verification_status_new} = verification <- DigitalVerifications.get(session_id),
-         {:ok, _verification} <- update(verification, get_verification_data_from_result(verification_result)) do
-      :ok
+         {:ok, verification} <- update(verification, get_verification_data_from_result(verification_result)) do
+      {:ok, verification}
     else
       _ -> {:error, :not_found}
+    end
+  end
+
+  @spec remove_verificaiton_documents(%DigitalVerification{}) :: :ok | {:error, binary}
+  defp remove_verificaiton_documents(%DigitalVerification{id: verification_id}) do
+    DigitalVerificationDocument
+    |> where([dv_d], dv_d.verification_id == ^verification_id)
+    |> Repo.delete_all()
+    |> case do
+      {deleted_count, nil} when is_integer(deleted_count) -> :ok
+      err -> err
     end
   end
 
@@ -144,7 +107,8 @@ defmodule AttestationApi.DigitalVerifications do
 
   ### Quering
 
-  @spec get(binary) :: {:ok, %DigitalVerification{}} | {:error, :not_found}
+  # todo: maybe rename? get_session_by_id, get(%{} = params)
+  @spec get(binary) :: %DigitalVerification{} | nil
   def get(session_id) when is_binary(session_id) do
     DigitalVerification
     |> where([dv], dv.session_id == ^session_id)
@@ -152,14 +116,14 @@ defmodule AttestationApi.DigitalVerifications do
   end
 
   @spec insert(map) :: {:ok, %DigitalVerification{}} | {:error, binary}
-  defp insert(params) when is_map(params) do
+  def insert(params) when is_map(params) do
     params
     |> DigitalVerification.changeset()
     |> Repo.insert()
   end
 
   @spec update(%DigitalVerification{}, map) :: {:ok, %DigitalVerification{}} | {:error, binary}
-  defp update(%DigitalVerification{} = entity, params) do
+  def update(%DigitalVerification{} = entity, params) do
     entity
     |> DigitalVerification.changeset(params)
     |> Repo.update()

@@ -2,14 +2,20 @@ defmodule AttestationApi.Factory do
   @moduledoc false
 
   alias AttestationApi.DigitalVerifications.DigitalVerification
+  alias AttestationApi.DigitalVerifications.DigitalVerificationDocument
   alias AttestationApi.Repo
   alias Ecto.UUID
 
-  def insert(:digital_verification, params) do
-    params
-    |> digital_verification()
-    |> changeset(DigitalVerification)
+  @spec insert(atom, map) :: term | {:error, binary}
+  def insert(factory, params) do
+    entity = Kernel.apply(__MODULE__, factory, [params])
+
+    changeset(entity, factory_module(factory))
     |> Repo.insert()
+    |> case do
+      {:ok, value} -> value
+      err -> err
+    end
   end
 
   @spec changeset(map, module) :: Ecto.Changeset.t()
@@ -22,6 +28,10 @@ defmodule AttestationApi.Factory do
     end
   end
 
+  @spec factory_module(atom) :: module
+  defp factory_module(:digital_verification), do: DigitalVerification
+  defp factory_module(:digital_verification_document), do: DigitalVerificationDocument
+
   ### Factories
 
   @spec digital_verification(map) :: %DigitalVerification{}
@@ -30,8 +40,20 @@ defmodule AttestationApi.Factory do
       account_address: generate(:account_address),
       session_id: UUID.generate(),
       contract_address: nil,
+      status: DigitalVerification.status(:new),
       inserted_at: NaiveDateTime.utc_now(),
       updated_at: NaiveDateTime.utc_now()
+    }
+    |> Map.merge(params)
+  end
+
+  @spec digital_verification_document(map) :: %DigitalVerificationDocument{}
+  def digital_verification_document(params \\ %{}) do
+    %{
+      verification_id: nil,
+      context: Enum.random(["face", "document-front", "document-back"]),
+      content: "data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs=",
+      timestamp: generate(:unix_timestamp)
     }
     |> Map.merge(params)
   end

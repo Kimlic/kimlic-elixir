@@ -20,20 +20,9 @@ defmodule AttestationApi.RequestDataFactory do
     %{
       "country" => "US",
       "document_type" => "ID_CARD",
-      "document_payload" => %{
-        "face" => %{
-          "content" => "data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs=",
-          "timestamp" => generate(:unix_timestamp)
-        },
-        "document-front" => %{
-          "content" => "data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs=",
-          "timestamp" => generate(:unix_timestamp)
-        },
-        "document-back" => %{
-          "content" => "data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs=",
-          "timestamp" => generate(:unix_timestamp)
-        }
-      }
+      "context" => Enum.random(["face", "document-front", "document-back"]),
+      "content" => "data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs=",
+      "timestamp" => generate(:unix_timestamp)
     }
     |> Map.merge(params)
   end

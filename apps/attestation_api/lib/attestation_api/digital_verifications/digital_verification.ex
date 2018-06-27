@@ -3,16 +3,19 @@ defmodule AttestationApi.DigitalVerifications.DigitalVerification do
 
   use Ecto.Schema
   import Ecto.Changeset
+  alias AttestationApi.DigitalVerifications.DigitalVerificationDocument
 
   @required_fields ~w(account_address session_id)a
-  @optional_fileds ~w(status contract_address veriffme_code veriffme_status veriffme_reason veriffme_comments)a
+  @optional_fileds ~w(contract_address status veriffme_code veriffme_status veriffme_reason veriffme_comments)a
 
   @status_new "NEW"
+  @status_pending "PENDING"
   @status_passed "PASSED"
   @status_failed "FAILED"
 
   @spec status(atom) :: binary
   def status(:new), do: @status_new
+  def status(:pending), do: @status_pending
   def status(:passed), do: @status_passed
   def status(:failed), do: @status_failed
 
@@ -27,6 +30,8 @@ defmodule AttestationApi.DigitalVerifications.DigitalVerification do
     field(:veriffme_reason, :string)
     field(:veriffme_comments, {:array, :map})
     timestamps()
+
+    has_many(:documents, DigitalVerificationDocument, foreign_key: :verification_id)
   end
 
   @spec changeset(map) :: Ecto.Changeset.t()
