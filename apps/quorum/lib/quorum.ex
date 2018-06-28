@@ -31,7 +31,7 @@ defmodule Quorum do
   defp create_verification_transaction(account_address, index, contract_func, callback) when is_callback(callback) do
     return_key = UUID.uuid4()
     kimlic_ap_address = Context.get_kimlic_attestation_party_address()
-    kimlic_ap_password = Confex.fetch_env!(:quorum, :kimlil_ap_password)
+    kimlic_ap_password = Confex.fetch_env!(:quorum, :kimlic_ap_password)
     verification_contract_factory_address = Context.get_verification_contract_factory_address()
 
     meta = %{
@@ -58,7 +58,7 @@ defmodule Quorum do
   def set_verification_result_transaction(contract_address) do
     data = hash_data(:base_verification, "setVerificationResult", [{true}])
     kimlic_ap_address = Context.get_kimlic_attestation_party_address()
-    kimlic_ap_password = Confex.fetch_env!(:quorum, :kimlil_ap_password)
+    kimlic_ap_password = Confex.fetch_env!(:quorum, :kimlic_ap_password)
 
     @quorum_client.request("personal_unlockAccount", [kimlic_ap_address, kimlic_ap_password], [])
 
