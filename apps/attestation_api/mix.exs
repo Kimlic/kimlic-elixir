@@ -30,7 +30,6 @@ defmodule AttestationApi.Mixfile do
 
   defp deps do
     [
-      {:core, in_umbrella: true},
       {:quorum, in_umbrella: true},
       {:phoenix, "~> 1.3.2"},
       {:phoenix_pubsub, "~> 1.0"},

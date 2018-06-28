@@ -5,7 +5,6 @@ defmodule AttestationApi.Factories do
 
   alias AttestationApi.DigitalVerifications.DigitalVerification
   alias AttestationApi.DigitalVerifications.DigitalVerificationDocument
-  alias Core.Verifications.TokenGenerator
   alias Ecto.UUID
 
   ### Factories
@@ -45,7 +44,7 @@ defmodule AttestationApi.Factories do
   def generate(:account_address) do
     account_address =
       :sha256
-      |> :crypto.hash(TokenGenerator.generate(:email))
+      |> :crypto.hash(to_string(:rand.uniform()))
       |> Base.encode16(case: :lower)
       |> String.slice(0..39)
 
