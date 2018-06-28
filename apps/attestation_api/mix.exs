@@ -30,6 +30,7 @@ defmodule AttestationApi.Mixfile do
 
   defp deps do
     [
+      {:core, in_umbrella: true},
       {:quorum, in_umbrella: true},
       {:phoenix, "~> 1.3.2"},
       {:phoenix_pubsub, "~> 1.0"},
@@ -39,7 +40,8 @@ defmodule AttestationApi.Mixfile do
       {:ecto, "~> 2.2"},
       {:postgrex, ">= 0.0.0"},
       {:eview, "~> 0.12"},
-      {:mox, "~> 0.3", only: :test}
+      {:mox, "~> 0.3", only: :test},
+      {:ex_machina, "~> 2.2", only: :test}
     ]
   end
 

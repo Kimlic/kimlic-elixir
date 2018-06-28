@@ -31,7 +31,7 @@ defmodule AttestationApi.DigitalVerificationController.UploadMediaTest do
                |> post(digital_verification_path(conn, :upload_media, @vendor_id, session_id), request_data)
                |> json_response(200)
 
-      assert %DigitalVerification{status: @status_pending} = DigitalVerifications.get(session_id)
+      assert %DigitalVerification{status: @status_pending} = DigitalVerifications.get_by(%{session_id: session_id})
     end
 
     test "success: partial document loading (document-back needed)", %{conn: conn} do
@@ -49,7 +49,7 @@ defmodule AttestationApi.DigitalVerificationController.UploadMediaTest do
                |> post(digital_verification_path(conn, :upload_media, @vendor_id, session_id), request_data)
                |> json_response(200)
 
-      assert %DigitalVerification{status: @status_new} = DigitalVerifications.get(session_id)
+      assert %DigitalVerification{status: @status_new} = DigitalVerifications.get_by(%{session_id: session_id})
     end
 
     test "success: load first document", %{conn: conn} do
@@ -64,7 +64,7 @@ defmodule AttestationApi.DigitalVerificationController.UploadMediaTest do
                |> post(digital_verification_path(conn, :upload_media, @vendor_id, session_id), request_data)
                |> json_response(200)
 
-      assert %DigitalVerification{status: @status_new} = DigitalVerifications.get(session_id)
+      assert %DigitalVerification{status: @status_new} = DigitalVerifications.get_by(%{session_id: session_id})
     end
 
     test "fail to upload media", %{conn: conn} do
@@ -117,7 +117,7 @@ defmodule AttestationApi.DigitalVerificationController.UploadMediaTest do
                |> post(digital_verification_path(conn, :upload_media, @vendor_id, session_id), request_data)
                |> json_response(500)
 
-      assert %DigitalVerification{status: @status_new} = DigitalVerifications.get(session_id)
+      assert %DigitalVerification{status: @status_new} = DigitalVerifications.get_by(%{session_id: session_id})
     end
 
     test "invalid session id", %{conn: conn} do

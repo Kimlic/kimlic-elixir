@@ -50,7 +50,7 @@ defmodule AttestationApi.DigitalVerifications do
   @spec handle_verification_result(map) :: :ok | {:error, atom}
   def handle_verification_result(params) do
     with {:ok, verification} <- update_status(params),
-         :ok <- remove_verificaiton_documents(verification) do
+         {_deleted_count, nil} <- remove_verification_documents(verification) do
       # todo: call quorum
       :ok
     end
@@ -58,7 +58,7 @@ defmodule AttestationApi.DigitalVerifications do
 
   @spec update_status(map) :: :ok | {:error, atom}
   defp update_status(%{"verification" => %{"id" => session_id} = verification_result}) do
-    with %{status: @verification_status_new} = verification <- DigitalVerifications.get(session_id),
+    with %{status: @verification_status_new} = verification <- DigitalVerifications.get_by(%{session_id: session_id}),
          {:ok, verification} <- update(verification, get_verification_data_from_result(verification_result)) do
       {:ok, verification}
     else
@@ -66,15 +66,11 @@ defmodule AttestationApi.DigitalVerifications do
     end
   end
 
-  @spec remove_verificaiton_documents(%DigitalVerification{}) :: :ok | {:error, binary}
-  defp remove_verificaiton_documents(%DigitalVerification{id: verification_id}) do
+  @spec remove_verification_documents(%DigitalVerification{}) :: {integer, nil} | {:error, binary}
+  defp remove_verification_documents(%DigitalVerification{id: verification_id}) do
     DigitalVerificationDocument
     |> where([dv_d], dv_d.verification_id == ^verification_id)
     |> Repo.delete_all()
-    |> case do
-      {deleted_count, nil} when is_integer(deleted_count) -> :ok
-      err -> err
-    end
   end
 
   @spec get_verification_data_from_result(map) :: map
@@ -107,13 +103,8 @@ defmodule AttestationApi.DigitalVerifications do
 
   ### Quering
 
-  # todo: maybe rename? get_session_by_id, get(%{} = params)
-  @spec get(binary) :: %DigitalVerification{} | nil
-  def get(session_id) when is_binary(session_id) do
-    DigitalVerification
-    |> where([dv], dv.session_id == ^session_id)
-    |> Repo.one()
-  end
+  @spec get_by(map) :: %DigitalVerification{} | nil
+  def get_by(params), do: Repo.get_by(DigitalVerification, params)
 
   @spec insert(map) :: {:ok, %DigitalVerification{}} | {:error, binary}
   def insert(params) when is_map(params) do

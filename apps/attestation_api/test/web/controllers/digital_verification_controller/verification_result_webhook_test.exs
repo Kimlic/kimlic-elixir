@@ -39,7 +39,7 @@ defmodule AttestationApi.DigitalVerificationController.VerificationResultWebhook
              |> json_response(200)
 
       status_passed = DigitalVerification.status(:passed)
-      assert %{status: ^status_passed} = DigitalVerifications.get(session_id)
+      assert %{status: ^status_passed} = DigitalVerifications.get_by(%{session_id: session_id})
 
       assert [] = Repo.all(DigitalVerificationDocument)
     end
@@ -89,7 +89,9 @@ defmodule AttestationApi.DigitalVerificationController.VerificationResultWebhook
              |> json_response(200)
 
       status_failed = DigitalVerification.status(:failed)
-      assert %{status: ^status_failed, veriffme_code: ^fail_code} = DigitalVerifications.get(session_id)
+
+      assert %{status: ^status_failed, veriffme_code: ^fail_code} =
+               DigitalVerifications.get_by(%{session_id: session_id})
     end
 
     test "verification not found on second call", %{conn: conn} do
