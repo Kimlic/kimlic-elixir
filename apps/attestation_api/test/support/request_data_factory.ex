@@ -1,7 +1,7 @@
 defmodule AttestationApi.RequestDataFactory do
   @moduledoc false
 
-  import Core.Factory
+  import AttestationApi.Factory
 
   @spec data_for(atom, map) :: map
   def data_for(atom, params \\ %{})

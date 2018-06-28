@@ -1,9 +1,9 @@
-defmodule Core.Clients.Veriffme do
+defmodule AttestationApi.Clients.Veriffme do
   @moduledoc false
 
   alias __MODULE__
 
-  @behaviour Core.Clients.VeriffmeBehaviour
+  @behaviour AttestationApi.Clients.VeriffmeBehaviour
 
   @typep api_response :: {:ok, HTTPoison.Response.t() | HTTPoison.AsyncResponse.t()} | {:error, HTTPoison.Error.t()}
 
@@ -103,12 +103,12 @@ defmodule Core.Clients.Veriffme do
   end
 
   @spec base_url :: binary
-  defp base_url, do: Confex.fetch_env!(:core, Veriffme)[:api_url]
+  defp base_url, do: Confex.fetch_env!(:attestation_api, Veriffme)[:api_url]
 
   @spec headers(map) :: list
   defp headers(request_data) do
-    auth_client = Confex.fetch_env!(:core, Veriffme)[:auth_client]
-    api_secret = Confex.fetch_env!(:core, Veriffme)[:api_secret]
+    auth_client = Confex.fetch_env!(:attestation_api, Veriffme)[:auth_client]
+    api_secret = Confex.fetch_env!(:attestation_api, Veriffme)[:api_secret]
 
     signature =
       :sha256
@@ -123,7 +123,7 @@ defmodule Core.Clients.Veriffme do
   end
 
   @spec timestamp(binary | nil) :: binary
-  def timestamp(unix_timestamp \\ nil) do
+  defp timestamp(unix_timestamp \\ nil) do
     unix_timestamp
     |> case do
       nil -> DateTime.utc_now()

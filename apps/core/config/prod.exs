@@ -14,8 +14,3 @@ config :core, Core.Clients.Mailer,
 config :ex_twilio,
   account_sid: "${TWILIO_ACCOUNT_SID}",
   auth_token: "${TWILIO_AUTH_TOKEN}"
-
-config :core, Core.Clients.Veriffme,
-  api_url: "${VERIFFME_API_URL}",
-  auth_client: "${VERIFFME_AUTH_CLIENT}",
-  api_secret: "${VERIFFME_API_SECRET}"

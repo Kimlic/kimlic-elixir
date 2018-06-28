@@ -10,6 +10,13 @@ config :attestation_api, AttestationApi.Endpoint,
 
 config :attestation_api, ecto_repos: [AttestationApi.Repo]
 
+config :attestation_api, :dependencies, veriffme: AttestationApi.Clients.Veriffme
+
+config :attestation_api, AttestationApi.Clients.Veriffme,
+  api_url: {:system, "VERIFFME_API_URL"},
+  auth_client: {:system, "VERIFFME_AUTH_CLIENT"},
+  api_secret: {:system, "VERIFFME_API_SECRET"}
+
 config :logger, :console,
   format: "$time $metadata[$level] $message\n",
   metadata: [:user_id]

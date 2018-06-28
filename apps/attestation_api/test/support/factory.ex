@@ -3,7 +3,6 @@ defmodule AttestationApi.Factory do
 
   alias AttestationApi.DigitalVerifications.DigitalVerification
   alias AttestationApi.Repo
-  alias Core.Verifications.TokenGenerator
   alias Ecto.UUID
 
   def insert(:digital_verification, params) do
@@ -19,7 +18,7 @@ defmodule AttestationApi.Factory do
     |> entity_module.changeset()
     |> case do
       %{valid?: true} = changeset -> changeset
-      _ -> raise "Changeset of #{entity_module} is not valid in `Core.Factory`"
+      _ -> raise "[AttestationApi.Factory] Changeset of #{entity_module} is not valid"
     end
   end
 
@@ -46,7 +45,7 @@ defmodule AttestationApi.Factory do
   def generate(:account_address) do
     account_address =
       :sha256
-      |> :crypto.hash(TokenGenerator.generate(:email))
+      |> :crypto.hash(to_string(:rand.uniform()))
       |> Base.encode16(case: :lower)
       |> String.slice(0..39)
 

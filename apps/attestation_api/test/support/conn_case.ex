@@ -21,7 +21,7 @@ defmodule AttestationApi.ConnCase do
       use Phoenix.ConnTest
       import AttestationApi.Router.Helpers
       import AttestationApi.Factory
-      import Core.TestHelper
+      import AttestationApi.TestHelper
 
       # The default endpoint for testing
       @endpoint AttestationApi.Endpoint
@@ -45,7 +45,7 @@ defmodule AttestationApi.ConnCase do
 
   @spec put_account_address(Conn.t(), map) :: Conn.t()
   def put_account_address(conn, %{account_address: true}) do
-    account_address = Core.Factory.generate(:account_address)
+    account_address = AttestationApi.Factory.generate(:account_address)
 
     conn
     |> Plug.Conn.put_req_header("account-address", account_address)
