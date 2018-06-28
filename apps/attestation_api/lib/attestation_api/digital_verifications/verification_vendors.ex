@@ -26,13 +26,13 @@ defmodule AttestationApi.DigitalVerifications.VerificationVendors do
   def check_context_items(%{
         "vendor_id" => vendor_id,
         "document_type" => document_type,
-        "document_payload" => document_payload,
-        "country" => country
+        "country" => country,
+        "context" => context
       }) do
     with {:ok, vendor} <- get_by_id(vendor_id),
          %{"countries" => countries, "context" => contexts} <- get_in(vendor, ["documents", document_type]),
          :ok <- validate_country(countries, country),
-         :ok <- validate_contexts(document_payload, contexts) do
+         :ok <- validate_context(contexts, context) do
       :ok
     else
       {:error, _message} = err -> err
@@ -48,14 +48,21 @@ defmodule AttestationApi.DigitalVerifications.VerificationVendors do
     end
   end
 
-  @spec validate_contexts(map, list) :: :ok | {:error, binary}
-  defp validate_contexts(document_payload, contexts) do
-    document_payload
-    |> Map.keys()
-    |> Enum.all?(&(&1 in contexts))
-    |> case do
+  @spec validate_context(list, binary) :: :ok | {:error, binary}
+  defp validate_context(contexts, context) do
+    case context in contexts do
       true -> :ok
-      false -> {:error, "Invalid document contexts"}
+      false -> {:error, "Country doesn't exist"}
+    end
+  end
+
+  @spec get_contexts(binary, binary) :: {:ok, list} | {:error, :not_found}
+  def get_contexts(vendor_id, document_type) do
+    vendor_id
+    |> get_by_id()
+    |> case do
+      {:ok, vendor} -> {:ok, vendor["documents"][document_type]["context"]}
+      err -> err
     end
   end
 end
