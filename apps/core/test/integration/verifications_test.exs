@@ -36,9 +36,8 @@ defmodule Core.Integration.VerificationsTest do
     assert {:ok, _} = QuorumHttpClient.request("personal_unlockAccount", [account_address, "p@ssW0rd"], [])
 
     email = "test@example.com"
-    index = :rand.uniform(100)
 
-    assert {:ok, verification} = Verifications.create_email_verification(email, account_address, index)
+    assert {:ok, verification} = Verifications.create_email_verification(email, account_address)
     refute verification.contract_address
 
     contract_address = assert_contract_address(verification.redis_key)

@@ -16,19 +16,19 @@ defmodule Core.Verifications do
 
   ### Business
 
-  @spec create_email_verification(binary, binary, integer) :: :ok | {:error, binary}
-  def create_email_verification(email, account_address, index) do
+  @spec create_email_verification(binary, integer) :: :ok | {:error, binary}
+  def create_email_verification(email, account_address) do
     with {:ok, verification} <- create_verification(account_address, :email),
-         :ok <- create_verification_contract(:email, account_address, index),
+         :ok <- create_verification_contract(:email, account_address),
          :ok <- Email.send_verification(email, verification) do
       {:ok, verification}
     end
   end
 
-  @spec create_phone_verification(binary, binary, integer) :: :ok | {:error, binary}
-  def create_phone_verification(phone, account_address, index) do
+  @spec create_phone_verification(binary, integer) :: :ok | {:error, binary}
+  def create_phone_verification(phone, account_address) do
     with {:ok, %Verification{token: sms_code}} <- create_verification(account_address, :phone),
-         :ok <- create_verification_contract(:phone, account_address, index),
+         :ok <- create_verification_contract(:phone, account_address),
          # todo: move message to resources
          {:ok, %{}} <- @messenger.send(phone, "Here is your code: #{sms_code}") do
       :ok
@@ -46,12 +46,11 @@ defmodule Core.Verifications do
     |> insert_verification(verification_ttl(type))
   end
 
-  @spec create_verification_contract(atom, binary, binary) :: :ok
-  defp create_verification_contract(type, account_address, index) do
+  @spec create_verification_contract(atom, binary) :: :ok
+  defp create_verification_contract(type, account_address) do
     Quorum.create_verification_contract(
       type,
       account_address,
-      index,
       {__MODULE__, :update_verification_contract_address, [account_address, type]}
     )
   end

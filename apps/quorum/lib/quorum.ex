@@ -19,16 +19,16 @@ defmodule Quorum do
             when is_tuple(mfa) and tuple_size(mfa) == 3 and
                    (is_atom(elem(mfa, 0)) and is_atom(elem(mfa, 1)) and is_list(elem(mfa, 2)))
 
-  @spec create_verification_contract(atom, binary, integer, callback) :: :ok
-  def create_verification_contract(:email, account_address, index, callback),
-    do: create_verification_transaction(account_address, index, "createEmailVerification", callback)
+  @spec create_verification_contract(atom, binary, callback) :: :ok
+  def create_verification_contract(:email, account_address, callback),
+    do: create_verification_transaction(account_address, "createEmailVerification", callback)
 
-  @spec create_verification_contract(atom, binary, integer, callback) :: :ok
-  def create_verification_contract(:phone, account_address, index, callback),
-    do: create_verification_transaction(account_address, index, "createPhoneVerification", callback)
+  @spec create_verification_contract(atom, binary, callback) :: :ok
+  def create_verification_contract(:phone, account_address, callback),
+    do: create_verification_transaction(account_address, "createPhoneVerification", callback)
 
-  @spec create_verification_transaction(binary, binary, binary, callback) :: :ok
-  defp create_verification_transaction(account_address, index, contract_func, callback) when is_callback(callback) do
+  @spec create_verification_transaction(binary, binary, callback) :: :ok
+  defp create_verification_transaction(account_address, contract_func, callback) when is_callback(callback) do
     return_key = UUID.uuid4()
     kimlic_ap_address = Context.get_kimlic_attestation_party_address()
     kimlic_ap_password = Confex.fetch_env!(:quorum, :kimlic_ap_password)
@@ -45,7 +45,7 @@ defmodule Quorum do
       to: verification_contract_factory_address,
       data:
         hash_data(:verification_factory, contract_func, [
-          {account_address, kimlic_ap_address, index, account_address, return_key}
+          {account_address, kimlic_ap_address, account_address, return_key}
         ])
     }
 
