@@ -4,9 +4,9 @@ defmodule MobileApi.VerificationController do
   use MobileApi, :controller
 
   alias Core.Verifications
-  alias MobileApi.Validators.Verification.{ApproveValidator, PhoneValidator, EmailValidator}
   alias MobileApi.FallbackController
   alias MobileApi.Plugs.RequestValidator
+  alias MobileApi.Validators.Verification.{ApproveValidator, EmailValidator, PhoneValidator}
   alias Plug.Conn
 
   action_fallback(FallbackController)
