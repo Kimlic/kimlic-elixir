@@ -59,6 +59,26 @@ defmodule MobileApi.VerificationControllerTest do
       assert {:ok, %Verification{token: ^token, entity_type: @entity_type_email}} =
                Verifications.get(:email, account_address)
     end
+
+    test "email param not set", %{conn: conn} do
+      assert [err] =
+               conn
+               |> post(verification_path(conn, :create_email_verification), %{not: :set})
+               |> json_response(422)
+               |> get_in(~w(error invalid))
+
+      assert "$.email" == err["entry"]
+    end
+
+    test "invalid email", %{conn: conn} do
+      assert [err] =
+               conn
+               |> post(verification_path(conn, :create_email_verification), %{email: "invalid.format.com"})
+               |> json_response(422)
+               |> get_in(~w(error invalid))
+
+      assert "$.email" == err["entry"]
+    end
   end
 
   describe "verify email" do
@@ -113,6 +133,26 @@ defmodule MobileApi.VerificationControllerTest do
 
       assert {:ok, %Verification{token: ^token, entity_type: @entity_type_phone}} =
                Verifications.get(:phone, account_address)
+    end
+
+    test "phone param not set", %{conn: conn} do
+      assert [err] =
+               conn
+               |> post(verification_path(conn, :create_phone_verification), %{not: :set})
+               |> json_response(422)
+               |> get_in(~w(error invalid))
+
+      assert "$.phone" == err["entry"]
+    end
+
+    test "invalid phone", %{conn: conn} do
+      assert [err] =
+               conn
+               |> post(verification_path(conn, :create_phone_verification), %{phone: "000111222"})
+               |> json_response(422)
+               |> get_in(~w(error invalid))
+
+      assert "$.phone" == err["entry"]
     end
 
     test "fail to send sms", %{conn: conn} do

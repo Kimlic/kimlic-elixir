@@ -1,13 +1,15 @@
-defmodule MobileApi.ApproveValidator do
+defmodule MobileApi.Validators.Verification.PhoneValidator do
   use Ecto.Schema
 
   import Ecto.Changeset
 
-  @required ~w(code)a
+  alias EView.Changeset.Validators.PhoneNumber
+
+  @required ~w(phone)a
 
   @primary_key false
   embedded_schema do
-    field(:code, :string)
+    field(:phone, :string)
   end
 
   @spec changeset(map) :: Changeset.t()
@@ -15,5 +17,6 @@ defmodule MobileApi.ApproveValidator do
     %__MODULE__{}
     |> cast(attrs, @required)
     |> validate_required(@required)
+    |> PhoneNumber.validate_phone_number(:phone)
   end
 end
