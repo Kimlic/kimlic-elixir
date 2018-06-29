@@ -21,7 +21,7 @@ defmodule MobileApi.VerificationController do
   def create_email_verification(conn, params) do
     account_address = conn.assigns.account_address
 
-    with {:ok, _} <- Verifications.create_email_verification(params["email"], account_address, params["index"]) do
+    with {:ok, _} <- Verifications.create_email_verification(params["email"], account_address) do
       conn
       |> put_status(201)
       |> json(%{})
@@ -41,7 +41,7 @@ defmodule MobileApi.VerificationController do
   def create_phone_verification(conn, params) do
     account_address = conn.assigns.account_address
 
-    with :ok <- Verifications.create_phone_verification(params["phone"], account_address, params["index"]) do
+    with :ok <- Verifications.create_phone_verification(params["phone"], account_address) do
       conn
       |> put_status(201)
       |> json(%{})

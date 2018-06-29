@@ -15,12 +15,11 @@ defmodule Quorum.Unit.SmartContractTest do
     assert {:ok, _} = QuorumHttpClient.request("personal_unlockAccount", [account_address, "p@ssW0rd"], [])
     assert {:ok, _} = QuorumHttpClient.request("personal_unlockAccount", [kimlic_ap_address, "Kimlicp@ssw0rd"], [])
 
-    index = 1
     return_key = UUID.uuid4()
 
     data =
       Contract.hash_data(:verification_factory, "createEmailVerification", [
-        {account_address, kimlic_ap_address, index, kimlic_ap_address, return_key}
+        {account_address, kimlic_ap_address, kimlic_ap_address, return_key}
       ])
 
     tx_data = %{
