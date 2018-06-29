@@ -20,7 +20,7 @@ defmodule AttestationApi.DigitalVerificationController do
     end
   end
 
-  # todo: validate request, contexts: face, document-front, document-back...
+  # todo: validate request, contexts: face, document-front, document-back..., timestamp
   @spec upload_media(Conn.t(), map) :: Conn.t()
   def upload_media(conn, %{"vendor_id" => _, "session_id" => _} = params) do
     with :ok <- UploadMedia.handle(conn.assigns.account_address, params) do

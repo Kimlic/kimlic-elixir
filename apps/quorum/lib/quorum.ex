@@ -8,7 +8,8 @@ defmodule Quorum do
   alias Quorum.Contract.Context
   alias Quorum.Jobs.TransactionCreate
 
-  @type callback :: nil | {module :: atom, function :: atom, args :: list}
+  @type callback :: nil | {module :: module, function :: atom, args :: list}
+  @type quorum_client_response_t :: {:ok, term} | {:error, map | binary | atom}
 
   @gas "0x500000"
   @gas_price "0x0"
@@ -54,9 +55,9 @@ defmodule Quorum do
     create_transaction(transaction_data, meta)
   end
 
-  @spec set_verification_result_transaction(binary) :: :ok
-  def set_verification_result_transaction(contract_address) do
-    data = hash_data(:base_verification, "setVerificationResult", [{true}])
+  @spec set_verification_result_transaction(binary, boolean) :: :ok
+  def set_verification_result_transaction(contract_address, status \\ true) do
+    data = hash_data(:base_verification, "setVerificationResult", [{status}])
     kimlic_ap_address = Context.get_kimlic_attestation_party_address()
     kimlic_ap_password = Confex.fetch_env!(:quorum, :kimlic_ap_password)
 
@@ -81,8 +82,8 @@ defmodule Quorum do
       2. Try 5 times, until success responce. On failed response - mark job as failed
       3. If argument `provide_return_value` set as true: fetch `return_value` from Quorum using `debug_traceTransaction` call
       4. Call callback if it provided. Transaction status and return value will be added as last arguments.
-         Transaction status argument - @spec map
-         Retrun value argument - @spec {:ok, binary} | {:error, binary}
+         Transaction status argument - @type :: map
+         Retrun value argument - @type :: {:ok, binary} | {:error, binary}
 
     ## Examples
 

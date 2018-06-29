@@ -4,6 +4,7 @@ defmodule AttestationApi.DigitalVerificationController.VerificationResultWebhook
   use AttestationApi.ConnCase, async: false
 
   import AttestationApi.RequestDataFactory
+  import Mox
 
   alias AttestationApi.DigitalVerifications
   alias AttestationApi.DigitalVerifications.DigitalVerification
@@ -15,11 +16,23 @@ defmodule AttestationApi.DigitalVerificationController.VerificationResultWebhook
   @moduletag :account_address
 
   describe "verification result webhook" do
-    test "verification approved", %{conn: conn} do
-      session_id = UUID.generate()
+    setup do
+      expect(QuorumClientMock, :eth_call, 2, fn params, _block, _opts ->
+        assert Map.has_key?(params, :data)
+        assert Map.has_key?(params, :to)
+        {:ok, "0x111f4029f7e13575d5f4eab2c65ccc43b21aa67f4cfa200"}
+      end)
 
-      %{id: verification_id} =
-        insert(:digital_verification, %{account_address: get_account_address(conn), session_id: session_id})
+      expect(QuorumClientMock, :request, fn method, _params, _opts ->
+        assert "personal_unlockAccount" == method
+        {:ok, true}
+      end)
+
+      :ok
+    end
+
+    test "verification approved", %{conn: conn} do
+      %{id: verification_id, session_id: session_id} = prepare_success_data(conn)
 
       insert(:digital_verification_document, %{verification_id: verification_id, context: "face"})
       insert(:digital_verification_document, %{verification_id: verification_id, context: "document-front"})
@@ -45,8 +58,7 @@ defmodule AttestationApi.DigitalVerificationController.VerificationResultWebhook
     end
 
     test "empty verification documents", %{conn: conn} do
-      session_id = UUID.generate()
-      insert(:digital_verification, %{account_address: get_account_address(conn), session_id: session_id})
+      %{session_id: session_id} = prepare_success_data(conn)
 
       request_data =
         data_for(:digital_verification_result_webhook, %{
@@ -63,9 +75,8 @@ defmodule AttestationApi.DigitalVerificationController.VerificationResultWebhook
     end
 
     test "verification declined", %{conn: conn} do
-      session_id = UUID.generate()
+      %{session_id: session_id} = prepare_success_data(conn)
       fail_code = 9102
-      insert(:digital_verification, %{account_address: get_account_address(conn), session_id: session_id})
 
       request_data =
         data_for(:digital_verification_result_webhook, %{
@@ -95,8 +106,7 @@ defmodule AttestationApi.DigitalVerificationController.VerificationResultWebhook
     end
 
     test "verification not found on second call", %{conn: conn} do
-      session_id = UUID.generate()
-      insert(:digital_verification, %{account_address: get_account_address(conn), session_id: session_id})
+      %{session_id: session_id} = prepare_success_data(conn)
 
       request_data =
         data_for(:digital_verification_result_webhook, %{
@@ -115,5 +125,15 @@ defmodule AttestationApi.DigitalVerificationController.VerificationResultWebhook
              |> post(digital_verification_path(conn, :verification_result_webhook), request_data)
              |> json_response(404)
     end
+  end
+
+  defp prepare_success_data(conn) do
+    session_id = UUID.generate()
+
+    insert(:digital_verification, %{
+      status: DigitalVerification.status(:pending),
+      account_address: get_account_address(conn),
+      session_id: session_id
+    })
   end
 end

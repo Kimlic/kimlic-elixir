@@ -10,15 +10,19 @@ defmodule AttestationApi.DigitalVerifications do
 
   @veriffme_client Application.get_env(:attestation_api, :dependencies)[:veriffme]
 
-  @verification_status_new DigitalVerification.status(:new)
-
+  @verification_status_passed DigitalVerification.status(:passed)
+  @verification_status_pending DigitalVerification.status(:pending)
   @verification_code_success 9001
 
   @spec create_session(binary, map) :: {:ok, binary} | {:error, binary}
   def create_session(account_address, params) do
     with {:ok, session_id} <- create_session_on_veriffme(params),
-         {:ok, _verification} <- insert(%{account_address: account_address, session_id: session_id}),
-         :ok <- create_contract(account_address) do
+         {:ok, _verification} <-
+           insert(%{
+             account_address: account_address,
+             session_id: session_id,
+             contract_address: params["contract_address"]
+           }) do
       {:ok, session_id}
     end
   end
@@ -41,24 +45,19 @@ defmodule AttestationApi.DigitalVerifications do
     end
   end
 
-  @spec create_contract(binary) :: :ok
-  defp create_contract(_account_address) do
-    # todo: call quorum
-    :ok
-  end
-
   @spec handle_verification_result(map) :: :ok | {:error, atom}
   def handle_verification_result(params) do
     with {:ok, verification} <- update_status(params),
-         {_deleted_count, nil} <- remove_verification_documents(verification) do
-      # todo: call quorum
+         {_deleted_count, nil} <- remove_verification_documents(verification),
+         :ok <- set_quorum_verification_result(verification) do
       :ok
     end
   end
 
   @spec update_status(map) :: :ok | {:error, atom}
   defp update_status(%{"verification" => %{"id" => session_id} = verification_result}) do
-    with %{status: @verification_status_new} = verification <- DigitalVerifications.get_by(%{session_id: session_id}),
+    with %{status: @verification_status_pending} = verification <-
+           DigitalVerifications.get_by(%{session_id: session_id}),
          {:ok, verification} <- update(verification, get_verification_data_from_result(verification_result)) do
       {:ok, verification}
     else
@@ -74,8 +73,8 @@ defmodule AttestationApi.DigitalVerifications do
   end
 
   @spec get_verification_data_from_result(map) :: map
-  def get_verification_data_from_result(%{"code" => code, "status" => veriffme_status})
-      when code == @verification_code_success do
+  defp get_verification_data_from_result(%{"code" => code, "status" => veriffme_status})
+       when code == @verification_code_success do
     %{
       status: DigitalVerification.status(:passed),
       veriffme_code: code,
@@ -84,7 +83,7 @@ defmodule AttestationApi.DigitalVerifications do
   end
 
   @spec get_verification_data_from_result(map) :: map
-  def get_verification_data_from_result(verification_result) do
+  defp get_verification_data_from_result(verification_result) do
     %{
       status: DigitalVerification.status(:failed),
       veriffme_code: verification_result["code"],
@@ -94,11 +93,11 @@ defmodule AttestationApi.DigitalVerifications do
     }
   end
 
-  ### Callbacks
+  @spec set_quorum_verification_result(%DigitalVerification{}) :: :ok
+  def set_quorum_verification_result(%DigitalVerification{contract_address: contract_address, status: status}) do
+    verification_passed? = status == @verification_status_passed
 
-  @spec update_contract_address(binary, term, term) :: :ok
-  def update_contract_address(_account_address, _transaction_status, {:ok, _contract_address}) do
-    # todo: update verification
+    Quorum.set_verification_result_transaction(contract_address, verification_passed?)
   end
 
   ### Quering
