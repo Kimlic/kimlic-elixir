@@ -4,9 +4,9 @@ defmodule MobileApi.VerificationController do
   use MobileApi, :controller
 
   alias Core.Verifications
-  alias MobileApi.ApproveValidator
   alias MobileApi.FallbackController
   alias MobileApi.Plugs.RequestValidator
+  alias MobileApi.Validators.Verification.{ApproveValidator, EmailValidator, PhoneValidator}
   alias Plug.Conn
 
   action_fallback(FallbackController)
@@ -14,6 +14,16 @@ defmodule MobileApi.VerificationController do
   plug(
     RequestValidator,
     [validator: ApproveValidator, error_handler: FallbackController] when action in ~w(verify_email verify_phone)a
+  )
+
+  plug(
+    RequestValidator,
+    [validator: EmailValidator, error_handler: FallbackController] when action == :create_email_verification
+  )
+
+  plug(
+    RequestValidator,
+    [validator: PhoneValidator, error_handler: FallbackController] when action == :create_phone_verification
   )
 
   # todo: validate request
