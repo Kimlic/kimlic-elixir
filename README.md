@@ -13,5 +13,4 @@ Local configuration:
 - found Kimlic AP (`"Kimlic":{"address":"0xfc1a3f6fd7876d37a677e02de695099d1de12c95","password":"Kimlicp@ssw0rd"}`) 
 - set `:quorum, kimlic_ap_address: "%Kimlic.address%"`
 - set `:quorum, kimlic_ap_password: "%Kimlic.password%"`
-- ??
 - profit
