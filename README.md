@@ -1,4 +1,5 @@
 # Kimlic application
+[![Build Status](https://travis-ci.com/Kimlic/kimlic-elixir.svg?token=gBEogjXajqrbo6djzwm2&branch=develop)](https://travis-ci.com/Kimlic/kimlic-elixir)
 
 ## Quorum
 
