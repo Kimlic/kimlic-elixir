@@ -39,8 +39,8 @@ Also sample `.env` can be used as payload for `docker run` cli.
 
 | VAR_NAME                   | Default Value | Description                        |
 | -------------------------- | ------------- | ---------------------------------- |
+| AUTHORIZATION_SALT         | not set       | Authorization salt.                |
 | QUORUM_URI                 | not set       | Quorum uri for ethereumex.         |
-| QUORUM_AUTHORIZATION_SALT  | not set       | Quorum authorization salt.         |
 | KIMLIC_AP_ADDRESS          | not set       | Kimlic attestation party address.  |
 | KIMLIC_AP_PASSWORD         | not set       | Kimlic attestation party password. |
 | CONTEXT_STORAGE_ADDRESS    | not set       | Context storage address.           |
