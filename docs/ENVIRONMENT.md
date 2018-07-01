@@ -5,38 +5,13 @@ Also sample `.env` can be used as payload for `docker run` cli.
 
 # Endpoints
 
-## Attestation API Endpoint
+## API Endpoints (Attestation / Mobile / Public / Proxy)
 
-| VAR_NAME                   | Default Value    | Description                         |
-| -------------------------- | ---------------- | ----------------------------------- |
-| ATTESTATION_API_HOST       | `80`             | HTTP host for web app to listen on. |
-| ATTESTATION_API_PORT       | `localhost`      | HTTP port for web app to listen on. |
-| ATTESTATION_API_SECRET_KEY | `b9WHCgR5TGcr`.. | Phoenix [`:secret_key_base`].       |
-
-## Mobile API Endpoint
-
-| VAR_NAME              | Default Value    | Description                         |
-| --------------------- | ---------------- | ----------------------------------- |
-| MOBILE_API_HOST       | `80`             | HTTP host for web app to listen on. |
-| MOBILE_API_PORT       | `localhost`      | HTTP port for web app to listen on. |
-| MOBILE_API_SECRET_KEY | `b9WHCgR5TGcr`.. | Phoenix [`:secret_key_base`].       |
-
-
-## Public API Endpoint
-
-| VAR_NAME              | Default Value    | Description                         |
-| --------------------- | ---------------- | ----------------------------------- |
-| PUBLIC_API_HOST       | `80`             | HTTP host for web app to listen on. |
-| PUBLIC_API_PORT       | `localhost`      | HTTP port for web app to listen on. |
-| PUBLIC_API_SECRET_KEY | `b9WHCgR5TGcr`.. | Phoenix [`:secret_key_base`].       |
-
-## Proxy API Endpoint
-
-| VAR_NAME              | Default Value    | Description |
-| --------------------- | ---------------- | ----------------------------------- |
-| PROXY_API_HOST        | `80`             | HTTP host for web app to listen on. |
-| PROXY_API_PORT        | `localhost`      | HTTP port for web app to listen on. |
-| PROXY_API_SECRET_KEY  | `b9WHCgR5TGcr`.. | Phoenix [`:secret_key_base`].       |
+| VAR_NAME   | Default Value    | Description                         |
+| ---------- | ---------------- | ----------------------------------- |
+| HOST       | `80`             | HTTP host for web app to listen on. |
+| PORT       | `localhost`      | HTTP port for web app to listen on. |
+| SECRET_KEY | `b9WHCgR5TGcr`.. | Phoenix [`:secret_key_base`].       |
 
 # Infrastructure
 
