@@ -10,7 +10,7 @@ config :mobile_api, MobileApi.Endpoint,
 
 config :mobile_api,
   rate_limit_create_phone_verification_timeout:
-    {:system, :integer, "RATE_LIMIT_CREATE_PHONE_VERIFICATION_TIMEOUT", :timer.hours(24) * 7}
+    {:system, :integer, "RATE_LIMIT_CREATE_PHONE_VERIFICATION_TIMEOUT", _week_in_ms = :timer.hours(24) * 7}
 
 config :mobile_api,
   rate_limit_create_phone_verification_attempts: {:system, :integer, "RATE_LIMIT_CREATE_PHONE_VERIFICATION_ATTEMPTS", 5}
