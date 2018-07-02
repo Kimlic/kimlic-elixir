@@ -46,7 +46,7 @@ Mobile API and Core application
 
 ### Dependent applications configurations
 
-[Quorum](#Quorum)
+[Quorum](#quorum)
 
 # Attestation API
 
@@ -74,7 +74,7 @@ Mobile API and Core application
 
 ### Dependent applications configurations
 
-[Quorum](#Quorum)
+[Quorum](#quorum)
 
 # Quorum
 
