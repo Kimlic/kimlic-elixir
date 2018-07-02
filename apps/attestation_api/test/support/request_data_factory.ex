@@ -11,7 +11,8 @@ defmodule AttestationApi.RequestDataFactory do
       "first_name" => "John",
       "last_name" => "Doe",
       "lang" => "en",
-      "timestamp" => generate(:unix_timestamp)
+      "timestamp" => generate(:unix_timestamp),
+      "contract_address" => generate(:account_address)
     }
     |> Map.merge(params)
   end
