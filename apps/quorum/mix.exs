@@ -34,6 +34,7 @@ defmodule Quorum.MixProject do
     [
       {:confex, "~> 3.3.1"},
       {:ethereumex, "~> 0.3.2"},
+      {:httpoison, "~> 1.2", override: true},
       {:jason, "~> 1.0"},
       {:keccakf1600, "~> 2.0.0", hex: :keccakf1600_orig},
       {:task_bunny, "~> 0.3.2"},
