@@ -36,8 +36,10 @@ defmodule FidoQrCode.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
+      {:confex, "~> 3.3.1"},
       {:ecto, "~> 2.2"},
       {:httpoison, "~> 1.2"},
+      {:jason, "~> 1.0"},
       {:postgrex, ">= 0.0.0"},
       {:qrcode, "~> 0.1.4"}
     ]
