@@ -46,6 +46,8 @@ defmodule MobileApi.Router do
 
       post("/phone/approve", VerificationController, :verify_phone)
     end
+
+    get("/config", ConfigController, :get_config)
   end
 
   scope "/api", MobileApi do

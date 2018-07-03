@@ -18,7 +18,7 @@ defmodule Quorum.Contract.Context do
   end
 
   @spec get_context_address :: binary
-  defp get_context_address do
+  def get_context_address do
     # ToDo: add cache
     context_storage_address = Confex.fetch_env!(:quorum, :context_storage_address)
     {:ok, address} = @quorum_client.eth_call(%{to: context_storage_address, data: "0x127f0f07"}, "latest", [])
