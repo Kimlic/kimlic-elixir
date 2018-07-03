@@ -8,7 +8,8 @@ defmodule Quorum do
   alias Quorum.Contract.Context
   alias Quorum.Jobs.TransactionCreate
 
-  @type callback :: nil | {module :: atom, function :: atom, args :: list}
+  @type callback :: nil | {module :: module, function :: atom, args :: list}
+  @type quorum_client_response_t :: {:ok, term} | {:error, map | binary | atom}
 
   @gas "0x500000"
   @gas_price "0x0"
@@ -19,19 +20,19 @@ defmodule Quorum do
             when is_tuple(mfa) and tuple_size(mfa) == 3 and
                    (is_atom(elem(mfa, 0)) and is_atom(elem(mfa, 1)) and is_list(elem(mfa, 2)))
 
-  @spec create_verification_contract(atom, binary, integer, callback) :: :ok
-  def create_verification_contract(:email, account_address, index, callback),
-    do: create_verification_transaction(account_address, index, "createEmailVerification", callback)
+  @spec create_verification_contract(atom, binary, callback) :: :ok
+  def create_verification_contract(:email, account_address, callback),
+    do: create_verification_transaction(account_address, "createEmailVerification", callback)
 
-  @spec create_verification_contract(atom, binary, integer, callback) :: :ok
-  def create_verification_contract(:phone, account_address, index, callback),
-    do: create_verification_transaction(account_address, index, "createPhoneVerification", callback)
+  @spec create_verification_contract(atom, binary, callback) :: :ok
+  def create_verification_contract(:phone, account_address, callback),
+    do: create_verification_transaction(account_address, "createPhoneVerification", callback)
 
-  @spec create_verification_transaction(binary, binary, binary, callback) :: :ok
-  defp create_verification_transaction(account_address, index, contract_func, callback) when is_callback(callback) do
+  @spec create_verification_transaction(binary, binary, callback) :: :ok
+  defp create_verification_transaction(account_address, contract_func, callback) when is_callback(callback) do
     return_key = UUID.uuid4()
     kimlic_ap_address = Context.get_kimlic_attestation_party_address()
-    kimlic_ap_password = Confex.fetch_env!(:quorum, :kimlil_ap_password)
+    kimlic_ap_password = Confex.fetch_env!(:quorum, :kimlic_ap_password)
     verification_contract_factory_address = Context.get_verification_contract_factory_address()
 
     meta = %{
@@ -45,7 +46,7 @@ defmodule Quorum do
       to: verification_contract_factory_address,
       data:
         hash_data(:verification_factory, contract_func, [
-          {account_address, kimlic_ap_address, index, account_address, return_key}
+          {account_address, kimlic_ap_address, account_address, return_key}
         ])
     }
 
@@ -54,11 +55,11 @@ defmodule Quorum do
     create_transaction(transaction_data, meta)
   end
 
-  @spec set_verification_result_transaction(binary) :: :ok
-  def set_verification_result_transaction(contract_address) do
-    data = hash_data(:base_verification, "setVerificationResult", [{true}])
+  @spec set_verification_result_transaction(binary, boolean) :: :ok
+  def set_verification_result_transaction(contract_address, status \\ true) do
+    data = hash_data(:base_verification, "setVerificationResult", [{status}])
     kimlic_ap_address = Context.get_kimlic_attestation_party_address()
-    kimlic_ap_password = Confex.fetch_env!(:quorum, :kimlil_ap_password)
+    kimlic_ap_password = Confex.fetch_env!(:quorum, :kimlic_ap_password)
 
     @quorum_client.request("personal_unlockAccount", [kimlic_ap_address, kimlic_ap_password], [])
 
@@ -81,8 +82,8 @@ defmodule Quorum do
       2. Try 5 times, until success responce. On failed response - mark job as failed
       3. If argument `provide_return_value` set as true: fetch `return_value` from Quorum using `debug_traceTransaction` call
       4. Call callback if it provided. Transaction status and return value will be added as last arguments.
-         Transaction status argument - @spec map
-         Retrun value argument - @spec {:ok, binary} | {:error, binary}
+         Transaction status argument - @type :: map
+         Retrun value argument - @type :: {:ok, binary} | {:error, binary}
 
     ## Examples
 

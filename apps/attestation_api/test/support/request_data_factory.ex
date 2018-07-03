@@ -1,7 +1,7 @@
 defmodule AttestationApi.RequestDataFactory do
   @moduledoc false
 
-  import Core.Factory
+  import AttestationApi.Factories
 
   @spec data_for(atom, map) :: map
   def data_for(atom, params \\ %{})
@@ -11,7 +11,8 @@ defmodule AttestationApi.RequestDataFactory do
       "first_name" => "John",
       "last_name" => "Doe",
       "lang" => "en",
-      "timestamp" => generate(:unix_timestamp)
+      "timestamp" => generate(:unix_timestamp),
+      "contract_address" => generate(:account_address)
     }
     |> Map.merge(params)
   end
@@ -20,20 +21,9 @@ defmodule AttestationApi.RequestDataFactory do
     %{
       "country" => "US",
       "document_type" => "ID_CARD",
-      "document_payload" => %{
-        "face" => %{
-          "content" => "data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs=",
-          "timestamp" => generate(:unix_timestamp)
-        },
-        "document-front" => %{
-          "content" => "data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs=",
-          "timestamp" => generate(:unix_timestamp)
-        },
-        "document-back" => %{
-          "content" => "data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs=",
-          "timestamp" => generate(:unix_timestamp)
-        }
-      }
+      "context" => Enum.random(["face", "document-front", "document-back"]),
+      "content" => "data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs=",
+      "timestamp" => generate(:unix_timestamp)
     }
     |> Map.merge(params)
   end

@@ -4,6 +4,7 @@ defmodule AttestationApi.DigitalVerificationController do
   use AttestationApi, :controller
 
   alias AttestationApi.DigitalVerifications
+  alias AttestationApi.DigitalVerifications.Operations.UploadMedia
   alias AttestationApi.DigitalVerifications.VerificationVendors
   alias AttestationApi.Plugs.RequestValidator
   alias Plug.Conn
@@ -19,10 +20,10 @@ defmodule AttestationApi.DigitalVerificationController do
     end
   end
 
-  # todo: validate request
+  # todo: validate request, contexts: face, document-front, document-back..., timestamp
   @spec upload_media(Conn.t(), map) :: Conn.t()
   def upload_media(conn, %{"vendor_id" => _, "session_id" => _} = params) do
-    with :ok <- DigitalVerifications.upload_media(conn.assigns.account_address, params) do
+    with :ok <- UploadMedia.handle(conn.assigns.account_address, params) do
       json(conn, %{status: "ok"})
     end
   end
@@ -30,7 +31,7 @@ defmodule AttestationApi.DigitalVerificationController do
   # todo: validate request
   @spec verification_result_webhook(Conn.t(), map) :: Conn.t()
   def verification_result_webhook(conn, params) do
-    with :ok <- DigitalVerifications.update_status(params) do
+    with :ok <- DigitalVerifications.handle_verification_result(params) do
       json(conn, %{})
     end
   end

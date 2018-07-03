@@ -16,19 +16,19 @@ defmodule Core.Verifications do
 
   ### Business
 
-  @spec create_email_verification(binary, binary, integer) :: :ok | {:error, binary}
-  def create_email_verification(email, account_address, index) do
+  @spec create_email_verification(binary, binary) :: :ok | {:error, binary}
+  def create_email_verification(email, account_address) do
     with {:ok, verification} <- create_verification(account_address, :email),
-         :ok <- create_verification_contract(:email, account_address, index),
+         :ok <- create_verification_contract(:email, account_address),
          :ok <- Email.send_verification(email, verification) do
       {:ok, verification}
     end
   end
 
-  @spec create_phone_verification(binary, binary, integer) :: :ok | {:error, binary}
-  def create_phone_verification(phone, account_address, index) do
+  @spec create_phone_verification(binary, binary) :: :ok | {:error, binary}
+  def create_phone_verification(phone, account_address) do
     with {:ok, %Verification{token: sms_code}} <- create_verification(account_address, :phone),
-         :ok <- create_verification_contract(:phone, account_address, index),
+         :ok <- create_verification_contract(:phone, account_address),
          # todo: move message to resources
          {:ok, %{}} <- @messenger.send(phone, "Here is your code: #{sms_code}") do
       :ok
@@ -46,23 +46,22 @@ defmodule Core.Verifications do
     |> insert_verification(verification_ttl(type))
   end
 
-  @spec create_verification_contract(atom, binary, binary) :: :ok
-  defp create_verification_contract(type, account_address, index) do
+  @spec create_verification_contract(atom, binary) :: :ok
+  defp create_verification_contract(type, account_address) do
     Quorum.create_verification_contract(
       type,
       account_address,
-      index,
       {__MODULE__, :update_verification_contract_address, [account_address, type]}
     )
   end
 
   @spec verify(atom, binary, binary) :: :ok | {:error, term}
   def verify(verification_type, account_address, token) when allowed_type_atom(verification_type) do
-    with {:ok, %Verification{} = verification} <- Verifications.get(account_address, verification_type),
+    with {:ok, %Verification{} = verification} <- Verifications.get(verification_type, account_address),
          {_, "0x" <> _} <- {:contract_address_set, verification.contract_address},
          {_, true} <- {:verification_access, can_access_verification?(verification, account_address, token)},
-         {:ok, 1} <- Verifications.delete(verification),
-         :ok <- Quorum.set_verification_result_transaction(verification.contract_address) do
+         :ok <- Quorum.set_verification_result_transaction(verification.contract_address),
+         {:ok, 1} <- Verifications.delete(verification) do
       :ok
     else
       {:contract_address_set, _} -> {:error, :not_found}
@@ -95,7 +94,7 @@ defmodule Core.Verifications do
       ) do
     verification_type = String.to_atom(verification_type)
 
-    with {:ok, verification} = Verifications.get(account_address, verification_type),
+    with {:ok, verification} = Verifications.get(verification_type, account_address),
          verification <- %Verification{verification | contract_address: contract_address},
          %Ecto.Changeset{valid?: true} = changeset <- verification |> Map.from_struct() |> Verification.changeset(),
          {:ok, _} <- Redis.upsert(changeset, verification_ttl(verification_type)) do
@@ -117,18 +116,10 @@ defmodule Core.Verifications do
   end
 
   @spec get(binary, atom) :: {:ok, %Verification{}} | {:error, term}
-  def get(account_address, type) do
-    redis_key =
-      type
-      |> Verification.entity_type()
-      |> Verification.redis_key(account_address)
-
-    redis_key
+  def get(type, account_address) do
+    type
+    |> Verification.redis_key(account_address)
     |> Redis.get()
-    |> case do
-      {:ok, verification} -> {:ok, %Verification{verification | redis_key: redis_key}}
-      err -> err
-    end
   end
 
   @spec delete(%Verification{} | term) :: {:ok, non_neg_integer} | {:error, term}

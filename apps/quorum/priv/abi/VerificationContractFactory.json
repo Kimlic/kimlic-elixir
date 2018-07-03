@@ -60,10 +60,6 @@
         "type": "address"
       },
       {
-        "name": "dataIndex",
-        "type": "uint256"
-      },
-      {
         "name": "verificatorAddress",
         "type": "address"
       },
@@ -90,10 +86,6 @@
         "type": "address"
       },
       {
-        "name": "dataIndex",
-        "type": "uint256"
-      },
-      {
         "name": "verificatorAddress",
         "type": "address"
       },
@@ -118,10 +110,6 @@
       {
         "name": "coOwnerAddress",
         "type": "address"
-      },
-      {
-        "name": "dataIndex",
-        "type": "uint256"
       },
       {
         "name": "verificatorAddress",

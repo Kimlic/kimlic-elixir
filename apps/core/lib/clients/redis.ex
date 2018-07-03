@@ -12,7 +12,12 @@ defmodule Core.Clients.Redis do
       if encoded_value == nil do
         {:error, :not_found}
       else
-        {:ok, decode(encoded_value)}
+        entity =
+          encoded_value
+          |> decode()
+          |> Map.put(:redis_key, key)
+
+        {:ok, entity}
       end
     else
       {:error, reason} = err ->

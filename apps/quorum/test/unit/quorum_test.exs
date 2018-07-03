@@ -67,10 +67,9 @@ defmodule Quorum.Unit.QuorumTest do
       end)
 
       account_address = "0x6cc3a44428c1722ee2fd2eb6d72387f4bc62449c"
-      index = 1
 
       callback = {QuorumClientMock, :eth_get_logs, []}
-      assert :ok = Quorum.create_verification_contract(:email, account_address, index, callback)
+      assert :ok = Quorum.create_verification_contract(:email, account_address, callback)
 
       # Ensure that queue contain message for create transaction job
       assert {transaction_payload, _queue_metadata} = pop(@queue_transaction_create)

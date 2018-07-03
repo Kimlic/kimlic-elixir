@@ -5,22 +5,26 @@ defmodule Quorum.Contract.Context do
 
   @quorum_client Application.get_env(:quorum, :client)
 
+  @spec get_verification_contract_factory_address :: binary
   def get_verification_contract_factory_address do
     # ToDo: add cache
     {:ok, address} = @quorum_client.eth_call(%{to: get_context_address(), data: "0x22d2dd34"}, "latest", [])
     address64_to_40(address)
   end
 
+  @spec get_kimlic_attestation_party_address :: binary
   def get_kimlic_attestation_party_address do
-    "0x11eb6f7653566343d9f1fb712b864b75ed1f6652"
+    Confex.fetch_env!(:quorum, :kimlic_ap_address)
   end
 
-  defp get_context_address do
+  @spec get_context_address :: binary
+  def get_context_address do
     # ToDo: add cache
     context_storage_address = Confex.fetch_env!(:quorum, :context_storage_address)
     {:ok, address} = @quorum_client.eth_call(%{to: context_storage_address, data: "0x127f0f07"}, "latest", [])
     address64_to_40(address)
   end
 
+  @spec address64_to_40(binary) :: binary
   defp address64_to_40(address), do: String.replace(address, String.duplicate("0", 24), "")
 end
