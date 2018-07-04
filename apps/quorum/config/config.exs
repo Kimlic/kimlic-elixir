@@ -8,6 +8,8 @@ config :quorum,
   proxy_client: Quorum.Proxy.Client,
   kimlic_ap_address: {:system, "KIMLIC_AP_ADDRESS"},
   kimlic_ap_password: {:system, "KIMLIC_AP_PASSWORD"},
+  veriff_ap_address: {:system, "VERIFF_AP_ADDRESS"},
+  veriff_ap_password: {:system, "VERIFF_AP_PASSWORD"},
   context_storage_address: {:system, "CONTEXT_STORAGE_ADDRESS"},
   allowed_rpc_methods:
     {:system, :list, "QUORUM_ALLOWED_RPC_METHODS",

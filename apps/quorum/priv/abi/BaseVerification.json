@@ -2,11 +2,53 @@
   {
     "constant": true,
     "inputs": [],
-    "name": "verificator",
+    "name": "tokensUnlockAt",
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [],
+    "name": "attestationParty",
     "outputs": [
       {
         "name": "",
         "type": "address"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [],
+    "name": "accountAddress",
+    "outputs": [
+      {
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [],
+    "name": "status",
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint8"
       }
     ],
     "payable": false,
@@ -25,11 +67,11 @@
   {
     "constant": true,
     "inputs": [],
-    "name": "isVerified",
+    "name": "verifiedAt",
     "outputs": [
       {
         "name": "",
-        "type": "bool"
+        "type": "uint256"
       }
     ],
     "payable": false,
@@ -57,7 +99,7 @@
     "outputs": [
       {
         "name": "",
-        "type": "uint8"
+        "type": "string"
       }
     ],
     "payable": false,
@@ -129,12 +171,12 @@
         "type": "uint256"
       },
       {
-        "name": "verificatorAddress",
+        "name": "attestationPartyAddress",
         "type": "address"
       },
       {
         "name": "fieldName",
-        "type": "uint8"
+        "type": "string"
       }
     ],
     "payable": false,
@@ -179,6 +221,29 @@
       }
     ],
     "name": "setVerificationResult",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [],
+    "name": "getData",
+    "outputs": [
+      {
+        "name": "data",
+        "type": "string"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [],
+    "name": "withdraw",
     "outputs": [],
     "payable": false,
     "stateMutability": "nonpayable",

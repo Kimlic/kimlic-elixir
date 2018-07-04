@@ -46,7 +46,7 @@ defmodule Quorum do
       to: verification_contract_factory_address,
       data:
         hash_data(:verification_factory, contract_func, [
-          {account_address, kimlic_ap_address, account_address, return_key}
+          {account_address, kimlic_ap_address, return_key}
         ])
     }
 
@@ -55,15 +55,26 @@ defmodule Quorum do
     create_transaction(transaction_data, meta)
   end
 
-  @spec set_verification_result_transaction(binary, boolean) :: :ok
-  def set_verification_result_transaction(contract_address, status \\ true) do
-    data = hash_data(:base_verification, "setVerificationResult", [{status}])
+  @spec set_verification_result_transaction(binary) :: :ok
+  def set_verification_result_transaction(contract_address) do
+    data = hash_data(:base_verification, "setVerificationResult", [{true}])
     kimlic_ap_address = Context.get_kimlic_attestation_party_address()
     kimlic_ap_password = Confex.fetch_env!(:quorum, :kimlic_ap_password)
 
     @quorum_client.request("personal_unlockAccount", [kimlic_ap_address, kimlic_ap_password], [])
 
     create_transaction(%{from: kimlic_ap_address, to: contract_address, data: data})
+  end
+
+  @spec set_digital_verification_result_transaction(binary, boolean) :: :ok
+  def set_digital_verification_result_transaction(contract_address, status) do
+    data = hash_data(:base_verification, "setVerificationResult", [{status}])
+    veriff_ap_address = Confex.fetch_env!(:quorum, :veriff_ap_address)
+    veriff_ap_password = Confex.fetch_env!(:quorum, :veriff_ap_password)
+
+    @quorum_client.request("personal_unlockAccount", [veriff_ap_address, veriff_ap_password], [])
+
+    create_transaction(%{from: veriff_ap_address, to: contract_address, data: data})
   end
 
   @doc """
@@ -106,7 +117,7 @@ defmodule Quorum do
   end
 
   @spec put_gas(map) :: map
-  defp put_gas(message), do: Map.merge(%{gasPrice: @gas_price, gas: @gas}, message)
+  defp put_gas(transaction_data), do: Map.merge(%{gasPrice: @gas_price, gas: @gas}, transaction_data)
 
   defp prepare_callback(%{callback: {module, function, args}} = meta),
     do: Map.put(meta, :callback, %{m: module, f: function, a: args})
