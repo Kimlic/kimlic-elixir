@@ -93,19 +93,35 @@ defmodule MobileApi.VerificationControllerTest do
 
       assert %{"data" => %{"status" => "ok"}} =
                conn
-               |> post(verification_path(conn, :verify_email), %{"code" => token})
+               |> post(verification_path(conn, :approve_email), %{"code" => token})
+               |> json_response(200)
+    end
+
+    test "cant access", %{conn: conn} do
+      expect(QuorumClientMock, :request, fn method, _params, _opts ->
+        assert "personal_unlockAccount" == method
+        {:ok, true}
+      end)
+
+      account_address = get_account_address(conn)
+      %{token: token} = insert(:verification, %{account_address: account_address})
+
+      assert %{"data" => %{"status" => "ok"}} =
+               conn
+               |> post(verification_path(conn, :approve_email), %{"code" => token})
                |> json_response(200)
     end
 
     test "not found on email verification", %{conn: conn} do
       assert conn
-             |> post(verification_path(conn, :verify_email), %{"code" => TokenGenerator.generate(:email)})
+             |> post(verification_path(conn, :approve_email), %{"code" => TokenGenerator.generate(:email)})
              |> json_response(404)
+      |> IO.inspect()
     end
 
     test "invalid params", %{conn: conn} do
       assert conn
-             |> post(verification_path(conn, :verify_email), %{"code" => 123})
+             |> post(verification_path(conn, :approve_email), %{"code" => 123})
              |> json_response(422)
     end
   end
@@ -228,13 +244,13 @@ defmodule MobileApi.VerificationControllerTest do
 
       assert %{"data" => %{"status" => "ok"}} =
                conn
-               |> post(verification_path(conn, :verify_phone), %{"code" => token})
+               |> post(verification_path(conn, :approve_phone), %{"code" => token})
                |> json_response(200)
     end
 
     test "not found on phone verification", %{conn: conn} do
       assert conn
-             |> post(verification_path(conn, :verify_phone), %{"code" => TokenGenerator.generate(:phone)})
+             |> post(verification_path(conn, :approve_phone), %{"code" => TokenGenerator.generate(:phone)})
              |> json_response(404)
     end
   end

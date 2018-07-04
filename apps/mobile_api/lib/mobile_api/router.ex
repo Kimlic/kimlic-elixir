@@ -37,14 +37,14 @@ defmodule MobileApi.Router do
 
     scope "/verifications" do
       post("/email", VerificationController, :create_email_verification)
-      post("/email/approve", VerificationController, :verify_email)
+      post("/email/approve", VerificationController, :approve_email)
 
       scope "/" do
         pipe_through(:create_phone_verification_limiter)
         post("/phone", VerificationController, :create_phone_verification)
       end
 
-      post("/phone/approve", VerificationController, :verify_phone)
+      post("/phone/approve", VerificationController, :approve_phone)
     end
 
     get("/config", ConfigController, :get_config)
