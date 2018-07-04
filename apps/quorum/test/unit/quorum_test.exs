@@ -1,4 +1,6 @@
 defmodule Quorum.Unit.QuorumTest do
+  @moduledoc false
+
   use ExUnit.Case
 
   import Mox
@@ -6,8 +8,6 @@ defmodule Quorum.Unit.QuorumTest do
 
   alias TaskBunny.Queue
   alias Quorum.Jobs.{TransactionCreate, TransactionStatus}
-
-  doctest Quorum
 
   setup :verify_on_exit!
   setup :set_mox_global

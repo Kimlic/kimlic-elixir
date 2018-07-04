@@ -12,6 +12,8 @@ defmodule AttestationApi.DigitalVerifications do
 
   @verification_status_passed DigitalVerification.status(:passed)
   @verification_status_pending DigitalVerification.status(:pending)
+
+  # todo: remove magic number accross code
   @verification_code_success 9001
 
   @spec create_session(binary, map) :: {:ok, binary} | {:error, binary}
@@ -97,7 +99,7 @@ defmodule AttestationApi.DigitalVerifications do
   def set_quorum_verification_result(%DigitalVerification{contract_address: contract_address, status: status}) do
     verification_passed? = status == @verification_status_passed
 
-    Quorum.set_verification_result_transaction(contract_address, verification_passed?)
+    Quorum.set_digital_verification_result_transaction(contract_address, verification_passed?)
   end
 
   ### Quering

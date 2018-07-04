@@ -102,6 +102,9 @@ defmodule AttestationApi.Clients.Veriffme do
     HTTPoison.request(method, base_url() <> url, Jason.encode!(request_data), headers(request_data), @request_options)
   end
 
+  @spec contexts :: list
+  def contexts, do: @contexts
+
   @spec base_url :: binary
   defp base_url, do: Confex.fetch_env!(:attestation_api, Veriffme)[:api_url]
 
