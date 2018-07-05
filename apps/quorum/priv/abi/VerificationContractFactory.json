@@ -56,11 +56,7 @@
         "type": "address"
       },
       {
-        "name": "coOwnerAddress",
-        "type": "address"
-      },
-      {
-        "name": "verificatorAddress",
+        "name": "attestationPartyAddress",
         "type": "address"
       },
       {
@@ -82,11 +78,7 @@
         "type": "address"
       },
       {
-        "name": "coOwnerAddress",
-        "type": "address"
-      },
-      {
-        "name": "verificatorAddress",
+        "name": "attestationPartyAddress",
         "type": "address"
       },
       {
@@ -108,11 +100,7 @@
         "type": "address"
       },
       {
-        "name": "coOwnerAddress",
-        "type": "address"
-      },
-      {
-        "name": "verificatorAddress",
+        "name": "attestationPartyAddress",
         "type": "address"
       },
       {

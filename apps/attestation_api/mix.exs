@@ -31,14 +31,15 @@ defmodule AttestationApi.Mixfile do
   defp deps do
     [
       {:quorum, in_umbrella: true},
+      {:cowboy, "~> 1.0"},
+      {:ecto, "~> 2.2"},
+      {:eview, "~> 0.12"},
+      {:httpoison, "~> 1.2", override: true},
+      {:jason, "~> 1.1"},
       {:phoenix, "~> 1.3.2"},
       {:phoenix_pubsub, "~> 1.0"},
-      {:jason, "~> 1.1"},
-      {:cowboy, "~> 1.0"},
       {:plug_logger_json, "~> 0.5"},
-      {:ecto, "~> 2.2"},
       {:postgrex, ">= 0.0.0"},
-      {:eview, "~> 0.12"},
       {:mox, "~> 0.3", only: :test},
       {:ex_machina, "~> 2.2", only: :test}
     ]

@@ -84,9 +84,11 @@ Dependents for [Mobile API](#Mobile API), [Attestation API](#Attestation API)
 | VAR_NAME                   | Default Value | Description                        |
 | -------------------------- | ------------- | ---------------------------------- |
 | AUTHORIZATION_SALT         | not set       | Authorization salt.                |
-| QUORUM_URI                 | not set       | Quorum uri.         |
+| QUORUM_URI                 | not set       | Quorum uri.                        |
 | KIMLIC_AP_ADDRESS          | not set       | Kimlic attestation party address.  |
 | KIMLIC_AP_PASSWORD         | not set       | Kimlic attestation party password. |
+| VERIFF_AP_ADDRESS          | not set       | Veriff attestation party address.  |
+| VERIFF_AP_PASSWORD         | not set       | Veriff attestation party password. |
 | CONTEXT_STORAGE_ADDRESS    | not set       | Context storage address.           |
 | QUORUM_ALLOWED_RPC_METHODS | [`web3_clientVersion`, `eth_call`, `eth_sendTransaction`, `eth_sendRawTransaction`, `eth_getTransactionCount`] | Quorum allowed rpc methods. |
 

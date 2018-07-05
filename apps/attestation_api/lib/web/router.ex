@@ -5,7 +5,6 @@ defmodule AttestationApi.Router do
   use Plug.ErrorHandler
 
   alias AttestationApi.Plugs.AccountAddress
-  alias AttestationApi.Plugs.Authorization
   alias Plug.LoggerJSON
 
   require Logger
@@ -15,10 +14,6 @@ defmodule AttestationApi.Router do
   pipeline :api do
     plug(:accepts, ["json"])
     plug(AccountAddress)
-  end
-
-  pipeline :authorized do
-    plug(Authorization)
   end
 
   pipeline :eview_response do
@@ -32,7 +27,7 @@ defmodule AttestationApi.Router do
   ### Endpoints
 
   scope "/api/verifications/digital", AttestationApi do
-    pipe_through([:api, :authorized, :eview_response])
+    pipe_through([:api, :eview_response])
 
     post("/:vendor_id/sessions", DigitalVerificationController, :create_session)
     post("/:vendor_id/sessions/:session_id/media", DigitalVerificationController, :upload_media)
