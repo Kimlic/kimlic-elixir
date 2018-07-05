@@ -62,7 +62,7 @@ defmodule Core.Factory do
   def generate(:account_address) do
     account_address =
       :sha256
-      |> :crypto.hash(random_string)
+      |> :crypto.hash(random_string())
       |> Base.encode16(case: :lower)
       |> String.slice(0..39)
 
