@@ -55,6 +55,9 @@ defmodule Core.Factory do
   def generate(:phone), do: "+38097#{Enum.random(1_000_000..9_999_999)}"
 
   @spec generate(atom) :: binary
+  def generate(:email), do: "test#{Enum.random(1_000_000..9_999_999)}@email.local"
+
+  @spec generate(atom) :: binary
   def generate(:account_address) do
     account_address =
       :sha256

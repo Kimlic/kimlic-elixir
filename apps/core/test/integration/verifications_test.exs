@@ -10,6 +10,8 @@ defmodule Core.Integration.VerificationsTest do
   alias Quorum.Contract.Context
   alias Ethereumex.HttpClient, as: QuorumHttpClient
 
+  setup :set_mox_global
+
   @doc """
   Test written for manual testing.
   Before running you should change in Quorum config/test.exs :quorum, :client
@@ -31,6 +33,10 @@ defmodule Core.Integration.VerificationsTest do
   """
   @tag :pending
   test "create Email verification and verify email" do
+    expect(MessengerMock, :send, fn _to, _message ->
+      {:ok, %ExTwilio.Message{}}
+    end)
+
     token = TokenGenerator.generate(:email)
     expect(TokenGeneratorMock, :generate, fn :email -> token end)
 

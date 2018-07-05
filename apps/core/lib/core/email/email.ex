@@ -3,10 +3,9 @@ defmodule Core.Email do
 
   alias Core.Clients.Mailer
   alias Core.Email.Views.EmailVerification
-  alias Core.Verifications.Verification
 
-  @spec send_verification(binary, %Verification{}) :: :ok | {:error, binary}
-  def send_verification(email, %Verification{token: token}) do
+  @spec send_verification(binary, binary) :: :ok | {:error, binary}
+  def send_verification(email, token) do
     email
     |> EmailVerification.render(token)
     |> Mailer.deliver()
