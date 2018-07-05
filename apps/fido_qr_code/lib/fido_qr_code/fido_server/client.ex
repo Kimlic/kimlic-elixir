@@ -1,6 +1,9 @@
-defmodule FidoQrCode.FidoServerClient do
+defmodule FidoQrCode.FidoServer.Client do
   use HTTPoison.Base
   alias FidoQrCode.ResponseDecoder
+  alias FidoQrCode.FidoServer.ClientBehaviour
+
+  @behaviour ClientBehaviour
 
   @spec process_url(binary) :: binary
   def process_url(url), do: Confex.fetch_env!(:fido_qr_code, :fido_server_url) <> url

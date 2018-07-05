@@ -1,10 +1,16 @@
 defmodule FidoQrCodeTest do
   use ExUnit.Case
+  import Mox
   alias FidoQrCode.ScopeRequest
   doctest FidoQrCode
 
   describe "generate qr code and process it" do
     test "happy path" do
+      expect(FidoServerClientMock, :create_request, fn username ->
+        assert is_binary(username)
+        {:ok, %{"challenge" => "some-random-challenge"}}
+      end)
+
       # 1. Create ScopeRequest with predefined scopes
       assert {:ok, scope_request = %ScopeRequest{}} = FidoQrCode.create_scope_request()
 

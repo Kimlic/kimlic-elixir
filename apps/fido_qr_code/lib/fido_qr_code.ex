@@ -1,7 +1,9 @@
 defmodule FidoQrCode do
   import FidoQrCode.ScopeRequests
 
-  alias FidoQrCode.{FidoServerClient, ScopeRequest, ScopeRequests}
+  alias FidoQrCode.{ScopeRequest, ScopeRequests}
+
+  @fido_server_client Application.get_env(:fido_qr_code, :fido_server_client)
 
   @spec create_scope_request :: %ScopeRequest{}
   def create_scope_request do
@@ -21,7 +23,7 @@ defmodule FidoQrCode do
          :ok <- check_processed(scope_request),
          :ok <- check_expired(scope_request),
          {:ok, processed_scope_request} <- process(scope_request, username),
-         {:ok, fido} <- FidoServerClient.create_request(username) do
+         {:ok, fido} <- @fido_server_client.create_request(username) do
       {:ok,
        %{
          scope_request: processed_scope_request,

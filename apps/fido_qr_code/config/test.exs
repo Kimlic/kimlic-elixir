@@ -1,6 +1,7 @@
 use Mix.Config
 
 config :fido_qr_code,
+  fido_server_client: FidoServerClientMock,
   fido_server_url: "http://localhost:8080",
   callback_url: "http://localhost:4001/callback",
   requested_scopes: ["documents.driver_license"],
