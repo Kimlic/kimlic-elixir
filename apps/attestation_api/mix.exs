@@ -33,7 +33,7 @@ defmodule AttestationApi.Mixfile do
       {:quorum, in_umbrella: true},
       {:phoenix, "~> 1.3.2"},
       {:phoenix_pubsub, "~> 1.0"},
-      {:httpoison, "~> 1.2"},
+      {:httpoison, "~> 1.2", override: true},
       {:jason, "~> 1.0"},
       {:cowboy, "~> 1.0"},
       {:plug_logger_json, "~> 0.5"},
