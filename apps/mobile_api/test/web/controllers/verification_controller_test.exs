@@ -29,10 +29,7 @@ defmodule MobileApi.VerificationControllerTest do
   describe "create email verification" do
     test "success", %{conn: conn} do
       account_address = get_account_address(conn)
-      token = TokenGenerator.generate(:email)
-      email = "test#{token}@email.com"
-
-      expect(TokenGeneratorMock, :generate, fn :email -> token end)
+      email = generate(:email)
 
       expect(QuorumClientMock, :request, fn method, _params, _opts ->
         assert "personal_unlockAccount" == method
@@ -47,8 +44,10 @@ defmodule MobileApi.VerificationControllerTest do
                )
                |> json_response(201)
 
-      assert {:ok, %Verification{token: ^token, entity_type: @entity_type_email}} =
+      assert {:ok, %Verification{token: token, entity_type: @entity_type_email}} =
                Verifications.get(:email, account_address)
+
+      assert token != nil
     end
 
     test "email param not set", %{conn: conn} do
@@ -105,9 +104,7 @@ defmodule MobileApi.VerificationControllerTest do
     test "success", %{conn: conn} do
       account_address = get_account_address(conn)
       phone = generate(:phone)
-      token = TokenGenerator.generate(:phone)
 
-      expect(TokenGeneratorMock, :generate, fn :phone -> token end)
       expect(MessengerMock, :send, fn ^phone, _message -> {:ok, %{}} end)
 
       expect(QuorumClientMock, :request, fn method, _params, _opts ->
@@ -122,8 +119,10 @@ defmodule MobileApi.VerificationControllerTest do
                  data_for(:create_phone_verification, phone)
                )
 
-      assert {:ok, %Verification{token: ^token, entity_type: @entity_type_phone}} =
+      assert {:ok, %Verification{token: token, entity_type: @entity_type_phone}} =
                Verifications.get(:phone, account_address)
+
+      assert token != nil
     end
 
     test "phone param not set", %{conn: conn} do
@@ -159,7 +158,6 @@ defmodule MobileApi.VerificationControllerTest do
       end)
 
       phone = generate(:phone)
-      token = TokenGenerator.generate(:phone)
 
       do_request = fn ->
         post(
@@ -169,7 +167,6 @@ defmodule MobileApi.VerificationControllerTest do
         )
       end
 
-      expect(TokenGeneratorMock, :generate, attempts, fn :phone -> token end)
       expect(MessengerMock, :send, attempts, fn ^phone, _message -> {:ok, %{}} end)
 
       expect(QuorumClientMock, :request, attempts, fn method, _params, _opts ->

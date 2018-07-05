@@ -6,12 +6,12 @@ defmodule Core.Verifications do
   alias __MODULE__
   alias Core.Clients.Redis
   alias Core.Email
+  alias Core.Verifications.TokenGenerator
   alias Core.Verifications.Verification
   alias Log
 
   @typep create_verification_t :: {:ok, %Verification{}} | {:error, binary} | {:error, Ecto.Changeset.t()}
 
-  @token_generator Application.get_env(:core, :dependencies)[:token_generator]
   @messenger Application.get_env(:core, :dependencies)[:messenger]
 
   ### Business
@@ -36,7 +36,7 @@ defmodule Core.Verifications do
   def create_verification(account_address, type) when allowed_type_atom(type) do
     %{
       account_address: account_address,
-      token: @token_generator.generate(type),
+      token: TokenGenerator.generate(type),
       entity_type: Verification.entity_type(type),
       status: Verification.status(:new)
     }

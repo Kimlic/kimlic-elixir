@@ -1,8 +1,6 @@
 use Mix.Config
 
-config :core, :dependencies,
-  token_generator: Core.Verifications.TokenGenerator,
-  messenger: Core.Clients.Messenger
+config :core, :dependencies, messenger: Core.Clients.Messenger
 
 config :core,
   verifications_ttl: [
