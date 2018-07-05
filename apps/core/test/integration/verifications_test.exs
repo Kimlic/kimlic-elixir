@@ -1,11 +1,13 @@
 defmodule Core.Integration.VerificationsTest do
+  @moduledoc false
+
   use ExUnit.Case
 
+  import Core.Factory
   import Mox
 
   alias Core.Clients.Redis
   alias Core.Verifications
-  alias Core.Verifications.TokenGenerator
   alias Quorum.Contract
   alias Quorum.Contract.Context
   alias Ethereumex.HttpClient, as: QuorumHttpClient
@@ -37,11 +39,8 @@ defmodule Core.Integration.VerificationsTest do
       {:ok, %ExTwilio.Message{}}
     end)
 
-    token = TokenGenerator.generate(:email)
-    expect(TokenGeneratorMock, :generate, fn :email -> token end)
-
     account_address = init_quorum_user("email")
-    email = "test@example.com"
+    email = generate(:email)
 
     assert {:ok, verification} = Verifications.create_email_verification(email, account_address)
     refute verification.contract_address
@@ -57,10 +56,8 @@ defmodule Core.Integration.VerificationsTest do
 
   @tag :pending
   test "create Phone verification and verify email" do
-    phone = "+380992223344"
-    token = TokenGenerator.generate(:phone)
+    phone = generate(:phone)
 
-    expect(TokenGeneratorMock, :generate, fn :phone -> token end)
     expect(MessengerMock, :send, fn ^phone, _message -> {:ok, %{}} end)
 
     account_address = init_quorum_user("phone")
