@@ -42,6 +42,7 @@ defmodule Quorum do
     }
 
     hashed_data = hash_data(:verification_factory, contract_func, [{account_address, kimlic_ap_address, return_key}])
+
     transaction_data = %{
       from: kimlic_ap_address,
       to: verification_contract_factory_address,

@@ -34,7 +34,7 @@ defmodule Core.Integration.VerificationsTest do
     token = TokenGenerator.generate(:email)
     expect(TokenGeneratorMock, :generate, fn :email -> token end)
 
-    account_address = init_quorum_user()
+    account_address = init_quorum_user("email")
     email = "test@example.com"
 
     assert {:ok, verification} = Verifications.create_email_verification(email, account_address)
@@ -43,6 +43,32 @@ defmodule Core.Integration.VerificationsTest do
     contract_address = assert_contract_address(verification.redis_key)
 
     assert :ok = Verifications.verify(:email, account_address, verification.token)
+
+    assert {:error, :not_found} = Redis.get(verification.redis_key)
+
+    assert_contract_verified(contract_address)
+  end
+
+  @tag :pending
+  test "create Phone verification and verify email" do
+    phone = "+380992223344"
+    token = TokenGenerator.generate(:phone)
+
+    expect(TokenGeneratorMock, :generate, fn :phone -> token end)
+    expect(MessengerMock, :send, fn ^phone, _message -> {:ok, %{}} end)
+
+    account_address =
+      init_quorum_user("phone")
+      |> IO.inspect()
+
+    System.halt()
+
+    assert {:ok, verification} = Verifications.create_phone_verification(phone, account_address)
+    refute verification.contract_address
+
+    contract_address = assert_contract_address(verification.redis_key)
+
+    assert :ok = Verifications.verify(:phone, account_address, verification.token)
 
     assert {:error, :not_found} = Redis.get(verification.redis_key)
 
@@ -69,6 +95,7 @@ defmodule Core.Integration.VerificationsTest do
     :timer.sleep(sleep)
 
     data = Contract.hash_data(:base_verification, "status", [{}])
+
     case QuorumHttpClient.eth_call(%{to: contract_address, data: data}, "latest", []) do
       {:ok, "0x0000000000000000000000000000000000000000000000000000000000000001"} ->
         :ok
@@ -81,7 +108,7 @@ defmodule Core.Integration.VerificationsTest do
     end
   end
 
-  defp init_quorum_user do
+  defp init_quorum_user(doc_type) do
     assert {:ok, account_address} = QuorumHttpClient.request("personal_newAccount", ["p@ssW0rd"], [])
     assert {:ok, _} = QuorumHttpClient.request("personal_unlockAccount", [account_address, "p@ssW0rd"], [])
 
@@ -90,7 +117,7 @@ defmodule Core.Integration.VerificationsTest do
       to: Context.get_account_storage_adapter_address(),
       data:
         Contract.hash_data(:account_storage_adapter, "setAccountFieldMainData", [
-          {"#{:rand.uniform()}", "email"}
+          {"#{:rand.uniform()}", doc_type}
         ]),
       gas: "0x500000",
       gasPrice: "0x0"

@@ -27,11 +27,11 @@ defmodule Core.Verifications do
 
   @spec create_phone_verification(binary, binary) :: :ok | {:error, binary}
   def create_phone_verification(phone, account_address) do
-    with {:ok, %Verification{token: sms_code}} <- create_verification(account_address, :phone),
+    with {:ok, %Verification{token: sms_code} = verification} <- create_verification(account_address, :phone),
          :ok <- create_verification_contract(:phone, account_address),
          # todo: move message to resources
          {:ok, %{}} <- @messenger.send(phone, "Here is your code: #{sms_code}") do
-      :ok
+      {:ok, verification}
     end
   end
 
