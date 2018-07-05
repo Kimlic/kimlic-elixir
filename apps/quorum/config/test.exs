@@ -14,6 +14,8 @@ config :quorum,
   client: QuorumClientMock,
   proxy_client: QuorumClientProxyMock
 
+config :ethereumex, url: "http://localhost:22000"
+
 # for test purposes only
 config :quorum,
   relying_party_address: "",

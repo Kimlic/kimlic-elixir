@@ -2,15 +2,14 @@ defmodule Quorum.Unit.SmartContractTest do
   use ExUnit.Case
 
   alias Quorum.Contract
+  alias Quorum.Contract.Context
   alias Ethereumex.HttpClient, as: QuorumHttpClient
 
   @tag :pending
   test "create Email verification contract" do
-    # assert {:ok, account_address} = QuorumHttpClient.request("personal_newAccount", ["p@ssW0rd"], [])
-
-    account_address = "0x63b1b67b599ba2de0d04287102c8b2ae85e209b3"
-    kimlic_ap_address = "0x6ad58c4fd879b94400eef71e40747ac743b6031f"
-    verification_contract_factory_address = "0x2d819f3832ec0fecc8eec4efe4e1a596878b2079"
+    account_address = init_quorum_user()
+    kimlic_ap_address = Context.get_kimlic_attestation_party_address()
+    verification_contract_factory_address = Context.get_verification_contract_factory_address()
 
     assert {:ok, _} = QuorumHttpClient.request("personal_unlockAccount", [account_address, "p@ssW0rd"], [])
     assert {:ok, _} = QuorumHttpClient.request("personal_unlockAccount", [kimlic_ap_address, "Kimlicp@ssw0rd"], [])
@@ -19,7 +18,7 @@ defmodule Quorum.Unit.SmartContractTest do
 
     data =
       Contract.hash_data(:verification_factory, "createEmailVerification", [
-        {account_address, kimlic_ap_address, kimlic_ap_address, return_key}
+        {account_address, kimlic_ap_address, return_key}
       ])
 
     tx_data = %{
@@ -66,5 +65,29 @@ defmodule Quorum.Unit.SmartContractTest do
     assert is_map(map), "Expected map from Quorum.eth_get_transaction_receipt, get: #{inspect(map)}"
     msg = "Invalid transaction status. Expected \"0x1\", get: #{map["status"]}"
     assert "0x1" == map["status"], msg
+  end
+
+  defp init_quorum_user do
+    assert {:ok, account_address} = QuorumHttpClient.request("personal_newAccount", ["p@ssW0rd"], [])
+    assert {:ok, _} = QuorumHttpClient.request("personal_unlockAccount", [account_address, "p@ssW0rd"], [])
+
+    transaction_data = %{
+      from: account_address,
+      to: Context.get_account_storage_adapter_address(),
+      data:
+        Contract.hash_data(:account_storage_adapter, "setAccountFieldMainData", [
+          {"#{:rand.uniform()}", "email"}
+        ]),
+      gas: "0x500000",
+      gasPrice: "0x0"
+    }
+
+    {:ok, transaction_hash} = QuorumHttpClient.eth_send_transaction(transaction_data, [])
+    :timer.sleep(150)
+
+    {:ok, %{"status" => "0x1"}} = QuorumHttpClient.eth_get_transaction_receipt(transaction_hash, [])
+    :timer.sleep(150)
+
+    account_address
   end
 end

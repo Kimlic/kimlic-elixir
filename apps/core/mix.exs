@@ -40,7 +40,7 @@ defmodule Core.MixProject do
       {:swoosh, "~> 0.14"},
       {:gen_smtp, "~> 0.12.0"},
       {:ex_twilio, "~> 0.6.0"},
-      {:httpoison, "~> 1.2"},
+      {:httpoison, "~> 1.2", override: true},
       {:mox, "~> 0.3", only: :test}
     ]
   end

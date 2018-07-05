@@ -5,7 +5,6 @@ defmodule MobileApi.Router do
   use Plug.ErrorHandler
 
   alias MobileApi.Plugs.AccountAddress
-  alias MobileApi.Plugs.Authorization
   alias MobileApi.Plugs.PhoneVerificationLimiter
   alias Plug.LoggerJSON
 
@@ -17,7 +16,8 @@ defmodule MobileApi.Router do
     plug(:accepts, ["json"])
     plug(EView)
     plug(AccountAddress)
-    plug(Authorization)
+    # todo: rewrite authorization logic
+    # plug(Authorization)
   end
 
   pipeline :quorum_proxy do
