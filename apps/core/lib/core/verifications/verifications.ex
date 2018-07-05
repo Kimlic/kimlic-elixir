@@ -6,6 +6,7 @@ defmodule Core.Verifications do
   alias __MODULE__
   alias Core.Clients.Redis
   alias Core.Email
+  alias Core.Verifications.TokenGenerator
   alias Core.Verifications.Verification
   alias Log
 
@@ -48,7 +49,7 @@ defmodule Core.Verifications do
   def create_verification(account_address, type) when allowed_type_atom(type) do
     %{
       account_address: account_address,
-      token: @token_generator.generate(type),
+      token: TokenGenerator.generate(type),
       entity_type: Verification.entity_type(type),
       status: Verification.status(:new)
     }
