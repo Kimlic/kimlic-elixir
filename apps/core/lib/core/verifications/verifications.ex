@@ -11,8 +11,8 @@ defmodule Core.Verifications do
 
   @typep create_verification_t :: {:ok, %Verification{}} | {:error, binary} | {:error, Ecto.Changeset.t()}
 
-  @token_generator Application.get_env(:core, :dependencies)[:token_generator]
   @messenger Application.get_env(:core, :dependencies)[:messenger]
+  @token_generator Application.get_env(:core, :dependencies)[:token_generator]
 
   ### Business
 
@@ -21,6 +21,12 @@ defmodule Core.Verifications do
     with {:ok, verification} <- create_verification(account_address, :email),
          :ok <- create_verification_contract(:email, account_address, email) do
       {:ok, verification}
+    else
+      {:error, :account_field_not_set} ->
+        {:error, {:conflict, "Account.email not set via AccountStorageAdapter.setAccountFieldMainData"}}
+
+      err ->
+        err
     end
   end
 
@@ -29,6 +35,12 @@ defmodule Core.Verifications do
     with {:ok, %Verification{} = verification} <- create_verification(account_address, :phone),
          :ok <- create_verification_contract(:phone, account_address, phone) do
       {:ok, verification}
+    else
+      {:error, :account_field_not_set} ->
+        {:error, {:conflict, "Account.phone not set via AccountStorageAdapter.setAccountFieldMainData"}}
+
+      err ->
+        err
     end
   end
 

@@ -3,7 +3,6 @@ defmodule MobileApi.VerificationControllerTest do
 
   use MobileApi.ConnCase, async: false
 
-  import MobileApi.RequestDataFactory
   import Mox
 
   alias Core.Verifications
@@ -39,6 +38,16 @@ defmodule MobileApi.VerificationControllerTest do
         {:ok, true}
       end)
 
+      # Quorum.getAccountStorageAdapter()
+      expect(QuorumClientMock, :eth_call, fn _params, _block, _opts ->
+        {:ok, "0x000000000000000000000000d37debc7b53d678788661c74c94f265b62a412ac"}
+      end)
+
+      # Quorum.getVerificationContractFactory()
+      expect(QuorumClientMock, :eth_call, fn _params, _block, _opts ->
+        {:ok, "0x000000000000000000000000d37debc7b53d678788661c74c94f265b62a412ac"}
+      end)
+
       # Quorum.getFieldHistoryLength(account_address, email)
       # Check that Account field email is set
       expect(QuorumClientMock, :eth_call, fn _params, _block, _opts ->
@@ -47,14 +56,43 @@ defmodule MobileApi.VerificationControllerTest do
 
       assert %{"data" => %{}, "meta" => %{"code" => 201}} =
                conn
-               |> post(
-                 verification_path(conn, :create_email_verification),
-                 data_for(:create_email_verification, email)
-               )
+               |> post(verification_path(conn, :create_email_verification), %{email: email})
                |> json_response(201)
 
       assert {:ok, %Verification{token: ^token, entity_type: @entity_type_email}} =
                Verifications.get(:email, account_address)
+    end
+
+    test "email not set for account", %{conn: conn} do
+      token = TokenGenerator.generate(:email)
+      email = "test#{token}@email.com"
+
+      expect(TokenGeneratorMock, :generate, fn :email -> token end)
+
+      expect(QuorumClientMock, :request, fn method, _params, _opts ->
+        assert "personal_unlockAccount" == method
+        {:ok, true}
+      end)
+
+      # Quorum.getFieldHistoryLength(account_address, email)
+      # Check that Account field email is set
+      # Response - email not set
+      expect(QuorumClientMock, :eth_call, fn _params, _block, _opts ->
+        {:ok, "0x0000000000000000000000000000000000000000000000000000000000000000"}
+      end)
+
+      # Quorum.getAccountStorageAdapter()
+      expect(QuorumClientMock, :eth_call, fn _params, _block, _opts ->
+        {:ok, "0x000000000000000000000000d37debc7b53d678788661c74c94f265b62a412ac"}
+      end)
+
+      err_message =
+        conn
+        |> post(verification_path(conn, :create_email_verification), %{email: email})
+        |> json_response(409)
+        |> get_in(~w(error message))
+
+      assert err_message =~ "Account.email"
     end
 
     test "email param not set", %{conn: conn} do
@@ -75,10 +113,6 @@ defmodule MobileApi.VerificationControllerTest do
                |> get_in(~w(error invalid))
 
       assert "$.email" == err["entry"]
-    end
-
-    test "email not set for account" do
-
     end
   end
 
@@ -120,20 +154,65 @@ defmodule MobileApi.VerificationControllerTest do
       expect(TokenGeneratorMock, :generate, fn :phone -> token end)
       expect(MessengerMock, :send, fn ^phone, _message -> {:ok, %{}} end)
 
+      # Quorum.getAccountStorageAdapter()
+      expect(QuorumClientMock, :eth_call, fn _params, _block, _opts ->
+        {:ok, "0x000000000000000000000000d37debc7b53d678788661c74c94f265b62a412ac"}
+      end)
+
+      # Quorum.getVerificationContractFactory()
+      expect(QuorumClientMock, :eth_call, fn _params, _block, _opts ->
+        {:ok, "0x000000000000000000000000d37debc7b53d678788661c74c94f265b62a412ac"}
+      end)
+
+      # Quorum.getFieldHistoryLength(account_address, phone)
+      # Check that Account field phone is set
+      expect(QuorumClientMock, :eth_call, fn _params, _block, _opts ->
+        {:ok, "0x0000000000000000000000000000000000000000000000000000000000000001"}
+      end)
+
       expect(QuorumClientMock, :request, fn method, _params, _opts ->
         assert "personal_unlockAccount" == method
         {:ok, true}
       end)
 
-      assert %{status: 201} =
-               post(
-                 conn,
-                 verification_path(conn, :create_phone_verification),
-                 data_for(:create_phone_verification, phone)
-               )
+      conn
+      |> post(verification_path(conn, :create_phone_verification), %{phone: phone})
+      |> json_response(201)
 
       assert {:ok, %Verification{token: ^token, entity_type: @entity_type_phone}} =
                Verifications.get(:phone, account_address)
+    end
+
+    test "Account.phone not set", %{conn: conn} do
+      phone = generate(:phone)
+      token = TokenGenerator.generate(:phone)
+
+      expect(TokenGeneratorMock, :generate, fn :phone -> token end)
+      expect(MessengerMock, :send, fn ^phone, _message -> {:ok, %{}} end)
+
+      # Quorum.getFieldHistoryLength(account_address, phone)
+      # Check that Account field phone is set
+      expect(QuorumClientMock, :eth_call, fn _params, _block, _opts ->
+        {:ok, "0x0000000000000000000000000000000000000000000000000000000000000000"}
+      end)
+
+      # Quorum.getAccountStorageAdapter()
+      expect(QuorumClientMock, :eth_call, fn _params, _block, _opts ->
+        {:ok, {:ok, generate(:account_address)}}
+      end)
+
+      expect(QuorumClientMock, :request, fn method, _params, _opts ->
+        assert "personal_unlockAccount" == method
+        {:ok, true}
+      end)
+
+      err_message =
+        conn
+        |> post(verification_path(conn, :create_phone_verification), %{phone: phone})
+        |> json_response(409)
+        |> get_in(~w(error message))
+
+      assert err_message =~ "Account.phone"
     end
 
     test "phone param not set", %{conn: conn} do
@@ -158,34 +237,32 @@ defmodule MobileApi.VerificationControllerTest do
 
     test "with limited requests", %{conn: conn} do
       attempts = Confex.fetch_env!(:mobile_api, :rate_limit_create_phone_verification_attempts)
-      # Each attempt invoke 2 call to Quorum.Context. Minus 2 because of defined expect in setup macro
-      # When requests will be cached - test will fail
-      mock_calls = attempts * 2 - 2
 
-      expect(QuorumClientMock, :eth_call, mock_calls, fn params, _block, _opts ->
+      # Quorum.getContextAddress
+      stub(QuorumClientMock, :eth_call, fn params, _block, _opts ->
         assert Map.has_key?(params, :data)
         assert Map.has_key?(params, :to)
-        {:ok, generate(:account_address)}
+
+        case params.data do
+          "0xbbe78c1b" <> _ -> {:ok, "0x0000000000000000000000000000000000000000000000000000000000000001"}
+          _ -> {:ok, generate(:account_address)}
+        end
       end)
 
       phone = generate(:phone)
       token = TokenGenerator.generate(:phone)
 
-      do_request = fn ->
-        post(
-          conn,
-          verification_path(conn, :create_phone_verification),
-          data_for(:create_phone_verification, phone)
-        )
-      end
+      stub(TokenGeneratorMock, :generate, fn :phone -> token end)
+      stub(MessengerMock, :send, fn ^phone, _message -> {:ok, %{}} end)
 
-      expect(TokenGeneratorMock, :generate, attempts, fn :phone -> token end)
-      expect(MessengerMock, :send, attempts, fn ^phone, _message -> {:ok, %{}} end)
-
-      expect(QuorumClientMock, :request, attempts, fn method, _params, _opts ->
+      stub(QuorumClientMock, :request, fn method, _params, _opts ->
         assert "personal_unlockAccount" == method
         {:ok, true}
       end)
+
+      do_request = fn ->
+        post(conn, verification_path(conn, :create_phone_verification), %{phone: phone})
+      end
 
       for _ <- 1..attempts, do: assert(%{status: 201} = do_request.())
 

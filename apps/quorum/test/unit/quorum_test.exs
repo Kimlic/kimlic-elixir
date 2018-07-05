@@ -54,8 +54,12 @@ defmodule Quorum.Unit.QuorumTest do
         {:ok, %{"status" => "0x1"}}
       end)
 
+      expect(QuorumClientMock, :eth_call, fn %{data: "0xbbe78c1b" <> _}, _block, _opts ->
+        {:ok, "0x0000000000000000000000000000000000000000000000000000000000000001"}
+      end)
+
       # get
-      expect(QuorumClientMock, :eth_call, fn params, _block, _opts ->
+      expect(QuorumClientMock, :eth_call, 3, fn params, _block, _opts ->
         assert Map.has_key?(params, :data)
         assert Map.has_key?(params, :to)
         {:ok, "0x9b4f4029f7e13575d5f4eab2c65ccc43b21aa67f4cfa200"}
