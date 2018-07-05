@@ -5,6 +5,9 @@ defmodule Quorum.Unit.SmartContractTest do
   alias Quorum.Contract.Context
   alias Ethereumex.HttpClient, as: QuorumHttpClient
 
+  @hashed_true "0x0000000000000000000000000000000000000000000000000000000000000001"
+  @hashed_false "0x0000000000000000000000000000000000000000000000000000000000000000"
+
   @tag :pending
   test "create Email verification contract" do
     account_address = init_quorum_user()
@@ -44,9 +47,9 @@ defmodule Quorum.Unit.SmartContractTest do
     assert {:ok, contract_address} = QuorumHttpClient.eth_call(%{data: data, to: verification_contract_factory_address})
     msg = "Expected address from Quorum.getVerificationContract, get: #{inspect(contract_address)}"
     assert is_binary(contract_address), msg
-    refute "0x0000000000000000000000000000000000000000000000000000000000000000" == contract_address
+    refute @hashed_false == contract_address
 
-    contract_address = String.replace(contract_address, "000000000000000000000000", "")
+    contract_address = String.replace(contract_address, String.duplicate("0", 24), "")
 
     data = Contract.hash_data(:base_verification, "setVerificationResult", [{true}])
 
@@ -76,8 +79,7 @@ defmodule Quorum.Unit.SmartContractTest do
       data: Contract.hash_data(:account_storage_adapter, "getFieldHistoryLength", [{account_address, "email"}])
     }
 
-    assert {:ok, "0x0000000000000000000000000000000000000000000000000000000000000000"} =
-             QuorumHttpClient.eth_call(params)
+    assert {:ok, @hashed_false} = QuorumHttpClient.eth_call(params)
   end
 
   @tag :pending
@@ -89,8 +91,7 @@ defmodule Quorum.Unit.SmartContractTest do
       data: Contract.hash_data(:account_storage_adapter, "getFieldHistoryLength", [{account_address, "email"}])
     }
 
-    assert {:ok, "0x0000000000000000000000000000000000000000000000000000000000000001"} =
-             QuorumHttpClient.eth_call(params)
+    assert {:ok, @hashed_true} = QuorumHttpClient.eth_call(params)
   end
 
   defp init_quorum_user do

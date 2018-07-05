@@ -12,6 +12,9 @@ defmodule MobileApi.VerificationControllerTest do
   @moduletag :authorized
   @moduletag :account_address
 
+  @hashed_true "0x0000000000000000000000000000000000000000000000000000000000000001"
+  @hashed_false "0x0000000000000000000000000000000000000000000000000000000000000000"
+
   @entity_type_email Verification.entity_type(:email)
   @entity_type_phone Verification.entity_type(:phone)
 
@@ -48,7 +51,7 @@ defmodule MobileApi.VerificationControllerTest do
       # Quorum.getFieldHistoryLength(account_address, email)
       # Check that Account field email is set
       expect(QuorumClientMock, :eth_call, fn _params, _block, _opts ->
-        {:ok, "0x0000000000000000000000000000000000000000000000000000000000000001"}
+        {:ok, @hashed_true}
       end)
 
       assert %{"data" => %{}, "meta" => %{"code" => 201}} =
@@ -74,7 +77,7 @@ defmodule MobileApi.VerificationControllerTest do
       # Check that Account field email is set
       # Response - email not set
       expect(QuorumClientMock, :eth_call, fn _params, _block, _opts ->
-        {:ok, "0x0000000000000000000000000000000000000000000000000000000000000000"}
+        {:ok, @hashed_false}
       end)
 
       # Quorum.getAccountStorageAdapter()
@@ -161,7 +164,7 @@ defmodule MobileApi.VerificationControllerTest do
       # Quorum.getFieldHistoryLength(account_address, phone)
       # Check that Account field phone is set
       expect(QuorumClientMock, :eth_call, fn _params, _block, _opts ->
-        {:ok, "0x0000000000000000000000000000000000000000000000000000000000000001"}
+        {:ok, @hashed_true}
       end)
 
       expect(QuorumClientMock, :request, fn method, _params, _opts ->
@@ -187,7 +190,7 @@ defmodule MobileApi.VerificationControllerTest do
       # Quorum.getFieldHistoryLength(account_address, phone)
       # Check that Account field phone is set
       expect(QuorumClientMock, :eth_call, fn _params, _block, _opts ->
-        {:ok, "0x0000000000000000000000000000000000000000000000000000000000000000"}
+        {:ok, @hashed_false}
       end)
 
       # Quorum.getAccountStorageAdapter()
@@ -239,8 +242,11 @@ defmodule MobileApi.VerificationControllerTest do
 
         case params.data do
           # 0xbbe78c1b - hashed getFieldHistoryLength(address,string)
-          "0xbbe78c1b" <> _ -> {:ok, "0x" <> String.duplicate("0", 63) <> "1"}
-          _ -> {:ok, generate(:account_address)}
+          "0xbbe78c1b" <> _ ->
+            {:ok, "0x" <> String.duplicate("0", 63) <> "1"}
+
+          _ ->
+            {:ok, generate(:account_address)}
         end
       end)
 

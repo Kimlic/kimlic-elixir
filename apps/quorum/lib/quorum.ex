@@ -15,6 +15,7 @@ defmodule Quorum do
   @gas_price "0x0"
 
   @quorum_client Application.get_env(:quorum, :client)
+  @hashed_false "0x0000000000000000000000000000000000000000000000000000000000000000"
 
   defguardp is_callback(mfa)
             when is_tuple(mfa) and tuple_size(mfa) == 3 and
@@ -39,11 +40,18 @@ defmodule Quorum do
     }
 
     case @quorum_client.eth_call(params, "latest", []) do
-      {:ok, "0x0000000000000000000000000000000000000000000000000000000000000000"} -> {:error, :account_field_not_set}
+      {:ok, @hashed_false} ->
+        {:error, :account_field_not_set}
+
       # byte_size 66 = hex prefix `0x` + 32 bytes
-      {:ok, resp} when byte_size(resp) != 66 -> {:error, :account_field_not_set}
-      {:ok, _} -> :ok
-      err -> err
+      {:ok, resp} when byte_size(resp) != 66 ->
+        {:error, :account_field_not_set}
+
+      {:ok, _} ->
+        :ok
+
+      err ->
+        err
     end
   end
 
