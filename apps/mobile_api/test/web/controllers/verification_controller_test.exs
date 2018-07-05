@@ -7,7 +7,6 @@ defmodule MobileApi.VerificationControllerTest do
   import Mox
 
   alias Core.Verifications
-  alias Core.Verifications.TokenGenerator
   alias Core.Verifications.Verification
 
   @moduletag :authorized
@@ -89,7 +88,7 @@ defmodule MobileApi.VerificationControllerTest do
 
     test "not found on email verification", %{conn: conn} do
       assert conn
-             |> post(verification_path(conn, :verify_email), %{"code" => TokenGenerator.generate(:email)})
+             |> post(verification_path(conn, :verify_email), %{"code" => Verifications.generate_token(:email)})
              |> json_response(404)
     end
 
@@ -199,7 +198,7 @@ defmodule MobileApi.VerificationControllerTest do
 
     test "not found on phone verification", %{conn: conn} do
       assert conn
-             |> post(verification_path(conn, :verify_phone), %{"code" => TokenGenerator.generate(:phone)})
+             |> post(verification_path(conn, :verify_phone), %{"code" => Verifications.generate_token(:phone)})
              |> json_response(404)
     end
   end

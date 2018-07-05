@@ -6,7 +6,6 @@ defmodule Core.Verifications do
   alias __MODULE__
   alias Core.Clients.Redis
   alias Core.Email
-  alias Core.Verifications.TokenGenerator
   alias Core.Verifications.Verification
   alias Log
 
@@ -36,12 +35,16 @@ defmodule Core.Verifications do
   def create_verification(account_address, type) when allowed_type_atom(type) do
     %{
       account_address: account_address,
-      token: TokenGenerator.generate(type),
+      token: generate_token(type),
       entity_type: Verification.entity_type(type),
       status: Verification.status(:new)
     }
     |> insert_verification(verification_ttl(type))
   end
+
+  @spec generate_token(:email | :phone) :: binary
+  def generate_token(:phone), do: "#{Enum.random(100_000..999_999)}"
+  def generate_token(:email), do: "#{Enum.random(100_000..999_999)}"
 
   @spec create_verification_contract(atom, binary, binary) :: :ok
   defp create_verification_contract(type, account_address, destination) do
