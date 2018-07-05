@@ -16,22 +16,13 @@ defmodule MobileApi.VerificationControllerTest do
   @entity_type_email Verification.entity_type(:email)
   @entity_type_phone Verification.entity_type(:phone)
 
-  defmodule QuorumContextExpect do
-    defmacro __using__(_) do
-      quote do
-        # Quorum.getContext()
-        # Quorum.getVerificationContractFactory()
-        expect(QuorumClientMock, :eth_call, 2, fn params, _block, _opts ->
-          assert Map.has_key?(params, :data)
-          assert Map.has_key?(params, :to)
-          {:ok, "0x111f4029f7e13575d5f4eab2c65ccc43b21aa67f4cfa200"}
-        end)
-      end
-    end
-  end
-
   setup do
-    use QuorumContextExpect
+    expect(QuorumClientMock, :eth_call, 2, fn params, _block, _opts ->
+      assert Map.has_key?(params, :data)
+      assert Map.has_key?(params, :to)
+      {:ok, generate(:account_address)}
+    end)
+
     :ok
   end
 
@@ -155,29 +146,6 @@ defmodule MobileApi.VerificationControllerTest do
       assert "$.phone" == err["entry"]
     end
 
-    test "fail to send sms", %{conn: conn} do
-      phone = generate(:phone)
-      error_message = "Fail to send sms"
-      expect(TokenGeneratorMock, :generate, fn :phone -> TokenGenerator.generate(:phone) end)
-
-      expect(MessengerMock, :send, fn ^phone, _message ->
-        {:error, {:internal_error, error_message}}
-      end)
-
-      expect(QuorumClientMock, :request, fn method, _params, _opts ->
-        assert "personal_unlockAccount" == method
-        {:ok, true}
-      end)
-
-      assert %{"error" => %{"message" => ^error_message}} =
-               conn
-               |> post(
-                 verification_path(conn, :create_phone_verification),
-                 data_for(:create_phone_verification, phone)
-               )
-               |> json_response(500)
-    end
-
     test "with limited requests", %{conn: conn} do
       attempts = Confex.fetch_env!(:mobile_api, :rate_limit_create_phone_verification_attempts)
       # Each attempt invoke 2 call to Quorum.Context. Minus 2 because of defined expect in setup macro
@@ -187,7 +155,7 @@ defmodule MobileApi.VerificationControllerTest do
       expect(QuorumClientMock, :eth_call, mock_calls, fn params, _block, _opts ->
         assert Map.has_key?(params, :data)
         assert Map.has_key?(params, :to)
-        {:ok, "0x111f4029f7e13575d5f4eab2c65ccc43b21aa67f4cfa200"}
+        {:ok, generate(:account_address)}
       end)
 
       phone = generate(:phone)
