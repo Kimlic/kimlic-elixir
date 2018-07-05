@@ -18,8 +18,10 @@ defmodule FidoQrCode.ScopeRequest do
   @optional ~w(username used)a
   @required ~w(status scopes)a
 
+  @spec status(atom) :: string
   def status(:new), do: @status_new
 
+  @spec changeset(%ScopeRequest{}, map) :: Ecto.Changeset.t()
   def changeset(%__MODULE__{} = schema, attrs) do
     schema
     |> cast(attrs, @required ++ @optional)

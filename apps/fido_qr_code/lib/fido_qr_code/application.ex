@@ -3,6 +3,7 @@ defmodule FidoQrCode.Application do
 
   use Application
 
+  @spec start(Application.start_type(), list) :: Supervisor.on_start()
   def start(_type, _args) do
     children = [
       FidoQrCode.Repo

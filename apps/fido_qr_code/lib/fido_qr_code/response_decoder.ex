@@ -5,6 +5,7 @@ defmodule FidoQrCode.ResponseDecoder do
 
   @success_codes [200, 201, 204]
 
+  @spec check_response(tuple) :: {:ok, map} | {:error, tuple}
   def check_response({:ok, %HTTPoison.Response{} = response}), do: check_response(response)
 
   def check_response(%HTTPoison.Response{status_code: status_code, body: body})
@@ -23,6 +24,7 @@ defmodule FidoQrCode.ResponseDecoder do
   end
 
   # no body in response
+  @spec decode_response(binary) :: {:ok, map} | {:error, tuple}
   def decode_response(""), do: {:ok, ""}
 
   def decode_response(response) do

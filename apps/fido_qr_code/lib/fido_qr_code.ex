@@ -1,7 +1,7 @@
 defmodule FidoQrCode do
   import FidoQrCode.ScopeRequests
 
-  alias FidoQrCode.{ScopeRequest, ScopeRequests, FidoServerClient}
+  alias FidoQrCode.{FidoServerClient, ScopeRequest, ScopeRequests}
 
   @spec create_scope_request :: %ScopeRequest{}
   def create_scope_request do
