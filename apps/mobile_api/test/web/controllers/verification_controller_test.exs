@@ -48,6 +48,12 @@ defmodule MobileApi.VerificationControllerTest do
         {:ok, true}
       end)
 
+      # Quorum.getFieldHistoryLength(account_address, email)
+      # Check that Account field email is set
+      expect(QuorumClientMock, :eth_call, fn _params, _block, _opts ->
+        {:ok, "0x0000000000000000000000000000000000000000000000000000000000000001"}
+      end)
+
       assert %{"data" => %{}, "meta" => %{"code" => 201}} =
                conn
                |> post(
@@ -78,6 +84,10 @@ defmodule MobileApi.VerificationControllerTest do
                |> get_in(~w(error invalid))
 
       assert "$.email" == err["entry"]
+    end
+
+    test "email not set for account" do
+
     end
   end
 
