@@ -1,19 +1,5 @@
 [
   {
-    "constant": true,
-    "inputs": [],
-    "name": "getContext",
-    "outputs": [
-      {
-        "name": "context",
-        "type": "address"
-      }
-    ],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
     "constant": false,
     "inputs": [
       {

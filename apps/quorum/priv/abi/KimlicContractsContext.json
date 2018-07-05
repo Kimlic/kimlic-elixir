@@ -121,10 +121,24 @@
   {
     "constant": true,
     "inputs": [],
-    "name": "getProvisioningPrice",
+    "name": "getProvisioningPriceList",
     "outputs": [
       {
-        "name": "provisioningPrice",
+        "name": "provisioningPriceList",
+        "type": "address"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [],
+    "name": "getVerificationPriceList",
+    "outputs": [
+      {
+        "name": "verificationPriceList",
         "type": "address"
       }
     ],
@@ -290,11 +304,25 @@
     "constant": false,
     "inputs": [
       {
-        "name": "provisioningPriceAddress",
+        "name": "provisioningPriceListAddress",
         "type": "address"
       }
     ],
-    "name": "setProvisioningPrice",
+    "name": "setProvisioningPriceList",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "name": "verificationPriceListAddress",
+        "type": "address"
+      }
+    ],
+    "name": "setVerificationPriceList",
     "outputs": [],
     "payable": false,
     "stateMutability": "nonpayable",
