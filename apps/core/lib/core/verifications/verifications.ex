@@ -13,7 +13,6 @@ defmodule Core.Verifications do
   @typep create_verification_t :: {:ok, %Verification{}} | {:error, binary} | {:error, Ecto.Changeset.t()}
 
   @messenger Application.get_env(:core, :dependencies)[:messenger]
-  @token_generator Application.get_env(:core, :dependencies)[:token_generator]
 
   ### Business
 

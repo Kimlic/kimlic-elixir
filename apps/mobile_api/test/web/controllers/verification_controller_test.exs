@@ -79,7 +79,7 @@ defmodule MobileApi.VerificationControllerTest do
 
       # Quorum.getAccountStorageAdapter()
       expect(QuorumClientMock, :eth_call, fn _params, _block, _opts ->
-        {:ok, "0x000000000000000000000000d37debc7b53d678788661c74c94f265b62a412ac"}
+        {:ok, generate(:account_address)}
       end)
 
       err_message =
@@ -238,7 +238,8 @@ defmodule MobileApi.VerificationControllerTest do
         assert Map.has_key?(params, :to)
 
         case params.data do
-          "0xbbe78c1b" <> _ -> {:ok, "0x0000000000000000000000000000000000000000000000000000000000000001"}
+          # 0xbbe78c1b - hashed getFieldHistoryLength(address,string)
+          "0xbbe78c1b" <> _ -> {:ok, "0x" <> String.duplicate("0", 63) <> "1"}
           _ -> {:ok, generate(:account_address)}
         end
       end)

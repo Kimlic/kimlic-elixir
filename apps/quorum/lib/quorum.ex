@@ -40,6 +40,7 @@ defmodule Quorum do
 
     case @quorum_client.eth_call(params, "latest", []) do
       {:ok, "0x0000000000000000000000000000000000000000000000000000000000000000"} -> {:error, :account_field_not_set}
+      # byte_size 66 = hex prefix `0x` + 32 bytes
       {:ok, resp} when byte_size(resp) != 66 -> {:error, :account_field_not_set}
       {:ok, _} -> :ok
       err -> err
