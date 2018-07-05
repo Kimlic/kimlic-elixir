@@ -39,9 +39,9 @@ defmodule FidoQrCode.MixProject do
       {:confex, "~> 3.3.1"},
       {:ecto, "~> 2.2"},
       {:httpoison, "~> 1.2"},
-      {:jason, "~> 1.0"},
-      {:postgrex, ">= 0.0.0"},
-      {:qrcode, "~> 0.1.4"}
+      {:jason, "~> 1.1"},
+      {:qrcode, "~> 0.1.4"},
+      {:postgrex, ">= 0.0.0"}
     ]
   end
 

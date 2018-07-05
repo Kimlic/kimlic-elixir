@@ -1,21 +1,11 @@
 defmodule FidoQrCode do
-  @moduledoc """
-  Example of rendering QR Code in Phoenix Controller
-
-  def qrcode(conn, _params) do
-    conn
-    |> put_resp_content_type("image/png")
-    |> send_resp(201, FidoQrCode.generate_qr_code(scope_request))
-  end
-  """
-
   import FidoQrCode.ScopeRequests
 
   alias FidoQrCode.{ScopeRequest, ScopeRequests, FidoServerClient}
 
+  @spec create_scope_request :: %ScopeRequest{}
   def create_scope_request do
     ScopeRequests.create(%{
-      callback_url: "",
       scopes: fetch_scopes(),
       status: ScopeRequest.status(:new),
       used: false
@@ -25,6 +15,7 @@ defmodule FidoQrCode do
   def process_scope_request(%ScopeRequest{id: id}, username),
     do: process_scope_request(id, username)
 
+  @spec process_scope_request(binary, binary) :: map
   def process_scope_request(id, username) when is_binary(username) do
     with scope_request <- ScopeRequests.get!(id),
          :ok <- check_processed(scope_request),
@@ -39,11 +30,22 @@ defmodule FidoQrCode do
     end
   end
 
+  @moduledoc """
+  Example of rendering QR Code in Phoenix Controller
+
+  def qrcode(conn, _params) do
+    conn
+    |> put_resp_content_type("image/png")
+    |> send_resp(201, FidoQrCode.generate_qr_code(scope_request))
+  end
+  """
+  @spec generate_qr_code(%ScopeRequest{}) :: binary
   def generate_qr_code(%ScopeRequest{id: id}) do
     callback_url = Confex.fetch_env!(:fido_qr_code, :callback_url)
     QRCode.to_png(callback_url <> "?scope_request=#{id}}")
   end
 
+  @spec fetch_scopes :: binary
   defp fetch_scopes do
     :fido_qr_code
     |> Confex.fetch_env!(:requested_scopes)
