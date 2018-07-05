@@ -63,10 +63,7 @@ defmodule MobileApi.VerificationControllerTest do
     end
 
     test "email not set for account", %{conn: conn} do
-      token = TokenGenerator.generate(:email)
-      email = "test#{token}@email.com"
-
-      expect(TokenGeneratorMock, :generate, fn :email -> token end)
+      email = generate(:email)
 
       expect(QuorumClientMock, :request, fn method, _params, _opts ->
         assert "personal_unlockAccount" == method
@@ -184,9 +181,7 @@ defmodule MobileApi.VerificationControllerTest do
 
     test "Account.phone not set", %{conn: conn} do
       phone = generate(:phone)
-      token = TokenGenerator.generate(:phone)
 
-      expect(TokenGeneratorMock, :generate, fn :phone -> token end)
       expect(MessengerMock, :send, fn ^phone, _message -> {:ok, %{}} end)
 
       # Quorum.getFieldHistoryLength(account_address, phone)
