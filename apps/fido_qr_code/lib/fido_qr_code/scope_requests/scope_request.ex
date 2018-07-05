@@ -21,7 +21,7 @@ defmodule FidoQrCode.ScopeRequest do
   @spec status(atom) :: string
   def status(:new), do: @status_new
 
-  @spec changeset(%ScopeRequest{}, map) :: Ecto.Changeset.t()
+  @spec changeset(ScopeRequest.t(), map) :: Ecto.Changeset.t()
   def changeset(%__MODULE__{} = schema, attrs) do
     schema
     |> cast(attrs, @required ++ @optional)
