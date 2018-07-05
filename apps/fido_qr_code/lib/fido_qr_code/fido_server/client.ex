@@ -1,7 +1,7 @@
 defmodule FidoQrCode.FidoServer.Client do
   use HTTPoison.Base
-  alias FidoQrCode.ResponseDecoder
   alias FidoQrCode.FidoServer.ClientBehaviour
+  alias FidoQrCode.ResponseDecoder
 
   @behaviour ClientBehaviour
 
