@@ -57,12 +57,7 @@ defmodule Core.Integration.VerificationsTest do
     expect(TokenGeneratorMock, :generate, fn :phone -> token end)
     expect(MessengerMock, :send, fn ^phone, _message -> {:ok, %{}} end)
 
-    account_address =
-      init_quorum_user("phone")
-      |> IO.inspect()
-
-    System.halt()
-
+    account_address = init_quorum_user("phone")
     assert {:ok, verification} = Verifications.create_phone_verification(phone, account_address)
     refute verification.contract_address
 

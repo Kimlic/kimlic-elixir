@@ -25,7 +25,7 @@ defmodule Core.Verifications do
     end
   end
 
-  @spec create_phone_verification(binary, binary) :: :ok | {:error, binary}
+  @spec create_phone_verification(binary, binary) :: {:ok, verification} | {:error, binary}
   def create_phone_verification(phone, account_address) do
     with {:ok, %Verification{token: sms_code} = verification} <- create_verification(account_address, :phone),
          :ok <- create_verification_contract(:phone, account_address),
