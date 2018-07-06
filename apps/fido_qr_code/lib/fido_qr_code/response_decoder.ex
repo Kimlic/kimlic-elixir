@@ -25,9 +25,9 @@ defmodule FidoQrCode.ResponseDecoder do
 
   # no body in response
   @spec decode_response(binary) :: {:ok, map} | {:error, tuple}
-  def decode_response(""), do: {:ok, ""}
+  defp decode_response(""), do: {:ok, ""}
 
-  def decode_response(response) do
+  defp decode_response(response) do
     case Jason.decode(response) do
       {:ok, body} -> {:ok, body}
       _ -> {:error, {:response_json_decoder, response}}
