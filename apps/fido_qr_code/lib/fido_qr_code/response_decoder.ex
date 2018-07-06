@@ -1,6 +1,6 @@
 defmodule FidoQrCode.ResponseDecoder do
   @moduledoc """
-  HTTPPoison JSON to Elixir data decoder and formatter
+  HTTPoison JSON to Elixir data decoder and formatter
   """
 
   @success_codes [200, 201, 204]
