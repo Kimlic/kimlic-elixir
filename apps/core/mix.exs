@@ -35,12 +35,12 @@ defmodule Core.MixProject do
     [
       {:quorum, in_umbrella: true},
       {:confex, "~> 3.3.1"},
-      {:redix, ">= 0.0.0"},
       {:ecto, "~> 2.1"},
-      {:swoosh, "~> 0.14"},
-      {:gen_smtp, "~> 0.12.0"},
       {:ex_twilio, "~> 0.6.0"},
+      {:gen_smtp, "~> 0.12.0"},
       {:httpoison, "~> 1.2", override: true},
+      {:redix, ">= 0.0.0"},
+      {:swoosh, "~> 0.14"},
       {:mox, "~> 0.3", only: :test}
     ]
   end

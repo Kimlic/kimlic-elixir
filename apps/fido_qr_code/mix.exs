@@ -1,47 +1,47 @@
-defmodule AttestationApi.Mixfile do
+defmodule FidoQrCode.MixProject do
   use Mix.Project
+
+  @version "0.0.1"
 
   def project do
     [
-      app: :attestation_api,
-      version: "0.0.1",
+      app: :fido_qr_code,
+      version: @version,
       build_path: "../../_build",
       config_path: "../../config/config.exs",
       deps_path: "../../deps",
       lockfile: "../../mix.lock",
-      elixir: "~> 1.4",
+      elixir: "~> 1.6",
       elixirc_paths: elixirc_paths(Mix.env()),
-      compilers: [:phoenix] ++ Mix.compilers(),
+      compilers: Mix.compilers(),
+      build_embedded: Mix.env() == :prod,
       start_permanent: Mix.env() == :prod,
+      preferred_cli_env: [coveralls: :test],
       deps: deps(),
       aliases: aliases()
     ]
   end
 
+  # Run "mix help compile.app" to learn about applications.
   def application do
     [
-      mod: {AttestationApi.Application, []},
-      extra_applications: [:logger, :runtime_tools]
+      extra_applications: [:logger],
+      mod: {FidoQrCode.Application, []}
     ]
   end
 
   defp elixirc_paths(:test), do: ["lib", "test/support"]
   defp elixirc_paths(_), do: ["lib"]
 
+  # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:quorum, in_umbrella: true},
-      {:cowboy, "~> 1.0"},
+      {:confex, "~> 3.3.1"},
       {:ecto, "~> 2.2"},
-      {:eview, "~> 0.12"},
-      {:httpoison, "~> 1.2", override: true},
+      {:httpoison, "~> 1.2"},
       {:jason, "~> 1.1"},
-      {:phoenix, "~> 1.3.2"},
-      {:phoenix_pubsub, "~> 1.0"},
-      {:plug_logger_json, "~> 0.5"},
-      {:postgrex, ">= 0.0.0"},
-      {:mox, "~> 0.3", only: :test},
-      {:ex_machina, "~> 2.2", only: :test}
+      {:qrcode, "~> 0.1.4"},
+      {:postgrex, ">= 0.0.0"}
     ]
   end
 
