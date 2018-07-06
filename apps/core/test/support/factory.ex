@@ -2,7 +2,6 @@ defmodule Core.Factory do
   @moduledoc false
 
   alias Core.Clients.Redis
-  alias Core.Verifications.TokenGenerator
   alias Core.Verifications.Verification
 
   @spec build(atom, map) :: %Verification{} | term
@@ -51,17 +50,19 @@ defmodule Core.Factory do
     end
   end
 
+  # ToDo: use Faker instead
   @spec generate(atom) :: binary
-  def generate(:phone), do: "+38097#{Enum.random(1_000_000..9_999_999)}"
+  def generate(:phone), do: "+38097#{random_string()}"
 
+  # ToDo: use Faker instead
   @spec generate(atom) :: binary
-  def generate(:email), do: "test#{Enum.random(1_000_000..9_999_999)}@email.local"
+  def generate(:email), do: "test#{random_string()}@email.local"
 
   @spec generate(atom) :: binary
   def generate(:account_address) do
     account_address =
       :sha256
-      |> :crypto.hash(TokenGenerator.generate(:email))
+      |> :crypto.hash(random_string())
       |> Base.encode16(case: :lower)
       |> String.slice(0..39)
 
@@ -70,4 +71,7 @@ defmodule Core.Factory do
 
   @spec generate(atom) :: binary
   def generate(:unix_timestamp), do: DateTime.utc_now() |> DateTime.to_unix()
+
+  @spec random_string :: binary
+  def random_string, do: "#{Enum.random(100_000..999_999)}"
 end
