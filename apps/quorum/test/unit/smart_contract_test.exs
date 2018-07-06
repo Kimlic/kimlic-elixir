@@ -5,6 +5,9 @@ defmodule Quorum.Unit.SmartContractTest do
   alias Quorum.Contract.Context
   alias Ethereumex.HttpClient, as: QuorumHttpClient
 
+  @hashed_true "0x0000000000000000000000000000000000000000000000000000000000000001"
+  @hashed_false "0x0000000000000000000000000000000000000000000000000000000000000000"
+
   @tag :pending
   test "create Email verification contract" do
     account_address = init_quorum_user()
@@ -44,9 +47,9 @@ defmodule Quorum.Unit.SmartContractTest do
     assert {:ok, contract_address} = QuorumHttpClient.eth_call(%{data: data, to: verification_contract_factory_address})
     msg = "Expected address from Quorum.getVerificationContract, get: #{inspect(contract_address)}"
     assert is_binary(contract_address), msg
-    refute "0x0000000000000000000000000000000000000000000000000000000000000000" == contract_address
+    refute @hashed_false == contract_address
 
-    contract_address = String.replace(contract_address, "000000000000000000000000", "")
+    contract_address = String.replace(contract_address, String.duplicate("0", 24), "")
 
     data = Contract.hash_data(:base_verification, "setVerificationResult", [{true}])
 
@@ -67,6 +70,30 @@ defmodule Quorum.Unit.SmartContractTest do
     assert "0x1" == map["status"], msg
   end
 
+  @tag :pending
+  test "check that account field email not set" do
+    assert {:ok, account_address} = QuorumHttpClient.request("personal_newAccount", ["p@ssW0rd"], [])
+
+    params = %{
+      to: Context.get_account_storage_adapter_address(),
+      data: Contract.hash_data(:account_storage_adapter, "getFieldHistoryLength", [{account_address, "email"}])
+    }
+
+    assert {:ok, @hashed_false} = QuorumHttpClient.eth_call(params)
+  end
+
+  @tag :pending
+  test "check that account field email set" do
+    account_address = init_quorum_user()
+
+    params = %{
+      to: Context.get_account_storage_adapter_address(),
+      data: Contract.hash_data(:account_storage_adapter, "getFieldHistoryLength", [{account_address, "email"}])
+    }
+
+    assert {:ok, @hashed_true} = QuorumHttpClient.eth_call(params)
+  end
+
   defp init_quorum_user do
     assert {:ok, account_address} = QuorumHttpClient.request("personal_newAccount", ["p@ssW0rd"], [])
     assert {:ok, _} = QuorumHttpClient.request("personal_unlockAccount", [account_address, "p@ssW0rd"], [])
@@ -83,10 +110,10 @@ defmodule Quorum.Unit.SmartContractTest do
     }
 
     {:ok, transaction_hash} = QuorumHttpClient.eth_send_transaction(transaction_data, [])
-    :timer.sleep(150)
+    :timer.sleep(75)
 
     {:ok, %{"status" => "0x1"}} = QuorumHttpClient.eth_get_transaction_receipt(transaction_hash, [])
-    :timer.sleep(150)
+    :timer.sleep(75)
 
     account_address
   end

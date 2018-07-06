@@ -15,18 +15,45 @@ defmodule Quorum do
   @gas_price "0x0"
 
   @quorum_client Application.get_env(:quorum, :client)
+  @hashed_false "0x0000000000000000000000000000000000000000000000000000000000000000"
 
   defguardp is_callback(mfa)
             when is_tuple(mfa) and tuple_size(mfa) == 3 and
                    (is_atom(elem(mfa, 0)) and is_atom(elem(mfa, 1)) and is_list(elem(mfa, 2)))
 
-  @spec create_verification_contract(atom, binary, callback) :: :ok
-  def create_verification_contract(:email, account_address, callback),
-    do: create_verification_transaction(account_address, "createEmailVerification", callback)
+  @spec create_verification_contract(atom, binary, callback) :: :ok | {:error, map}
+  def create_verification_contract(type, account_address, callback) do
+    with {:ok, contract_function} <- get_contract_function(type),
+         :ok <- validate_account_field(account_address, Atom.to_string(type)) do
+      create_verification_transaction(account_address, contract_function, callback)
+    end
+  end
 
-  @spec create_verification_contract(atom, binary, callback) :: :ok
-  def create_verification_contract(:phone, account_address, callback),
-    do: create_verification_transaction(account_address, "createPhoneVerification", callback)
+  defp get_contract_function(:email), do: {:ok, "createEmailVerification"}
+  defp get_contract_function(:phone), do: {:ok, "createPhoneVerification"}
+  defp get_contract_function(_), do: {:error, :invalid_verification_type}
+
+  defp validate_account_field(account_address, field) do
+    params = %{
+      to: Context.get_account_storage_adapter_address(),
+      data: hash_data(:account_storage_adapter, "getFieldHistoryLength", [{account_address, field}])
+    }
+
+    case @quorum_client.eth_call(params, "latest", []) do
+      {:ok, @hashed_false} ->
+        {:error, :account_field_not_set}
+
+      # byte_size 66 = hex prefix `0x` + 32 bytes
+      {:ok, resp} when byte_size(resp) != 66 ->
+        {:error, :account_field_not_set}
+
+      {:ok, _} ->
+        :ok
+
+      err ->
+        err
+    end
+  end
 
   @spec create_verification_transaction(binary, binary, callback) :: :ok
   defp create_verification_transaction(account_address, contract_func, callback) when is_callback(callback) do

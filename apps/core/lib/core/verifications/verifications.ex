@@ -20,6 +20,12 @@ defmodule Core.Verifications do
     with {:ok, verification} <- create_verification(account_address, :email),
          :ok <- create_verification_contract(:email, account_address, email) do
       {:ok, verification}
+    else
+      {:error, :account_field_not_set} ->
+        {:error, {:conflict, "Account.email not set via AccountStorageAdapter.setAccountFieldMainData"}}
+
+      err ->
+        err
     end
   end
 
@@ -28,6 +34,12 @@ defmodule Core.Verifications do
     with {:ok, %Verification{} = verification} <- create_verification(account_address, :phone),
          :ok <- create_verification_contract(:phone, account_address, phone) do
       {:ok, verification}
+    else
+      {:error, :account_field_not_set} ->
+        {:error, {:conflict, "Account.phone not set via AccountStorageAdapter.setAccountFieldMainData"}}
+
+      err ->
+        err
     end
   end
 

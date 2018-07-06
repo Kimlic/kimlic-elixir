@@ -55,6 +55,16 @@ defmodule Core.Integration.VerificationsTest do
   end
 
   @tag :pending
+  test "create Email verification when Account field email not set" do
+    token = TokenGenerator.generate(:email)
+
+    account_address = init_quorum_user("phone")
+    email = "test@example.com"
+
+    assert {:error, :account_field_not_set} = Verifications.create_email_verification(email, account_address)
+  end
+
+  @tag :pending
   test "create Phone verification and verify email" do
     phone = generate(:phone)
 
