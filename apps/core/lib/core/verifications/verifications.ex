@@ -55,8 +55,8 @@ defmodule Core.Verifications do
   end
 
   @spec generate_token(:email | :phone) :: binary
-  def generate_token(:phone), do: "#{Enum.random(100_000..999_999)}"
-  def generate_token(:email), do: "#{Enum.random(100_000..999_999)}"
+  def generate_token(:phone), do: "#{Enum.random(1000..9999)}"
+  def generate_token(:email), do: "#{Enum.random(1000..9999)}"
 
   @spec create_verification_contract(atom, binary, binary) :: :ok
   defp create_verification_contract(type, account_address, destination) do
