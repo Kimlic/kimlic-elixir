@@ -44,6 +44,16 @@ Mobile API and Core application
 | TWILIO_AUTH_TOKEN      | not set              | Twilio account auth token. |
 | VERIFICATION_PHONE_TTL | `86400`       | Time to live for phone verification (in seconds). |
 
+### Push notifications
+
+| VAR_NAME                   | Default Value   | Description                     |
+| -------------------------- | --------------- | ------------------------------- |
+| PIGEON_APNS_KEY            | not set         | IOS push server key.            |
+| PIGEON_APNS_KEY_IDENTIFIER | not set         | IOS push server key identifier. |
+| PIGEON_APNS_TEAM_ID        | not set         | IOS team id.                    |
+| PIGEON_FCM_KEY             | not set         | Android push server key.        |
+
+
 ### Dependent applications configurations
 
 [Quorum](#quorum)
