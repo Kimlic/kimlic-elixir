@@ -32,7 +32,7 @@ defmodule FidoQrCode do
     end
   end
 
-  @moduledoc """
+  @doc """
   Example of rendering QR Code in Phoenix Controller
 
   def qrcode(conn, _params) do
