@@ -48,3 +48,6 @@ uploads/
 *id_rsa*
 *.key
 *.csr
+
+# Exclude plt hash
+priv/*.hash
