@@ -84,7 +84,6 @@ defmodule AttestationApi.DigitalVerifications do
     }
   end
 
-  @spec get_verification_data_from_result(map) :: map
   defp get_verification_data_from_result(verification_result) do
     %{
       status: DigitalVerification.status(:failed),

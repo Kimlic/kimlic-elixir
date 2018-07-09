@@ -1,7 +1,7 @@
 defmodule PublicApi.Application do
   use Application
 
-  @spec start(Application.start_type(), list) :: Supervisor.on_start()
+  @spec start(Application.start_type(), list) :: {:error, term} | {:ok, pid} | {:ok, pid, term}
   def start(_type, _args) do
     import Supervisor.Spec
 
