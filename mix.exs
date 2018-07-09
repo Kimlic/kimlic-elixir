@@ -11,7 +11,8 @@ defmodule Kimlic.MixProject do
       test_coverage: [tool: ExCoveralls],
       dialyzer: [
         ignore_warnings: "config/.dialyzer_ignore",
-        plt_file: {:no_warn, "priv/dialyxir_erlang-20.3.6_elixir-1.6.5.plt"}
+        plt_file: {:no_warn, "priv/dialyxir_erlang-20.3.6_elixir-1.6.5.plt"},
+        flags: ["-Wpattern_match"]
       ]
     ]
   end

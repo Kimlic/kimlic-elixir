@@ -47,7 +47,7 @@ defmodule MobileApi.VerificationController do
   end
 
   # todo: validate request
-  @spec create_phone_verification(Conn.t(), map) :: Conn.t()
+  @spec create_phone_verification(Conn.t(), map) :: Conn.t() | Ecto.Changeset.t()
   def create_phone_verification(conn, params) do
     account_address = conn.assigns.account_address
 

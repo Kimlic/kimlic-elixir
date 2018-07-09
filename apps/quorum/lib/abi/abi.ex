@@ -1,4 +1,6 @@
 defmodule Quorum.ABI do
+  @moduledoc false
+
   alias Quorum.ABI.{FunctionSelector, Parser, TypeEncoder}
 
   @spec encode(binary, list) :: binary
@@ -13,7 +15,7 @@ defmodule Quorum.ABI do
     TypeEncoder.encode(data, function_selector)
   end
 
-  @spec parse_specification(integer) :: integer
+  @spec parse_specification(term) :: [%FunctionSelector{}]
   def parse_specification(doc) do
     doc
     |> Enum.map(&FunctionSelector.parse_specification_item/1)
