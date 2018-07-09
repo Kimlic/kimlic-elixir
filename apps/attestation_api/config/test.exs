@@ -4,7 +4,9 @@ config :attestation_api, AttestationApi.Endpoint,
   http: [port: 4001],
   server: false
 
-config :attestation_api, :dependencies, veriffme: VeriffmeMock
+config :attestation_api, :dependencies,
+  veriffme: VeriffmeMock,
+  push: PushMock
 
 config :attestation_api, AttestationApi.Repo,
   url: "postgres://postgres:postgres@localhost:5432/attestation_api_test",
