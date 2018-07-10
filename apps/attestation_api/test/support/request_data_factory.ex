@@ -2,6 +2,7 @@ defmodule AttestationApi.RequestDataFactory do
   @moduledoc false
 
   import AttestationApi.Factories
+  alias Ecto.UUID
 
   @spec data_for(atom, map) :: map
   def data_for(atom, params \\ %{})
@@ -12,7 +13,9 @@ defmodule AttestationApi.RequestDataFactory do
       "last_name" => "Doe",
       "lang" => "en",
       "timestamp" => generate(:unix_timestamp),
-      "contract_address" => generate(:account_address)
+      "contract_address" => generate(:account_address),
+      "device_os" => Enum.random(["ios", "android"]),
+      "device_token" => UUID.generate()
     }
     |> Map.merge(params)
   end

@@ -42,6 +42,8 @@ defmodule AttestationApi.Mixfile do
       {:ecto, "~> 2.2"},
       {:postgrex, ">= 0.0.0"},
       {:eview, "~> 0.12"},
+      {:pigeon, "~> 1.2.0"},
+      {:kadabra, "~> 0.4.2"},
       {:mox, "~> 0.3", only: :test},
       {:ex_machina, "~> 2.2", only: :test}
     ]
