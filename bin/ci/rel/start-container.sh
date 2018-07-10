@@ -30,3 +30,12 @@ docker run -p 4000:4000 -p 4001:4001 -p 4002:4002 \
        "${PROJECT_NAME}:${PROJECT_VERSION}"
 sleep 5
 docker ps
+
+docker logs ${PROJECT_NAME} --details --since 5h;
+
+IS_RUNNING=$(docker inspect --format='{{ .State.Running }}' ${PROJECT_NAME});
+
+if [ -z "$IS_RUNNING" ] || [ $IS_RUNNING != "true" ]; then
+  echo "[E] Container is not started.";
+  exit 1;
+fi;
