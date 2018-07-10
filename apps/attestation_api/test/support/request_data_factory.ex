@@ -9,6 +9,7 @@ defmodule AttestationApi.RequestDataFactory do
 
   def data_for(:verification_digital_create_session, params) do
     %{
+      # present in request: vendor_id
       "first_name" => "John",
       "last_name" => "Doe",
       "lang" => "en",
@@ -22,10 +23,11 @@ defmodule AttestationApi.RequestDataFactory do
 
   def data_for(:digital_verification_upload_media, params) do
     %{
+      # present in request: vendor_id, session_id
       "country" => "US",
       "document_type" => "ID_CARD",
       "context" => Enum.random(["face", "document-front", "document-back"]),
-      "content" => "data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs=",
+      "content" => "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==",
       "timestamp" => generate(:unix_timestamp)
     }
     |> Map.merge(params)

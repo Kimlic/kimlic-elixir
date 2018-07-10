@@ -6,8 +6,8 @@ defmodule AttestationApi.DigitalVerifications.Operations.UploadMedia do
   alias AttestationApi.DigitalVerifications
   alias AttestationApi.DigitalVerifications.DigitalVerification
   alias AttestationApi.DigitalVerifications.DigitalVerificationDocument
-  alias AttestationApi.DigitalVerifications.VerificationVendors
   alias AttestationApi.Repo
+  alias AttestationApi.VerificationVendors
 
   @veriffme_client Application.get_env(:attestation_api, :dependencies)[:veriffme]
 
@@ -16,8 +16,7 @@ defmodule AttestationApi.DigitalVerifications.Operations.UploadMedia do
         _account_address,
         %{"session_id" => session_id, "vendor_id" => vendor_id, "document_type" => document_type} = params
       ) do
-    with :ok <- VerificationVendors.check_context_items(params),
-         %DigitalVerification{documents: documents} = verification <- get_verification_and_documents(session_id),
+    with %DigitalVerification{documents: documents} = verification <- get_verification_and_documents(session_id),
          {:ok, new_document} <- create_digital_verification_document(params, verification),
          documents <- [new_document] ++ documents,
          :ok <- check_all_documents_are_loaded(documents, vendor_id, document_type),
