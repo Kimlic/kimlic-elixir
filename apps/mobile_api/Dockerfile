@@ -1,4 +1,4 @@
-FROM bitwalker/alpine-elixir:1.6.5 as builder
+FROM elixir:1.6.6-alpine as builder
 
 ARG APP_NAME
 ARG APP_VERSION

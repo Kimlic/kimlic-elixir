@@ -1,10 +1,12 @@
 defmodule AttestationApi.Mixfile do
   use Mix.Project
 
+  @version "0.0.1"
+
   def project do
     [
       app: :attestation_api,
-      version: "0.0.1",
+      version: @version,
       build_path: "../../_build",
       config_path: "../../config/config.exs",
       deps_path: "../../deps",
