@@ -23,7 +23,7 @@ RUN mix do \
       deps.compile, \
       release
 
-FROM alpine:edge
+FROM alpine:3.7
 
 ARG APP_NAME
 ARG APP_VERSION
