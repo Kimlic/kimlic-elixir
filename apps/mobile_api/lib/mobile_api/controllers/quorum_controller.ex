@@ -9,7 +9,7 @@ defmodule MobileApi.QuorumController do
 
   plug(RequestValidator, validator: JSONRPCValidator, error_handler: FallbackController)
 
-  @spec proxy(Conn.t(), map) :: Conn.t()
+  @spec proxy(Plug.Conn.t(), map) :: Plug.Conn.t()
   def proxy(conn, params) do
     case Quorum.Proxy.proxy(params) do
       {_, %Response{status_code: code, body: body}} ->

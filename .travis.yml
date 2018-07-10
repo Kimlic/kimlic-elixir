@@ -54,8 +54,8 @@ script:
 - ./bin/ci/release/check-version-error.sh || travis_terminate 1
 # Increment version in mix.exs
 - ./bin/ci/release/put-source-version.sh || travis_terminate 1
-# Run all tests except pending ones
-- ./bin/mix_tests.sh || travis_terminate 1
+# Run project checks
+- ./bin/mix_checks.sh || travis_terminate 1
 # Build Docker container
 - ./bin/ci/rel/build-container.sh || travis_terminate 1
 # Run Docker container

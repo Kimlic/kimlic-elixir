@@ -22,17 +22,17 @@ defmodule MobileApi.JSONRPCValidator do
 
   @required ~w(id method)a
 
-  @spec changeset(map) :: Changeset.t()
+  @spec changeset(map) :: Ecto.Changeset.t()
   def changeset(%{"_json" => _} = attrs) do
     %RequestBatch{}
     |> cast(attrs, [])
     |> cast_embed(:_json, with: &changeset/2)
   end
 
-  @spec changeset(map) :: Changeset.t()
+  @spec changeset(map) :: Ecto.Changeset.t()
   def changeset(attrs), do: changeset(%Request{}, attrs)
 
-  @spec changeset(struct, map) :: Changeset.t()
+  @spec changeset(struct, map) :: Ecto.Changeset.t()
   def changeset(schema, attrs) do
     schema
     |> cast(attrs, @required)

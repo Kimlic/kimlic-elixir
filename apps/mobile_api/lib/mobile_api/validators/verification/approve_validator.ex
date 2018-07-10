@@ -10,7 +10,7 @@ defmodule MobileApi.Validators.Verification.ApproveValidator do
     field(:code, :string)
   end
 
-  @spec changeset(map) :: Changeset.t()
+  @spec changeset(map) :: Ecto.Changeset.t()
   def changeset(attrs) do
     %__MODULE__{}
     |> cast(attrs, @required)

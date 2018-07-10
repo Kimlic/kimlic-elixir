@@ -39,7 +39,7 @@ defmodule MobileApi.ConnCase do
     {:ok, conn: conn}
   end
 
-  @spec put_account_address(Conn.t(), map) :: Conn.t()
+  @spec put_account_address(Plug.Conn.t(), map) :: Plug.Conn.t()
   def put_account_address(conn, %{account_address: true}) do
     account_address = Core.Factory.generate(:account_address)
 
@@ -50,7 +50,7 @@ defmodule MobileApi.ConnCase do
 
   def put_account_address(conn, _tags), do: conn
 
-  @spec put_authorization_headers(Conn.t(), map) :: Conn.t()
+  @spec put_authorization_headers(Plug.Conn.t(), map) :: Plug.Conn.t()
   def put_authorization_headers(conn, %{authorized: true}) do
     auth_token = Ecto.UUID.generate()
     bearer_token = Quorum.BearerService.bearer(auth_token)

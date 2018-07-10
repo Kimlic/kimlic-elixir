@@ -24,7 +24,7 @@ defmodule AttestationApi.Endpoint do
   It receives the endpoint configuration and checks if
   configuration should be loaded from the system environment.
   """
-  @spec init(term, term) :: {:ok, term}
+  @spec init(term, term) :: {:ok, Keyword.t()}
   def init(_key, config) do
     config = Resolver.resolve!(config)
 

@@ -126,14 +126,14 @@ defmodule Core.Verifications do
 
   ### CRUD
 
-  @spec insert_verification(map, binary) :: create_verification_t
+  @spec insert_verification(map, pos_integer) :: create_verification_t
   defp insert_verification(attrs, verification_ttl) do
     with %Ecto.Changeset{valid?: true} = verification <- Verification.changeset(attrs) do
       Redis.upsert(verification, verification_ttl)
     end
   end
 
-  @spec get(binary, atom) :: {:ok, %Verification{}} | {:error, term}
+  @spec get(:email | :phone | binary(), binary) :: {:ok, %Verification{}} | {:error, atom}
   def get(type, account_address) do
     type
     |> Verification.redis_key(account_address)

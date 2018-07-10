@@ -12,7 +12,7 @@ defmodule MobileApi.Validators.Verification.EmailValidator do
     field(:email, :string)
   end
 
-  @spec changeset(map) :: Changeset.t()
+  @spec changeset(map) :: Ecto.Changeset.t()
   def changeset(attrs) do
     %__MODULE__{}
     |> cast(attrs, @required)
