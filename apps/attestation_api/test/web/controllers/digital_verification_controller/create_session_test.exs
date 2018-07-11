@@ -11,10 +11,11 @@ defmodule AttestationApi.DigitalVerificationController.CreateSessionTest do
   @moduletag :authorized
   @moduletag :account_address
 
+  @kimlic_vendor_id Application.get_env(:attestation_api, :kimlic_vendor_id)
+
   describe "create session" do
     test "success", %{conn: conn} do
       request_data = data_for(:verification_digital_create_session)
-      vendor_id = UUID.generate()
       session_id = UUID.generate()
 
       expect(VeriffmeMock, :create_session, fn _, _, _, _ ->
@@ -38,13 +39,12 @@ defmodule AttestationApi.DigitalVerificationController.CreateSessionTest do
 
       assert %{"data" => %{"session_id" => ^session_id}} =
                conn
-               |> post(digital_verification_path(conn, :create_session, vendor_id), request_data)
+               |> post(digital_verification_path(conn, :create_session, @kimlic_vendor_id), request_data)
                |> json_response(200)
     end
 
     test "fail with veriffme", %{conn: conn} do
       request_data = data_for(:verification_digital_create_session)
-      vendor_id = UUID.generate()
 
       expect(VeriffmeMock, :create_session, fn _, _, _, _ ->
         {:ok,
@@ -62,8 +62,22 @@ defmodule AttestationApi.DigitalVerificationController.CreateSessionTest do
 
       assert %{"error" => %{"message" => _, "type" => "internal_error"}} =
                conn
-               |> post(digital_verification_path(conn, :create_session, vendor_id), request_data)
+               |> post(digital_verification_path(conn, :create_session, @kimlic_vendor_id), request_data)
                |> json_response(504)
+    end
+  end
+
+  describe "validation" do
+    test "verification timestamp should not be older than hour from now", %{conn: conn} do
+      hour = 60 * 60 + 1
+      timestamp_hour_ago = DateTime.to_unix(DateTime.utc_now()) - hour
+      request_data = data_for(:verification_digital_create_session, %{"timestamp" => timestamp_hour_ago})
+
+      assert [%{"entry" => "$.timestamp"}] =
+               conn
+               |> post(digital_verification_path(conn, :create_session, @kimlic_vendor_id), request_data)
+               |> json_response(422)
+               |> get_in(~w(error invalid))
     end
   end
 end

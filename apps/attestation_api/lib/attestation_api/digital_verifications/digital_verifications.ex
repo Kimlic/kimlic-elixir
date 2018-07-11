@@ -71,6 +71,11 @@ defmodule AttestationApi.DigitalVerifications do
     end
   end
 
+  defp update_status(params) do
+    Log.error("[#{__MODULE__}] Fail to handle Veriff webhook with params: #{inspect(params)}")
+    {:error, :not_found}
+  end
+
   @spec remove_verification_documents(%DigitalVerification{}) :: {integer, nil} | {:error, binary}
   defp remove_verification_documents(%DigitalVerification{id: verification_id}) do
     DigitalVerificationDocument
