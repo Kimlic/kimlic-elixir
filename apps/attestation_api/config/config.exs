@@ -19,6 +19,8 @@ config :attestation_api, AttestationApi.Clients.Veriffme,
   auth_client: {:system, "VERIFFME_AUTH_CLIENT"},
   api_secret: {:system, "VERIFFME_API_SECRET"}
 
+config :attestation_api, kimlic_vendor_id: "87177897-2441-43af-a6bf-4860afcdd067"
+
 config :logger, :console,
   format: "$time $metadata[$level] $message\n",
   metadata: [:user_id]

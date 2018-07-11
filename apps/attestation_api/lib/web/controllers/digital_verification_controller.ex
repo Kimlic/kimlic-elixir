@@ -6,13 +6,15 @@ defmodule AttestationApi.DigitalVerificationController do
   alias AttestationApi.DigitalVerifications
   alias AttestationApi.DigitalVerifications.Operations.UploadMedia
   alias AttestationApi.Plugs.RequestValidator
+  alias AttestationApi.Validators.CreateSessionValidator
+  alias AttestationApi.Validators.UploadMediaValidator
   alias AttestationApi.VerificationVendors
   alias Plug.Conn
 
   action_fallback(AttestationApi.FallbackController)
 
-  plug(RequestValidator, [validator: AttestationApi.Validators.CreateSessionValidator] when action in [:create_session])
-  plug(RequestValidator, [validator: AttestationApi.Validators.UploadMediaValidator] when action in [:upload_media])
+  plug(RequestValidator, [validator: CreateSessionValidator] when action in [:create_session])
+  plug(RequestValidator, [validator: UploadMediaValidator] when action in [:upload_media])
 
   @spec create_session(Conn.t(), map) :: Conn.t()
   def create_session(conn, %{"vendor_id" => _} = params) do

@@ -16,7 +16,7 @@ defmodule AttestationApi.VerificationVendors do
   end
 
   @spec get_kimlic_vendor_id :: binary
-  def get_kimlic_vendor_id, do: "87177897-2441-43af-a6bf-4860afcdd067"
+  def get_kimlic_vendor_id, do: Confex.fetch_env!(:attestation_api, :kimlic_vendor_id)
 
   @spec check_context_items(map) :: :ok | {:error, binary}
   def check_context_items(%{
