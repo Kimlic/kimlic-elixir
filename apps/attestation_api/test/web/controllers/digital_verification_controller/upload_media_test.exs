@@ -8,13 +8,12 @@ defmodule AttestationApi.DigitalVerificationController.UploadMediaTest do
 
   alias AttestationApi.DigitalVerifications
   alias AttestationApi.DigitalVerifications.DigitalVerification
-  alias AttestationApi.VerificationVendors
   alias Ecto.UUID
 
   @moduletag :authorized
   @moduletag :account_address
 
-  @kimlic_vendor_id VerificationVendors.get_kimlic_vendor_id()
+  @kimlic_vendor_id Application.get_env(:attestation_api, :kimlic_vendor_id)
 
   @status_new DigitalVerification.status(:new)
   @status_pending DigitalVerification.status(:pending)

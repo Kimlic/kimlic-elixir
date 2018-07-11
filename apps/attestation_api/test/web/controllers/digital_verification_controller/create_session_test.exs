@@ -6,13 +6,12 @@ defmodule AttestationApi.DigitalVerificationController.CreateSessionTest do
   import AttestationApi.RequestDataFactory
   import Mox
 
-  alias AttestationApi.VerificationVendors
   alias Ecto.UUID
 
   @moduletag :authorized
   @moduletag :account_address
 
-  @kimlic_vendor_id VerificationVendors.get_kimlic_vendor_id()
+  @kimlic_vendor_id Application.get_env(:attestation_api, :kimlic_vendor_id)
 
   describe "create session" do
     test "success", %{conn: conn} do
