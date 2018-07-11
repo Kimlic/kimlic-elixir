@@ -15,28 +15,24 @@ defmodule Quorum.Contract.Store do
 
   @spec get_abis_content :: map
   defp get_abis_content do
-    abis_path =
-      :quorum
-      |> Application.app_dir("priv/abi/*.json")
-      |> Path.wildcard()
-
-    abis_content =
-      Enum.map(abis_path, fn path ->
+    :quorum
+    |> Application.app_dir("priv/abi/*.json")
+    |> Path.wildcard()
+    |> Enum.reduce([], fn path, accumulator ->
+      abi_content =
         path
         |> File.read!()
         |> Jason.decode!()
-      end)
 
-    abis_atoms =
-      Enum.map(abis_path, fn path ->
+      abi_atom =
         path
         |> String.split("/")
         |> List.last()
         |> String.replace(".json", "")
         |> Macro.underscore()
         |> String.to_atom()
-      end)
 
-    Enum.zip(abis_atoms, abis_content)
+      [{abi_atom, abi_content}] ++ accumulator
+    end)
   end
 end
