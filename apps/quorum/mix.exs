@@ -24,6 +24,7 @@ defmodule Quorum.MixProject do
 
   def application do
     [
+      mod: {Quorum.Application, []},
       extra_applications: [:logger]
     ]
   end
