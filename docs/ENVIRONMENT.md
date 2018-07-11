@@ -93,7 +93,6 @@ Dependents for [Mobile API](#Mobile API), [Attestation API](#Attestation API)
 
 | VAR_NAME                   | Default Value | Description                        |
 | -------------------------- | ------------- | ---------------------------------- |
-| AUTHORIZATION_SALT         | not set       | Authorization salt.                |
 | QUORUM_URI                 | not set       | Quorum uri.                        |
 | KIMLIC_AP_ADDRESS          | not set       | Kimlic attestation party address.  |
 | KIMLIC_AP_PASSWORD         | not set       | Kimlic attestation party password. |
