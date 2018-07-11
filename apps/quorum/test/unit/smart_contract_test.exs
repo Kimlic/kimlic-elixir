@@ -20,7 +20,7 @@ defmodule Quorum.Unit.SmartContractTest do
     return_key = UUID.uuid4()
 
     data =
-      Contract.hash_data(:verification_factory, "createEmailVerification", [
+      Contract.hash_data(:verification_contract_factory, "createEmailVerification", [
         {account_address, kimlic_ap_address, return_key}
       ])
 
@@ -40,7 +40,7 @@ defmodule Quorum.Unit.SmartContractTest do
     msg = "Invalid transaction status. Expected \"0x1\", get: #{map["status"]}"
     assert "0x1" == map["status"], msg
 
-    data = Contract.hash_data(:verification_factory, "getVerificationContract", [{return_key}])
+    data = Contract.hash_data(:verification_contract_factory, "getVerificationContract", [{return_key}])
 
     :timer.sleep(50)
 

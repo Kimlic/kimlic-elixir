@@ -50,7 +50,7 @@ defmodule Quorum.Jobs.TransactionStatus do
          "verification_contract_return_key" => return_key,
          "verification_contract_factory_address" => contract_factory_address
        }) do
-    data = Contract.hash_data(:verification_factory, "getVerificationContract", [{return_key}])
+    data = Contract.hash_data(:verification_contract_factory, "getVerificationContract", [{return_key}])
     params = %{data: data, to: contract_factory_address}
 
     case fetch_verification_contract_address(params) do
