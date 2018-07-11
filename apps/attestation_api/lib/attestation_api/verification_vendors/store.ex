@@ -1,4 +1,4 @@
-defmodule AttestationApi.VerificationVendors.VerificationVendorsStore do
+defmodule AttestationApi.VerificationVendors.Store do
   @moduledoc false
 
   use Agent

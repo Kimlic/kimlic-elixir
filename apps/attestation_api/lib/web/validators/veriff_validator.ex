@@ -5,7 +5,7 @@ defmodule AttestationApi.Validators.VeriffValidator do
 
   alias AttestationApi.DigitalVerifications
   alias AttestationApi.VerificationVendors
-  alias AttestationApi.VerificationVendors.VerificationVendorsStore
+  alias AttestationApi.VerificationVendors.Store
 
   @spec validate_timestamp(Ecto.Changeset.t(), atom) :: Ecto.Changeset.t()
   def validate_timestamp(changeset, field) do
