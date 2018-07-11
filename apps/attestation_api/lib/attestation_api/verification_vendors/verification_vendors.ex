@@ -2,8 +2,7 @@ defmodule AttestationApi.VerificationVendors do
   @moduledoc """
   Manages digital verification vendors
   """
-
-  alias AttestationApi.VerificationVendors.Store
+  alias AttestationApi.VerificationVendors.Store, as: VerificationVendorsStore
 
   @spec all :: map
   def all, do: VerificationVendorsStore.all()
