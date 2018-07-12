@@ -1,6 +1,8 @@
 {
     "skip_files": [
-        "test/*"
+        "test/*",
+        "lib/core/application.ex",
+        "lib/clients/messenger_behaviour.ex"
     ],
     "custom_stop_words": [
         "field",

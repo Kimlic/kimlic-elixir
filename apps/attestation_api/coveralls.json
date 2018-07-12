@@ -1,6 +1,16 @@
 {
     "skip_files": [
-        "test/*"
+        "test/*",
+        "lib/application.ex",
+        "lib/repo.ex",
+        "lib/web/attestation_api.ex",
+        "lib/web/router.ex",
+        "lib/web/endpoint.ex",
+
+        "lib/clients/veriffme_behaviour.ex",
+        "lib/clients/push_behaviour.ex",
+
+        "lib/web/validators/types/base64.ex"
     ],
     "custom_stop_words": [
         "field",

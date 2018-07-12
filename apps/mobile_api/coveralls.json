@@ -1,6 +1,11 @@
 {
     "skip_files": [
-        "test/*"
+        "test/*",
+
+        "lib/application.ex",
+        "lib/mobile_api/endpoint.ex",
+        "lib/mobile_api/mobile_api_web.ex",
+        "lib/mobile_api/router.ex"
     ],
     "custom_stop_words": [
         "field",
