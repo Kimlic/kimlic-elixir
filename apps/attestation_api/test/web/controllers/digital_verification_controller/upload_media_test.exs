@@ -149,6 +149,27 @@ defmodule AttestationApi.DigitalVerificationController.UploadMediaTest do
                |> json_response(422)
                |> get_in(~w(error invalid))
     end
+
+    test "base64 image size should be less than 5mb", %{conn: conn} do
+      session_id = UUID.generate()
+      insert(:digital_verification, %{account_address: get_account_address(conn), session_id: session_id})
+
+      # 5.1 mb
+      content = String.duplicate("Q123", 1_350_000)
+      request_data = data_for(:digital_verification_upload_media, %{"content" => content})
+
+      assert conn
+             |> post(digital_verification_path(conn, :upload_media, @kimlic_vendor_id, session_id), request_data)
+             |> json_response(422)
+
+      # 4.99 mb
+      content = String.duplicate("Q123", 1_300_000)
+      request_data = data_for(:digital_verification_upload_media, %{"content" => content})
+
+      assert conn
+             |> post(digital_verification_path(conn, :upload_media, @kimlic_vendor_id, session_id), request_data)
+             |> json_response(200)
+    end
   end
 
   defp prepare_success_data(conn) do
