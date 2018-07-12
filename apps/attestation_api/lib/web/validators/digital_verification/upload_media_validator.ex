@@ -28,6 +28,7 @@ defmodule AttestationApi.Validators.UploadMediaValidator do
     |> validate_required(fields)
     |> validate_inclusion(:context, Veriffme.contexts())
     |> VeriffValidator.validate_vendor_id(:vendor_id)
+    |> VeriffValidator.validate_base64_size(:content)
     |> VeriffValidator.validate_timestamp(:timestamp)
     |> VeriffValidator.validate_upload_media()
     |> VeriffValidator.validate_session_id_exists(:session_id)

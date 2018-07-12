@@ -40,6 +40,21 @@ defmodule AttestationApi.Validators.VeriffValidator do
     end)
   end
 
+  # actual image size should be less than 3.7 mb
+  @spec validate_base64_size(Ecto.Changeset.t(), atom) :: Ecto.Changeset.t()
+  def validate_base64_size(changeset, field) do
+    validate_change(changeset, field, fn _, image_base64 ->
+      five_mb_raw_in_bytes = 5_000_000
+      base64_ratio = 1.28
+      image_bytes = byte_size(image_base64) * base64_ratio
+
+      case five_mb_raw_in_bytes > image_bytes do
+        true -> []
+        false -> [content: "Media content size is more than max allowed by attestation party"]
+      end
+    end)
+  end
+
   @spec validate_upload_media(Ecto.Changeset.t()) :: Ecto.Changeset.t()
   def validate_upload_media(changeset) do
     validate_change(changeset, :context, fn _, context ->
