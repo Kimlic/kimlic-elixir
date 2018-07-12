@@ -41,8 +41,8 @@ defmodule AttestationApi.Validators.VeriffValidator do
   end
 
   # actual image size should be less than 3.7 mb
-  @spec validate_image(Ecto.Changeset.t(), atom) :: Ecto.Changeset.t()
-  def validate_image(changeset, field) do
+  @spec validate_base64_size(Ecto.Changeset.t(), atom) :: Ecto.Changeset.t()
+  def validate_base64_size(changeset, field) do
     validate_change(changeset, field, fn _, image_base64 ->
       five_mb_raw_in_bytes = 5_000_000
       base64_ratio = 1.28
