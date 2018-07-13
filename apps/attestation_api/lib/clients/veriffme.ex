@@ -24,13 +24,16 @@ defmodule AttestationApi.Clients.Veriffme do
   }
   Success status_code: 201
   """
-  @spec create_session(binary, binary, binary, binary) :: api_response
-  def create_session(first_name, last_name, lang, unix_timestamp) do
+  @spec create_session(binary, binary, binary, binary, binary) :: api_response
+  def create_session(first_name, last_name, lang, document_type, unix_timestamp) do
     request_data = %{
       "verification" => %{
         "person" => %{
           "firstName" => first_name,
           "lastName" => last_name
+        },
+        "document" => %{
+          "type" => document_type
         },
         "lang" => lang,
         "features" => ["selfid"],
