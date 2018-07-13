@@ -18,7 +18,7 @@ defmodule AttestationApi.DigitalVerificationController.CreateSessionTest do
       request_data = data_for(:verification_digital_create_session)
       session_id = UUID.generate()
 
-      expect(VeriffmeMock, :create_session, fn _, _, _, _ ->
+      expect(VeriffmeMock, :create_session, fn _, _, _, _, _ ->
         {:ok,
          %HTTPoison.Response{
            status_code: 201,
@@ -46,7 +46,7 @@ defmodule AttestationApi.DigitalVerificationController.CreateSessionTest do
     test "fail with veriffme", %{conn: conn} do
       request_data = data_for(:verification_digital_create_session)
 
-      expect(VeriffmeMock, :create_session, fn _, _, _, _ ->
+      expect(VeriffmeMock, :create_session, fn _, _, _, _, _ ->
         {:ok,
          %HTTPoison.Response{
            status_code: 400,

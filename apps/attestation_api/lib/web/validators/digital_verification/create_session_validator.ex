@@ -11,6 +11,7 @@ defmodule AttestationApi.Validators.CreateSessionValidator do
     field(:vendor_id, :string)
     field(:first_name, :string)
     field(:last_name, :string)
+    field(:document_type, :string)
     field(:lang, :string)
     field(:timestamp, :integer)
     field(:device_os, :string)
@@ -25,7 +26,8 @@ defmodule AttestationApi.Validators.CreateSessionValidator do
     |> cast(params, fields)
     |> validate_required(fields)
     |> validate_format(:lang, ~r/^\w{2}$/)
-    |> validate_inclusion(:device_os, ["ios", "android"])
+    |> validate_inclusion(:device_os, ~w(ios android))
+    |> validate_inclusion(:document_type, ~w(PASSPORT ID_CARD DRIVERS_LICENSE RESIDENCE_PERMIT))
     |> VeriffValidator.validate_vendor_id(:vendor_id)
     |> VeriffValidator.validate_timestamp(:timestamp)
   end
