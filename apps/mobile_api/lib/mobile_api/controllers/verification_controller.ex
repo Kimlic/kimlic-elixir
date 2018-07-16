@@ -4,6 +4,7 @@ defmodule MobileApi.VerificationController do
   use MobileApi, :controller
 
   alias Core.Verifications
+  alias Core.Verifications.Verification
   alias MobileApi.FallbackController
   alias MobileApi.Plugs.RequestValidator
   alias MobileApi.Validators.Verification.{ApproveValidator, EmailValidator, PhoneValidator}
@@ -30,9 +31,10 @@ defmodule MobileApi.VerificationController do
   def create_email_verification(conn, params) do
     account_address = conn.assigns.account_address
 
-    with {:ok, _} <- Verifications.create_email_verification(params["email"], account_address) do
+    with {:ok, verification} <- Verifications.create_email_verification(params["email"], account_address) do
       conn
       |> put_status(201)
+      |> send_debug_info(verification)
       |> json(%{})
     end
   end
@@ -48,9 +50,10 @@ defmodule MobileApi.VerificationController do
   def create_phone_verification(conn, params) do
     account_address = conn.assigns.account_address
 
-    with {:ok, _} <- Verifications.create_phone_verification(params["phone"], account_address) do
+    with {:ok, verification} <- Verifications.create_phone_verification(params["phone"], account_address) do
       conn
       |> put_status(201)
+      |> send_debug_info(verification)
       |> json(%{})
     end
   end
@@ -59,6 +62,14 @@ defmodule MobileApi.VerificationController do
   def verify_phone(conn, params) do
     with :ok <- Verifications.verify(:phone, conn.assigns.account_address, params["code"]) do
       json(conn, %{status: "ok"})
+    end
+  end
+
+  @spec send_debug_info(Conn.t(), %Verification{}) :: Conn.t()
+  defp send_debug_info(conn, %Verification{token: token}) do
+    case Confex.fetch_env!(:mobile_api, :debug_info_enabled) do
+      true -> put_resp_header(conn, "debug-verification-token", token)
+      false -> conn
     end
   end
 end
