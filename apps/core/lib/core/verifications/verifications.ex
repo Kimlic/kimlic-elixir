@@ -11,7 +11,6 @@ defmodule Core.Verifications do
 
   @typep create_verification_t :: {:ok, %Verification{}} | {:error, binary} | {:error, Ecto.Changeset.t()}
 
-  @token_generator Application.get_env(:core, :dependencies)[:token_generator]
   @messenger Application.get_env(:core, :dependencies)[:messenger]
 
   ### Business
@@ -19,19 +18,28 @@ defmodule Core.Verifications do
   @spec create_email_verification(binary, binary) :: create_verification_t
   def create_email_verification(email, account_address) do
     with {:ok, verification} <- create_verification(account_address, :email),
-         :ok <- create_verification_contract(:email, account_address),
-         :ok <- Email.send_verification(email, verification) do
+         :ok <- create_verification_contract(:email, account_address, email) do
       {:ok, verification}
+    else
+      {:error, :account_field_not_set} ->
+        {:error, {:conflict, "Account.email not set via AccountStorageAdapter.setAccountFieldMainData"}}
+
+      err ->
+        err
     end
   end
 
   @spec create_phone_verification(binary, binary) :: create_verification_t
   def create_phone_verification(phone, account_address) do
-    with {:ok, %Verification{token: sms_code} = verification} <- create_verification(account_address, :phone),
-         :ok <- create_verification_contract(:phone, account_address),
-         # todo: move message to resources
-         {:ok, %{}} <- @messenger.send(phone, "Here is your code: #{sms_code}") do
+    with {:ok, %Verification{} = verification} <- create_verification(account_address, :phone),
+         :ok <- create_verification_contract(:phone, account_address, phone) do
       {:ok, verification}
+    else
+      {:error, :account_field_not_set} ->
+        {:error, {:conflict, "Account.phone not set via AccountStorageAdapter.setAccountFieldMainData"}}
+
+      err ->
+        err
     end
   end
 
@@ -39,19 +47,23 @@ defmodule Core.Verifications do
   def create_verification(account_address, type) when allowed_type_atom(type) do
     %{
       account_address: account_address,
-      token: @token_generator.generate(type),
+      token: generate_token(type),
       entity_type: Verification.entity_type(type),
       status: Verification.status(:new)
     }
     |> insert_verification(verification_ttl(type))
   end
 
-  @spec create_verification_contract(atom, binary) :: :ok
-  defp create_verification_contract(type, account_address) do
+  @spec generate_token(:email | :phone) :: binary
+  def generate_token(:phone), do: "#{Enum.random(1000..9999)}"
+  def generate_token(:email), do: "#{Enum.random(1000..9999)}"
+
+  @spec create_verification_contract(atom, binary, binary) :: :ok
+  defp create_verification_contract(type, account_address, destination) do
     Quorum.create_verification_contract(
       type,
       account_address,
-      {__MODULE__, :update_verification_contract_address, [account_address, type]}
+      {__MODULE__, :update_verification_contract_address, [account_address, type, destination]}
     )
   end
 
@@ -85,24 +97,30 @@ defmodule Core.Verifications do
 
   ### Callbacks (do not remove)
 
-  @spec update_verification_contract_address(binary, binary, map, {:ok, binary} | {:error, binary}) :: :ok
+  # Callback data is serialized when passed to rabbitmq, so `verification_type` becomes string instead of atom
+  @spec update_verification_contract_address(binary, binary, binary, map, {:ok, binary} | {:error, binary}) :: term
   def update_verification_contract_address(
         account_address,
         verification_type,
+        destination,
         _transaction_status,
         {:ok, contract_address}
       ) do
     verification_type = String.to_atom(verification_type)
+    update_data = %{contract_address: contract_address}
 
     with {:ok, verification} = Verifications.get(verification_type, account_address),
-         verification <- %Verification{verification | contract_address: contract_address},
-         %Ecto.Changeset{valid?: true} = changeset <- verification |> Map.from_struct() |> Verification.changeset(),
-         {:ok, _} <- Redis.upsert(changeset, verification_ttl(verification_type)) do
-      :ok
+         {:ok, _} <- Redis.update(verification, update_data, verification_ttl(verification_type)) do
+      case verification_type do
+        :email -> Email.send_verification(destination, verification.token)
+        :phone -> @messenger.send(destination, "Here is your code: #{verification.token}")
+      end
     end
+
+    :ok
   end
 
-  def update_verification_contract_address(_, _, _, {:error, reason}) do
+  def update_verification_contract_address(_, _, _, _, {:error, reason}) do
     Log.error("[#{__MODULE__}]: fail to update verification contract address with info: #{inspect(reason)}")
   end
 

@@ -1,22 +1,15 @@
-defmodule AttestationApi.DigitalVerifications.VerificationVendors do
+defmodule AttestationApi.VerificationVendors do
   @moduledoc """
   Manages digital verification vendors
   """
+  alias AttestationApi.VerificationVendors.Store, as: VerificationVendorsStore
 
   @spec all :: map
-  def all do
-    :attestation_api
-    |> Application.app_dir("priv/verification_providers.json")
-    |> File.read!()
-    |> Jason.decode!()
-  end
+  def all, do: VerificationVendorsStore.all()
 
   @spec get_by_id(binary) :: {:ok, map} | {:error, :not_found}
   def get_by_id(vendor_id) do
-    all()
-    |> Map.get("vendors", [])
-    |> Enum.find(&(&1["id"] == vendor_id))
-    |> case do
+    case VerificationVendorsStore.get_by_id(vendor_id) do
       nil -> {:error, :not_found}
       vendor -> {:ok, vendor}
     end

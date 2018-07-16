@@ -10,7 +10,9 @@ config :attestation_api, AttestationApi.Endpoint,
 
 config :attestation_api, ecto_repos: [AttestationApi.Repo]
 
-config :attestation_api, :dependencies, veriffme: AttestationApi.Clients.Veriffme
+config :attestation_api, :dependencies,
+  veriffme: AttestationApi.Clients.Veriffme,
+  push: AttestationApi.Clients.Push
 
 config :attestation_api, AttestationApi.Clients.Veriffme,
   api_url: {:system, "VERIFFME_API_URL"},

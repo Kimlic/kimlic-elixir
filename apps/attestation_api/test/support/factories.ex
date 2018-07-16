@@ -20,6 +20,8 @@ defmodule AttestationApi.Factories do
       veriffme_status: nil,
       veriffme_reason: nil,
       veriffme_comments: nil,
+      device_os: sequence(:devise_os, ["ios", "android"]),
+      device_token: UUID.generate(),
       inserted_at: NaiveDateTime.utc_now(),
       updated_at: NaiveDateTime.utc_now()
     }

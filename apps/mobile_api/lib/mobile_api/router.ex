@@ -16,14 +16,10 @@ defmodule MobileApi.Router do
     plug(:accepts, ["json"])
     plug(EView)
     plug(AccountAddress)
-    # todo: rewrite authorization logic
-    # plug(Authorization)
   end
 
   pipeline :quorum_proxy do
     plug(:accepts, ["json"])
-    # ToDo: temporary commented auth for this endpoint until it implemented on iOs
-    # plug(Authorization)
   end
 
   pipeline :create_phone_verification_limiter do

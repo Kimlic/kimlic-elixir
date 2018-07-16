@@ -18,4 +18,18 @@ config :attestation_api, AttestationApi.Clients.Veriffme,
   auth_client: "${VERIFFME_AUTH_CLIENT}",
   api_secret: "${VERIFFME_API_SECRET}"
 
+config :pigeon, :apns,
+  apns_default: %{
+    key: "${PIGEON_APNS_KEY}",
+    key_identifier: "${PIGEON_APNS_KEY_IDENTIFIER}",
+    team_id: "${PIGEON_APNS_TEAM_ID}",
+    mode: :prod
+  }
+
+config :pigeon, :fcm,
+  fcm_default: %{
+    key: "${PIGEON_FCM_KEY}",
+    mode: :prod
+  }
+
 config :logger, level: :info

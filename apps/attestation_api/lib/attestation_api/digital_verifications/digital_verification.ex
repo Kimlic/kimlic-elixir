@@ -6,7 +6,16 @@ defmodule AttestationApi.DigitalVerifications.DigitalVerification do
   alias AttestationApi.DigitalVerifications.DigitalVerificationDocument
 
   @required_fields ~w(account_address session_id)a
-  @optional_fileds ~w(contract_address status veriffme_code veriffme_status veriffme_reason veriffme_comments)a
+  @optional_fileds ~w(
+    contract_address
+    status
+    device_os
+    device_token
+    veriffme_code
+    veriffme_status
+    veriffme_reason
+    veriffme_comments
+  )a
 
   @status_new "NEW"
   @status_pending "PENDING"
@@ -24,6 +33,8 @@ defmodule AttestationApi.DigitalVerifications.DigitalVerification do
     field(:account_address, :string)
     field(:session_id, :string)
     field(:contract_address, :string)
+    field(:device_os, :string)
+    field(:device_token, :string)
     field(:status, :string, default: @status_new)
     field(:veriffme_code, :integer)
     field(:veriffme_status, :string)

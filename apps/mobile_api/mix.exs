@@ -1,7 +1,7 @@
 defmodule MobileApi.Mixfile do
   use Mix.Project
 
-  @version "0.52.15"
+  @version "0.56.0"
 
   def project do
     [
@@ -16,6 +16,8 @@ defmodule MobileApi.Mixfile do
       compilers: [:phoenix] ++ Mix.compilers(),
       build_embedded: Mix.env() == :prod,
       start_permanent: Mix.env() == :prod,
+      test_coverage: [tool: ExCoveralls],
+      preferred_cli_env: [coveralls: :test],
       deps: deps()
     ]
   end

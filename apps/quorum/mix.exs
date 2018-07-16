@@ -16,6 +16,7 @@ defmodule Quorum.MixProject do
       compilers: Mix.compilers(),
       build_embedded: Mix.env() == :prod,
       start_permanent: Mix.env() == :prod,
+      test_coverage: [tool: ExCoveralls],
       preferred_cli_env: [coveralls: :test],
       deps: deps()
     ]
@@ -23,6 +24,7 @@ defmodule Quorum.MixProject do
 
   def application do
     [
+      mod: {Quorum.Application, []},
       extra_applications: [:logger]
     ]
   end

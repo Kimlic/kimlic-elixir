@@ -9,6 +9,7 @@ defmodule AttestationApi.DigitalVerifications do
   alias AttestationApi.Repo
 
   @veriffme_client Application.get_env(:attestation_api, :dependencies)[:veriffme]
+  @push_client Application.get_env(:attestation_api, :dependencies)[:push]
 
   @verification_status_passed DigitalVerification.status(:passed)
   @verification_status_pending DigitalVerification.status(:pending)
@@ -23,7 +24,9 @@ defmodule AttestationApi.DigitalVerifications do
            insert(%{
              account_address: account_address,
              session_id: session_id,
-             contract_address: params["contract_address"]
+             contract_address: params["contract_address"],
+             device_os: params["device_os"],
+             device_token: params["device_token"]
            }) do
       {:ok, session_id}
     end
@@ -33,11 +36,12 @@ defmodule AttestationApi.DigitalVerifications do
   defp create_session_on_veriffme(%{
          "first_name" => first_name,
          "last_name" => last_name,
+         "document_type" => document_type,
          "lang" => lang,
          "timestamp" => timestamp
        }) do
     with {:ok, %{body: body, status_code: 201}} <-
-           @veriffme_client.create_session(first_name, last_name, lang, timestamp),
+           @veriffme_client.create_session(first_name, last_name, lang, document_type, timestamp),
          {:ok, %{"status" => "success", "verification" => %{"id" => session_id}}} <- Jason.decode(body) do
       {:ok, session_id}
     else
@@ -50,6 +54,7 @@ defmodule AttestationApi.DigitalVerifications do
   @spec handle_verification_result(map) :: :ok | {:error, atom}
   def handle_verification_result(params) do
     with {:ok, verification} <- update_status(params),
+         :ok <- send_push_notification(verification),
          {_deleted_count, nil} <- remove_verification_documents(verification),
          :ok <- set_quorum_verification_result(verification) do
       :ok
@@ -67,11 +72,28 @@ defmodule AttestationApi.DigitalVerifications do
     end
   end
 
+  defp update_status(params) do
+    Log.error("[#{__MODULE__}] Fail to handle Veriff webhook with params: #{inspect(params)}")
+    {:error, :not_found}
+  end
+
   @spec remove_verification_documents(%DigitalVerification{}) :: {integer, nil} | {:error, binary}
   defp remove_verification_documents(%DigitalVerification{id: verification_id}) do
     DigitalVerificationDocument
     |> where([dv_d], dv_d.verification_id == ^verification_id)
     |> Repo.delete_all()
+  end
+
+  @spec send_push_notification(%DigitalVerification{}) :: :ok
+  def send_push_notification(%DigitalVerification{device_os: device_os, device_token: device_token, status: status}) do
+    # todo: move to resources
+    status_message =
+      case status do
+        @verification_status_passed -> "passed"
+        _ -> "failed"
+      end
+
+    @push_client.send("Video verification of your document has #{status_message}", device_os, device_token)
   end
 
   @spec get_verification_data_from_result(map) :: map
@@ -96,7 +118,7 @@ defmodule AttestationApi.DigitalVerifications do
   end
 
   @spec set_quorum_verification_result(%DigitalVerification{}) :: :ok
-  def set_quorum_verification_result(%DigitalVerification{contract_address: contract_address, status: status}) do
+  defp set_quorum_verification_result(%DigitalVerification{contract_address: contract_address, status: status}) do
     verification_passed? = status == @verification_status_passed
 
     Quorum.set_digital_verification_result_transaction(contract_address, verification_passed?)
