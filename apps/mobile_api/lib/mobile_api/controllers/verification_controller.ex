@@ -37,8 +37,8 @@ defmodule MobileApi.VerificationController do
     end
   end
 
-  @spec approve_email(Conn.t(), map) :: Conn.t()
-  def approve_email(conn, params) do
+  @spec verify_email(Conn.t(), map) :: Conn.t()
+  def verify_email(conn, params) do
     with :ok <- Verifications.verify(:email, conn.assigns.account_address, params["code"]) do
       json(conn, %{status: "ok"})
     end
@@ -55,8 +55,8 @@ defmodule MobileApi.VerificationController do
     end
   end
 
-  @spec approve_phone(Conn.t(), map) :: Conn.t()
-  def approve_phone(conn, params) do
+  @spec verify_phone(Conn.t(), map) :: Conn.t()
+  def verify_phone(conn, params) do
     with :ok <- Verifications.verify(:phone, conn.assigns.account_address, params["code"]) do
       json(conn, %{status: "ok"})
     end

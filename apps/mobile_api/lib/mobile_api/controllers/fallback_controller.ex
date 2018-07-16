@@ -19,6 +19,12 @@ defmodule MobileApi.FallbackController do
     |> render(Error, :"404")
   end
 
+  def call(conn, {:error, {:not_found, reason}}) do
+    conn
+    |> put_status(:not_found)
+    |> render(Error, :"404", %{message: reason})
+  end
+
   def call(conn, {:error, {:conflict, reason}}) do
     conn
     |> put_status(:conflict)

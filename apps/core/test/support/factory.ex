@@ -42,9 +42,7 @@ defmodule Core.Factory do
 
   @spec changeset(map, module) :: Ecto.Changeset.t()
   defp changeset(data, entity_module) do
-    data
-    |> entity_module.changeset()
-    |> case do
+    case entity_module.changeset(data) do
       %{valid?: true} = changeset -> changeset
       _ -> raise "Changeset of #{entity_module} is not valid in `Core.Factory`"
     end

@@ -77,7 +77,8 @@ defmodule Core.Verifications do
       :ok
     else
       {:contract_address_set, _} -> {:error, {:conflict, "Verification.contract_address not set yet. Try later"}}
-      {:verification_access, _} -> {:error, {:not_found, "Verification not found"}}
+      {:verification_access, _} -> {:error, {:not_found, "Verification not found. Invalid account address or code"}}
+      {:error, :not_found} -> {:error, {:not_found, "Verification not found"}}
       err -> err
     end
   end
