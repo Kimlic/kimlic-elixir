@@ -3,7 +3,6 @@ use Mix.Config
 alias Quorum.Jobs.{TransactionCreate, TransactionStatus}
 
 config :quorum,
-  authorization_salt: {:system, "AUTHORIZATION_SALT"},
   client: Ethereumex.HttpClient,
   proxy_client: Quorum.Proxy.Client,
   kimlic_ap_address: {:system, "KIMLIC_AP_ADDRESS"},

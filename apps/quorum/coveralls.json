@@ -1,9 +1,11 @@
 {
   "skip_files": [
-    "src/*",
     "test/*",
+    "src/*",
 
-    "lib/quorum/abi/*"
+    "lib/abi/*",
+    "lib/application.ex",
+    "lib/quorum/proxy/client_behaviour.ex"
   ],
   "treat_no_relevant_lines_as_covered": true
 }

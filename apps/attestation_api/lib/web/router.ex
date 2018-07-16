@@ -9,6 +9,8 @@ defmodule AttestationApi.Router do
 
   require Logger
 
+  @http_server_error_codes 500..505
+
   ### Pipelines
 
   pipeline :api do
@@ -38,11 +40,13 @@ defmodule AttestationApi.Router do
   scope "/api", AttestationApi do
     pipe_through(:accepts_json)
 
+    post("/verifications/digital/submission", DigitalVerificationController, :verification_submission_webhook)
     post("/verifications/digital/decision", DigitalVerificationController, :verification_result_webhook)
   end
 
   @spec handle_errors(Plug.Conn.t(), map) :: Plug.Conn.t()
-  defp handle_errors(%Plug.Conn{status: 500} = conn, %{kind: kind, reason: reason, stack: stacktrace}) do
+  defp handle_errors(%Plug.Conn{status: status_code} = conn, %{kind: kind, reason: reason, stack: stacktrace})
+       when status_code in @http_server_error_codes do
     LoggerJSON.log_error(kind, reason, stacktrace)
 
     Logger.log(:info, fn ->
@@ -53,6 +57,10 @@ defmodule AttestationApi.Router do
       })
     end)
 
-    send_resp(conn, 500, Jason.encode!("Internal server error"))
+    conn
+    |> put_resp_header("content-type", "application/json; charset=utf-8")
+    |> send_resp(status_code, Jason.encode!(%{message: "Internal server error", detail: inspect(reason)}))
   end
+
+  defp handle_errors(_, _), do: nil
 end

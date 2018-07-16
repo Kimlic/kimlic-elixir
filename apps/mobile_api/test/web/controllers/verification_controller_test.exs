@@ -130,10 +130,53 @@ defmodule MobileApi.VerificationControllerTest do
                |> json_response(200)
     end
 
-    test "not found on email verification", %{conn: conn} do
-      assert conn
-             |> post(verification_path(conn, :verify_email), %{"code" => Verifications.generate_token(:email)})
-             |> json_response(404)
+    test "cant access", %{conn: conn} do
+      expect(QuorumClientMock, :request, fn method, _params, _opts ->
+        assert "personal_unlockAccount" == method
+        {:ok, true}
+      end)
+
+      account_address = get_account_address(conn)
+      %{token: token} = insert(:verification, %{account_address: account_address})
+
+      assert %{"data" => %{"status" => "ok"}} =
+               conn
+               |> post(verification_path(conn, :verify_email), %{"code" => token})
+               |> json_response(200)
+    end
+
+    test "not found", %{conn: conn} do
+      err =
+        conn
+        |> post(verification_path(conn, :verify_email), %{"code" => "1234"})
+        |> json_response(404)
+        |> get_in(~w(error message))
+
+      assert err =~ "Verification not found"
+    end
+
+    test "invalid code", %{conn: conn} do
+      insert(:verification, %{account_address: get_account_address(conn)})
+
+      err =
+        conn
+        |> post(verification_path(conn, :verify_email), %{"code" => "1234"})
+        |> json_response(404)
+        |> get_in(~w(error message))
+
+      assert err =~ "Invalid account address or code"
+    end
+
+    test "contract address not set", %{conn: conn} do
+      %{token: token} = insert(:verification, %{account_address: get_account_address(conn), contract_address: ""})
+
+      err =
+        conn
+        |> post(verification_path(conn, :verify_email), %{"code" => token})
+        |> json_response(409)
+        |> get_in(~w(error message))
+
+      assert err =~ "Verification.contract_address not set yet. Try later"
     end
 
     test "invalid params", %{conn: conn} do
@@ -286,9 +329,48 @@ defmodule MobileApi.VerificationControllerTest do
     end
 
     test "not found on phone verification", %{conn: conn} do
+      err =
+        conn
+        |> post(verification_path(conn, :verify_phone), %{"code" => Verifications.generate_token(:phone)})
+        |> json_response(404)
+        |> get_in(~w(error message))
+
+      assert err =~ "Verification not found"
+    end
+
+    test "invalid code", %{conn: conn} do
+      insert(:verification, %{entity_type: @entity_type_phone, account_address: get_account_address(conn)})
+
+      err =
+        conn
+        |> post(verification_path(conn, :verify_phone), %{"code" => "1234"})
+        |> json_response(404)
+        |> get_in(~w(error message))
+
+      assert err =~ "Invalid account address or code"
+    end
+
+    test "contract address not set", %{conn: conn} do
+      %{token: token} =
+        insert(:verification, %{
+          entity_type: @entity_type_phone,
+          account_address: get_account_address(conn),
+          contract_address: ""
+        })
+
+      err =
+        conn
+        |> post(verification_path(conn, :verify_phone), %{"code" => token})
+        |> json_response(409)
+        |> get_in(~w(error message))
+
+      assert err =~ "Verification.contract_address not set yet. Try later"
+    end
+
+    test "invalid params", %{conn: conn} do
       assert conn
-             |> post(verification_path(conn, :verify_phone), %{"code" => Verifications.generate_token(:phone)})
-             |> json_response(404)
+             |> post(verification_path(conn, :verify_phone), %{"code" => 123})
+             |> json_response(422)
     end
   end
 end

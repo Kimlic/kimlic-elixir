@@ -26,7 +26,6 @@ defmodule MobileApi.VerificationController do
     [validator: PhoneValidator, error_handler: FallbackController] when action == :create_phone_verification
   )
 
-  # todo: validate request
   @spec create_email_verification(Conn.t(), map) :: Conn.t()
   def create_email_verification(conn, params) do
     account_address = conn.assigns.account_address
@@ -38,7 +37,6 @@ defmodule MobileApi.VerificationController do
     end
   end
 
-  # todo: validate request
   @spec verify_email(Conn.t(), map) :: Conn.t()
   def verify_email(conn, params) do
     with :ok <- Verifications.verify(:email, conn.assigns.account_address, params["code"]) do
@@ -46,7 +44,6 @@ defmodule MobileApi.VerificationController do
     end
   end
 
-  # todo: validate request
   @spec create_phone_verification(Conn.t(), map) :: Conn.t()
   def create_phone_verification(conn, params) do
     account_address = conn.assigns.account_address
@@ -58,7 +55,6 @@ defmodule MobileApi.VerificationController do
     end
   end
 
-  # todo: validate request
   @spec verify_phone(Conn.t(), map) :: Conn.t()
   def verify_phone(conn, params) do
     with :ok <- Verifications.verify(:phone, conn.assigns.account_address, params["code"]) do

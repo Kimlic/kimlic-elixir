@@ -9,9 +9,11 @@ defmodule AttestationApi.RequestDataFactory do
 
   def data_for(:verification_digital_create_session, params) do
     %{
+      # present in request: vendor_id
       "first_name" => "John",
       "last_name" => "Doe",
       "lang" => "en",
+      "document_type" => "DRIVERS_LICENSE",
       "timestamp" => generate(:unix_timestamp),
       "contract_address" => generate(:account_address),
       "device_os" => Enum.random(["ios", "android"]),
@@ -22,10 +24,11 @@ defmodule AttestationApi.RequestDataFactory do
 
   def data_for(:digital_verification_upload_media, params) do
     %{
+      # present in request: vendor_id, session_id
       "country" => "US",
       "document_type" => "ID_CARD",
       "context" => Enum.random(["face", "document-front", "document-back"]),
-      "content" => "data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs=",
+      "content" => "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==",
       "timestamp" => generate(:unix_timestamp)
     }
     |> Map.merge(params)
@@ -65,6 +68,16 @@ defmodule AttestationApi.RequestDataFactory do
       "technicalData" => %{
         "ip" => "186.153.67.122"
       }
+    }
+    |> Map.merge(params)
+  end
+
+  def data_for(:digital_verification_submission_webhook, params) do
+    %{
+      "id" => UUID.generate(),
+      "feature" => "selfid",
+      "code" => 7002,
+      "action" => "submitted"
     }
     |> Map.merge(params)
   end

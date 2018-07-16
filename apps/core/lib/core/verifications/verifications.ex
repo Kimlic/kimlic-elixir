@@ -76,8 +76,9 @@ defmodule Core.Verifications do
          {:ok, 1} <- Verifications.delete(verification) do
       :ok
     else
-      {:contract_address_set, _} -> {:error, :not_found}
-      {:verification_access, _} -> {:error, :not_found}
+      {:contract_address_set, _} -> {:error, {:conflict, "Verification.contract_address not set yet. Try later"}}
+      {:verification_access, _} -> {:error, {:not_found, "Verification not found. Invalid account address or code"}}
+      {:error, :not_found} -> {:error, {:not_found, "Verification not found"}}
       err -> err
     end
   end
