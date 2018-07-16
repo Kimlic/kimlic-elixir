@@ -9,11 +9,12 @@ Mobile API and Core application
 
 ### Endpoints
 
-| VAR_NAME   | Default Value    | Description                         |
-| ---------- | ---------------- | ----------------------------------- |
-| HOST       | `80`             | HTTP host for web app to listen on. |
-| PORT       | `localhost`      | HTTP port for web app to listen on. |
-| SECRET_KEY | `b9WHCgR5TGcr`.. | Phoenix [`:secret_key_base`].       |
+| VAR_NAME           | Default Value    | Description                         |
+| ------------------ | ---------------- | ----------------------------------- |
+| HOST               | `80`             | HTTP host for web app to listen on. |
+| PORT               | `localhost`      | HTTP port for web app to listen on. |
+| SECRET_KEY         | `b9WHCgR5TGcr`.. | Phoenix [`:secret_key_base`].       |
+| DEBUG_INFO_ENABLED | `false`          | Send debug info in headers          |
 
 ### Redis
 

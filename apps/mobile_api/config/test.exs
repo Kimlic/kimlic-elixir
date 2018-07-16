@@ -9,4 +9,6 @@ config :hammer,
 
 config :mobile_api, rate_limit_create_phone_verification_attempts: 5
 
+config :mobile_api, debug_info_enabled: true
+
 config :logger, level: :warn
