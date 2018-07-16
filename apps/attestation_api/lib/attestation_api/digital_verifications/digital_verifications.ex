@@ -73,7 +73,7 @@ defmodule AttestationApi.DigitalVerifications do
   end
 
   defp update_status(params) do
-    Log.error("[#{__MODULE__}] Fail to handle Veriff webhook with params: #{inspect(params)}")
+    Log.error("[#{__MODULE__}] Fail to handle Veriff decision webhook with params: #{inspect(params)}")
     {:error, :not_found}
   end
 
@@ -85,7 +85,7 @@ defmodule AttestationApi.DigitalVerifications do
   end
 
   @spec send_push_notification(%DigitalVerification{}) :: :ok
-  def send_push_notification(%DigitalVerification{device_os: device_os, device_token: device_token, status: status}) do
+  defp send_push_notification(%DigitalVerification{device_os: device_os, device_token: device_token, status: status}) do
     # todo: move to resources
     status_message =
       case status do
@@ -122,6 +122,20 @@ defmodule AttestationApi.DigitalVerifications do
     verification_passed? = status == @verification_status_passed
 
     Quorum.set_digital_verification_result_transaction(contract_address, verification_passed?)
+  end
+
+  @spec handle_verification_submission(map) :: :ok
+  def handle_verification_submission(%{"id" => session_id, "code" => code}) do
+    with %DigitalVerification{} = verification <- get_by(%{session_id: session_id}) do
+      update(verification, %{veriffme_code: code})
+    end
+
+    :ok
+  end
+
+  def handle_verification_submission(params) do
+    Log.error("[#{__MODULE__}] Fail to handle Veriff submission webhook with params: #{inspect(params)}")
+    :ok
   end
 
   ### Quering

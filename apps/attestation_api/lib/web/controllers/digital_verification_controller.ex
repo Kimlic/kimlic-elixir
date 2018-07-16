@@ -30,6 +30,13 @@ defmodule AttestationApi.DigitalVerificationController do
     end
   end
 
+  @spec verification_submission_webhook(Conn.t(), map) :: Conn.t()
+  def verification_submission_webhook(conn, params) do
+    with :ok <- DigitalVerifications.handle_verification_submission(params) do
+      json(conn, %{})
+    end
+  end
+
   @spec verification_result_webhook(Conn.t(), map) :: Conn.t()
   def verification_result_webhook(conn, params) do
     with :ok <- DigitalVerifications.handle_verification_result(params) do
