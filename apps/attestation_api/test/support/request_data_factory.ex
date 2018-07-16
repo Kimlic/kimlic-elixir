@@ -71,4 +71,14 @@ defmodule AttestationApi.RequestDataFactory do
     }
     |> Map.merge(params)
   end
+
+  def data_for(:digital_verification_submission_webhook, params) do
+    %{
+      "id" => UUID.generate(),
+      "feature" => "selfid",
+      "code" => 7002,
+      "action" => "submitted"
+    }
+    |> Map.merge(params)
+  end
 end

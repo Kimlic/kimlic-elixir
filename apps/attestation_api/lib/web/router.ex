@@ -40,6 +40,7 @@ defmodule AttestationApi.Router do
   scope "/api", AttestationApi do
     pipe_through(:accepts_json)
 
+    post("/verifications/digital/submission", DigitalVerificationController, :verification_submission_webhook)
     post("/verifications/digital/decision", DigitalVerificationController, :verification_result_webhook)
   end
 
