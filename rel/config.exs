@@ -21,3 +21,10 @@ release :mobile_api do
     mobile_api: :permanent
   ]
 end
+
+release :attestation_api do
+  set(version: current_version(:attestation_api))
+  set applications: [
+    attestation_api: :permanent
+  ]
+end
