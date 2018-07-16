@@ -8,9 +8,7 @@
         "lib/web/endpoint.ex",
 
         "lib/clients/veriffme_behaviour.ex",
-        "lib/clients/push_behaviour.ex",
-
-        "lib/web/validators/types/base64.ex"
+        "lib/clients/push_behaviour.ex"
     ],
     "custom_stop_words": [
         "field",
