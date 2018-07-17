@@ -73,7 +73,12 @@ Mobile API and Core application
 
 | VAR_NAME      | Default Value | Description   |
 | ------------- | ------------- | ------------- |
-| POSTGRES_URI  | not set       | Postgres URI. |
+| DB_USER       | not set       | DB user.      |
+| DB_PASSWORD   | not set       | DB password.  |    
+| DB_NAME       | not set       | DB name.      |
+| DB_HOST       | not set       | DB host.      |
+| DB_PORT       | not set       | DB port.      |
+| DB_POOL_SIZE  | not set       | DB pool size. |     
 
 ### Veriffme
 
