@@ -8,7 +8,11 @@ config :attestation_api, AttestationApi.Endpoint,
   watchers: []
 
 config :attestation_api, AttestationApi.Repo,
-  url: "postgres://postgres:postgres@localhost:5432/attestation_api_dev",
+  username: "postgres",
+  password: "postgres",
+  database: "attestation_api_dev",
+  hostname: "localhost",
+  port: "5432",
   pool_size: 10
 
 config :attestation_api, AttestationApi.Clients.Veriffme,

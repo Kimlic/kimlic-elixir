@@ -44,6 +44,7 @@ defmodule AttestationApi.Mixfile do
       {:eview, "~> 0.12"},
       {:pigeon, "~> 1.2.0"},
       {:kadabra, "~> 0.4.2"},
+      {:ecto_logger_json, git: "https://github.com/edenlabllc/ecto_logger_json.git", branch: "query_params"},
       {:mox, "~> 0.3", only: :test},
       {:ex_machina, "~> 2.2", only: :test}
     ]
