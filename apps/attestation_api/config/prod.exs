@@ -11,7 +11,13 @@ config :attestation_api, AttestationApi.Endpoint,
   debug_errors: false,
   code_reloader: false
 
-config :attestation_api, AttestationApi.Repo, url: "${POSTGRES_URI}"
+config :attestation_api, AttestationApi.Repo,
+  username: "${DB_USER}",
+  password: "${DB_PASSWORD}",
+  database: "${DB_NAME}",
+  hostname: "${DB_HOST}",
+  port: "${DB_PORT}",
+  pool_size: 10
 
 config :attestation_api, AttestationApi.Clients.Veriffme,
   api_url: "${VERIFFME_API_URL}",

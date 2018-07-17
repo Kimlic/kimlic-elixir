@@ -12,7 +12,6 @@ config :mobile_api,
   rate_limit_create_phone_verification_timeout:
     {:system, :integer, "RATE_LIMIT_CREATE_PHONE_VERIFICATION_TIMEOUT", _week_in_ms = :timer.hours(24) * 7}
 
-# Check for variable presense, "false" in helm values returns true
 config :mobile_api, debug_info_enabled: {:system, :boolean, "DEBUG_INFO_ENABLED", false}
 
 config :mobile_api,

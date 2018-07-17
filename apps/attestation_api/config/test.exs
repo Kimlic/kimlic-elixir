@@ -9,7 +9,11 @@ config :attestation_api, :dependencies,
   push: PushMock
 
 config :attestation_api, AttestationApi.Repo,
-  url: "postgres://postgres:postgres@localhost:5432/attestation_api_test",
+  username: "postgres",
+  password: "postgres",
+  database: "attestation_api_test",
+  hostname: "localhost",
+  port: "5432",
   pool: Ecto.Adapters.SQL.Sandbox
 
 # for tests only
