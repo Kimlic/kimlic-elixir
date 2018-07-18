@@ -14,7 +14,7 @@ defmodule Quorum.Contract.Store do
   end
 
   @spec get_abis_content :: map
-  defp get_abis_content do
+  def get_abis_content do
     :quorum
     |> Application.app_dir("priv/abi/*.json")
     |> Path.wildcard()
