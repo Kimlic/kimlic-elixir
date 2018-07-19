@@ -17,6 +17,8 @@ config :core, :emails,
     subject: {:system, "EMAIL_CREATE_PROFILE_SUBJECT", "Kimlic - New user email verification"}
   }
 
+config :core, sync_fields: {:system, :list, "SYNC_VERIFICATIONS"}
+
 config :logger, :console,
   format: "$message\n",
   handle_otp_reports: true,
