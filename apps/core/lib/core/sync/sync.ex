@@ -46,7 +46,7 @@ defmodule Core.Sync do
       data: Contract.hash_data(:account_storage_adapter, "getFieldDetails", [{account_address, sync_field}])
     }
 
-    with {:ok, "0x" <> field_details_response} <- @quorum_client.eth_call(params, "latest", []),
+    with {_, {:ok, "0x" <> field_details_response}} <- {:quorum_error, @quorum_client.eth_call(params, "latest", [])},
          true <- field_details_response != "",
          [{_sha256, _status, _contract_address, _verified_on} = fields] <-
            field_details_response
@@ -54,7 +54,12 @@ defmodule Core.Sync do
            |> TypeDecoder.decode(function_selector) do
       {:ok, fields}
     else
-      _ -> {:error, "Fail to get field details"}
+      {:quorum_error, err} ->
+        Log.error("[Core.Sync]: Fail to sync with error: #{inspect(err)}")
+        {:error, "Fail to sync"}
+
+      _ ->
+        {:error, "Fail to sync"}
     end
   end
 
