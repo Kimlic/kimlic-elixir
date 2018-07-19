@@ -58,7 +58,7 @@ Mobile API and Core application
 
 | VAR_NAME                   | Default Value   | Description                        |
 | -------------------------- | --------------- | ---------------------------------- |
-| SYNC_VERIFICATIONS         | `email,phone,documents.id_card,documents.passport,documents.driver_license,documents.residence_permit_card` | List of verifications to be synced |
+| SYNC_VERIFICATIONS         | not set         | List of verifications to be synced |
 
 
 ### Dependent applications configurations
