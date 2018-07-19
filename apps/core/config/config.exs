@@ -17,17 +17,7 @@ config :core, :emails,
     subject: {:system, "EMAIL_CREATE_PROFILE_SUBJECT", "Kimlic - New user email verification"}
   }
 
-config :core,
-  sync_fields:
-    {:system, :list, "SYNC_VERIFICATIONS",
-     [
-       "email",
-       "phone",
-       "documents.id_card",
-       "documents.passport",
-       "documents.driver_license",
-       "documents.residence_permit_card"
-     ]}
+config :core, sync_fields: {:system, :list, "SYNC_VERIFICATIONS"}
 
 config :logger, :console,
   format: "$message\n",

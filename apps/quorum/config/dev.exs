@@ -6,4 +6,4 @@ config :quorum,
   veriff_ap_address: "",
   veriff_ap_password: "Veriffp@ssw0rd",
   context_storage_address: "",
-  quorum_super_user_address: ""
+  user_address: ""

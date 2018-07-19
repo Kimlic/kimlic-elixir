@@ -20,7 +20,6 @@ defmodule Core.Sync do
              get_field_details(account_address, sync_field, account_storage_adapter_address) do
         verification_contract_address = "0x" <> Base.encode16(verification_contract_address, case: :lower)
         verification_status = if verification_status == 1, do: "PASSED", else: "FAILED"
-        verified_on = round(verified_on / 1_000_000_000)
 
         [
           %{
@@ -28,7 +27,7 @@ defmodule Core.Sync do
             "value" => %{"#{sync_field}" => field_value_sha256},
             "status" => verification_status,
             "verification_contract" => verification_contract_address,
-            "verified_on" => verified_on
+            "verified_on" => to_timestamp(verified_on)
           }
         ] ++ acc
       else
@@ -42,7 +41,7 @@ defmodule Core.Sync do
     function_selector = %FunctionSelector{types: [{:tuple, [:string, {:uint, 8}, :address, {:uint, 256}]}]}
 
     params = %{
-      from: Confex.fetch_env!(:quorum, :quorum_super_user_address),
+      from: Confex.fetch_env!(:quorum, :user_address),
       to: account_storage_addapter_address,
       data: Contract.hash_data(:account_storage_adapter, "getFieldDetails", [{account_address, sync_field}])
     }
@@ -58,4 +57,7 @@ defmodule Core.Sync do
       _ -> {:error, "Fail to get field details"}
     end
   end
+
+  @spec to_timestamp(integer) :: integer
+  defp to_timestamp(timestamp), do: round(timestamp / 1_000_000_000)
 end
