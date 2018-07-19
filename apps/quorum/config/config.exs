@@ -10,6 +10,7 @@ config :quorum,
   veriff_ap_address: {:system, "VERIFF_AP_ADDRESS"},
   veriff_ap_password: {:system, "VERIFF_AP_PASSWORD"},
   context_storage_address: {:system, "CONTEXT_STORAGE_ADDRESS"},
+  quorum_super_user_address: {:system, "QUORUM_SUPER_USER_ADDRESS"},
   allowed_rpc_methods:
     {:system, :list, "QUORUM_ALLOWED_RPC_METHODS",
      [

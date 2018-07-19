@@ -5,4 +5,5 @@ config :quorum,
   kimlic_ap_password: "Kimlicp@ssw0rd",
   veriff_ap_address: "",
   veriff_ap_password: "Veriffp@ssw0rd",
-  context_storage_address: ""
+  context_storage_address: "",
+  quorum_super_user_address: ""

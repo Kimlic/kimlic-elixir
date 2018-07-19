@@ -80,11 +80,11 @@
     "constant": false,
     "inputs": [
       {
-        "name": "columnName",
+        "name": "fieldName",
         "type": "string"
       }
     ],
-    "name": "addAllowedColumnName",
+    "name": "addAllowedFieldName",
     "outputs": [],
     "payable": false,
     "stateMutability": "nonpayable",
@@ -94,11 +94,11 @@
     "constant": false,
     "inputs": [
       {
-        "name": "columnName",
+        "name": "fieldName",
         "type": "string"
       }
     ],
-    "name": "removeAllowedColumnName",
+    "name": "removeAllowedFieldName",
     "outputs": [],
     "payable": false,
     "stateMutability": "nonpayable",
@@ -108,11 +108,11 @@
     "constant": true,
     "inputs": [
       {
-        "name": "columnName",
+        "name": "fieldName",
         "type": "string"
       }
     ],
-    "name": "isAllowedColumnName",
+    "name": "isAllowedFieldName",
     "outputs": [
       {
         "name": "",
@@ -139,6 +139,41 @@
     "outputs": [],
     "payable": false,
     "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [
+      {
+        "name": "accountAddress",
+        "type": "address"
+      },
+      {
+        "name": "accountFieldName",
+        "type": "string"
+      }
+    ],
+    "name": "getFieldDetails",
+    "outputs": [
+      {
+        "name": "data",
+        "type": "string"
+      },
+      {
+        "name": "verificationStatus",
+        "type": "uint8"
+      },
+      {
+        "name": "verificationContractAddress",
+        "type": "address"
+      },
+      {
+        "name": "verifiedAt",
+        "type": "uint256"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
     "type": "function"
   },
   {

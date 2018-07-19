@@ -54,6 +54,12 @@ Mobile API and Core application
 | PIGEON_APNS_TEAM_ID        | not set         | IOS team id.                    |
 | PIGEON_FCM_KEY             | not set         | Android push server key.        |
 
+### Quorum
+
+| VAR_NAME                   | Default Value   | Description                        |
+| -------------------------- | --------------- | ---------------------------------- |
+| SYNC_VERIFICATIONS         | `email,phone,documents.id_card,documents.passport,documents.driver_license,documents.residence_permit_card` | List of verifications to be synced |
+
 
 ### Dependent applications configurations
 
@@ -105,6 +111,7 @@ Dependents for [Mobile API](#Mobile API), [Attestation API](#Attestation API)
 | VERIFF_AP_ADDRESS          | not set       | Veriff attestation party address.  |
 | VERIFF_AP_PASSWORD         | not set       | Veriff attestation party password. |
 | CONTEXT_STORAGE_ADDRESS    | not set       | Context storage address.           |
+| QUORUM_SUPER_USER_ADDRESS  | not set       | Quorum super user address.         |
 | QUORUM_ALLOWED_RPC_METHODS | [`web3_clientVersion`, `eth_call`, `eth_sendTransaction`, `eth_sendRawTransaction`, `eth_getTransactionCount`] | Quorum allowed rpc methods. |
 
 ## RabbitMQ
