@@ -10,6 +10,7 @@ config :quorum,
   veriff_ap_address: "",
   veriff_ap_password: "Veriffp@ssw0rd",
   context_storage_address: "",
+  user_address: "",
   client: QuorumClientMock,
   proxy_client: QuorumClientProxyMock
 

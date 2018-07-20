@@ -11,7 +11,16 @@ config :attestation_api, AttestationApi.Endpoint,
   debug_errors: false,
   code_reloader: false
 
-config :attestation_api, AttestationApi.Repo, url: "${POSTGRES_URI}"
+config :attestation_api, AttestationApi.Repo,
+  username: "${DB_USER}",
+  password: "${DB_PASSWORD}",
+  database: "${DB_NAME}",
+  hostname: "${DB_HOST}",
+  port: "${DB_PORT}",
+  pool_size: "${DB_POOL_SIZE}",
+  timeout: 15_000,
+  pool_timeout: 15_000,
+  loggers: [{Ecto.LoggerJSON, :log, [:info]}]
 
 config :attestation_api, AttestationApi.Clients.Veriffme,
   api_url: "${VERIFFME_API_URL}",

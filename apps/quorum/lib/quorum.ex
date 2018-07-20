@@ -29,11 +29,13 @@ defmodule Quorum do
     end
   end
 
+  @spec get_contract_function(atom) :: {:ok, binary} | {:error, atom}
   defp get_contract_function(:email), do: {:ok, "createEmailVerification"}
   defp get_contract_function(:phone), do: {:ok, "createPhoneVerification"}
   defp get_contract_function(_), do: {:error, :invalid_verification_type}
 
-  defp validate_account_field(account_address, field) do
+  @spec validate_account_field(binary, binary) :: :ok | {:error, atom}
+  def validate_account_field(account_address, field) do
     params = %{
       to: Context.get_account_storage_adapter_address(),
       data: hash_data(:account_storage_adapter, "getFieldHistoryLength", [{account_address, field}])
