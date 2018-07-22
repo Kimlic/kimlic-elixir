@@ -10,7 +10,12 @@ defmodule Mix.Tasks.Quorum.Contracts.Generate do
 
   @shortdoc "quorum.contracts.generate"
 
-  EEx.function_from_file(:def, :generate_module, __DIR__ <> "/contract_stub.exs", [:module_name, :functions])
+  EEx.function_from_file(:def, :generate_contract, __DIR__ <> "/contract_stub.exs", [:module_name, :functions])
+
+  EEx.function_from_file(:def, :generate_contract_behaviour, __DIR__ <> "/contract_behaviour_stub.exs", [
+    :module_name,
+    :functions
+  ])
 
   @spec run(list) :: :ok
   def run(_params) do
@@ -21,7 +26,7 @@ defmodule Mix.Tasks.Quorum.Contracts.Generate do
 
   @spec remove_previously_generated_files :: :ok
   defp remove_previously_generated_files do
-    (__DIR__ <> "/generated/*.ex")
+    generated_path("*")
     |> Path.wildcard()
     |> Enum.each(&File.rm!/1)
   end
@@ -29,12 +34,17 @@ defmodule Mix.Tasks.Quorum.Contracts.Generate do
   @spec generate_contracts :: [term]
   defp generate_contracts do
     Enum.map(ContractStore.get_abis_content(), fn {module_atom, functions} ->
-      module = to_string(module_atom)
-      content = __MODULE__.generate_module(Macro.camelize(module), functions)
-      File.write!(__DIR__ <> "/generated/#{module_atom}.ex", content)
+      module_name = module_atom |> to_string() |> Macro.camelize()
+      content = __MODULE__.generate_contract(module_name, functions)
+      File.write!(generated_path(module_atom), content)
+
+      content = __MODULE__.generate_contract_behaviour(module_name, functions)
+      File.write!(generated_path("#{module_atom}_behaviour"), content)
     end)
   end
 
   @spec format_contracts :: :ok
   defp format_contracts, do: Format.run([])
+
+  defp generated_path(path), do: __DIR__ <> "/../generated/#{path}.ex"
 end
