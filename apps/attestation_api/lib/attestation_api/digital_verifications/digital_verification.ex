@@ -5,7 +5,7 @@ defmodule AttestationApi.DigitalVerifications.DigitalVerification do
   import Ecto.Changeset
   alias AttestationApi.DigitalVerifications.DigitalVerificationDocument
 
-  @required_fields ~w(account_address session_id)a
+  @required_fields ~w(account_address session_id document_type)a
   @optional_fileds ~w(
     contract_address
     status
@@ -32,6 +32,7 @@ defmodule AttestationApi.DigitalVerifications.DigitalVerification do
   schema "digital_verifications" do
     field(:account_address, :string)
     field(:session_id, :string)
+    field(:document_type, :string)
     field(:contract_address, :string)
     field(:device_os, :string)
     field(:device_token, :string)

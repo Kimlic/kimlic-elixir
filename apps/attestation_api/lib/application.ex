@@ -11,7 +11,7 @@ defmodule AttestationApi.Application do
     children = [
       supervisor(AttestationApi.Endpoint, []),
       supervisor(AttestationApi.Repo, []),
-      worker(AttestationApi.VerificationVendors.Store, [])
+      worker(AttestationApi.VendorDocuments.Store, [])
     ]
 
     opts = [strategy: :one_for_one, name: AttestationApi.Supervisor]

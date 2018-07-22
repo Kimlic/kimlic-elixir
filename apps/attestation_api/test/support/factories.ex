@@ -16,6 +16,7 @@ defmodule AttestationApi.Factories do
       session_id: UUID.generate(),
       contract_address: nil,
       status: DigitalVerification.status(:new),
+      document_type: "ID_CARD",
       veriffme_code: nil,
       veriffme_status: nil,
       veriffme_reason: nil,

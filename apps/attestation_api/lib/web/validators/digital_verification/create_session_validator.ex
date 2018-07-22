@@ -8,7 +8,6 @@ defmodule AttestationApi.Validators.CreateSessionValidator do
 
   @primary_key false
   embedded_schema do
-    field(:vendor_id, :string)
     field(:first_name, :string)
     field(:last_name, :string)
     field(:document_type, :string)
@@ -28,7 +27,6 @@ defmodule AttestationApi.Validators.CreateSessionValidator do
     |> validate_format(:lang, ~r/^\w{2}$/)
     |> validate_inclusion(:device_os, ~w(ios android))
     |> validate_inclusion(:document_type, ~w(PASSPORT ID_CARD DRIVERS_LICENSE RESIDENCE_PERMIT))
-    |> VeriffValidator.validate_vendor_id(:vendor_id)
     |> VeriffValidator.validate_timestamp(:timestamp)
   end
 end
