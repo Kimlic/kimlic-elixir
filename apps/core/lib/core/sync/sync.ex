@@ -19,7 +19,6 @@ defmodule Core.Sync do
       with {:ok, {field_value, verification_status, verification_contract_address, verified_on}} <-
              get_field_details(account_address, sync_field, account_storage_adapter_address) do
         verification_contract_address = "0x" <> Base.encode16(verification_contract_address, case: :lower)
-        verification_status = if verification_status == 1, do: "PASSED", else: "FAILED"
 
         [
           %{
