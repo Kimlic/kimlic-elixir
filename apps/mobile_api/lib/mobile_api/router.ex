@@ -43,6 +43,7 @@ defmodule MobileApi.Router do
       post("/phone/approve", VerificationController, :verify_phone)
     end
 
+    post("/push", PushController, :send_push)
     get("/sync", SyncController, :sync_profile)
     get("/config", ConfigController, :get_config)
   end
