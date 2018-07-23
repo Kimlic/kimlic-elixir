@@ -262,6 +262,17 @@ defmodule Quorum.ABI.TypeDecoder do
   end
 
   @spec decode_bytes(binary(), integer(), atom()) :: {binary(), binary()}
+  def decode_bytes(data, size_in_bytes, padding_direction) when size_in_bytes > 64 do
+    data
+    |> Stream.unfold(&String.split_at(&1, 64))
+    |> Enum.take_while(&(&1 != ""))
+    |> Enum.reduce({"", ""}, fn binary, {acc_decoded, acc_rest} ->
+      {decoded, rest} = decode_bytes(binary, byte_size(binary), padding_direction)
+      {acc_decoded <> decoded, acc_rest <> rest}
+    end)
+  end
+
+  @spec decode_bytes(binary(), integer(), atom()) :: {binary(), binary()}
   def decode_bytes(data, size_in_bytes, padding_direction) do
     # TODO: Create `unright_pad` repo, err, add to `ExthCrypto.Math`
     total_size_in_bytes = size_in_bytes + mod(32 - size_in_bytes, 32)
