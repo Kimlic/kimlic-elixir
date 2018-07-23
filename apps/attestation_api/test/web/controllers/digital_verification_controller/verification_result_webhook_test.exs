@@ -12,12 +12,11 @@ defmodule AttestationApi.DigitalVerificationController.VerificationResultWebhook
   alias AttestationApi.Repo
   alias Ecto.UUID
 
-  @moduletag :authorized
   @moduletag :account_address
 
   describe "verification result webhook" do
     setup do
-      expect(PushMock, :send, fn _message, _device_os, _device_token -> :ok end)
+      expect(AttestationApiPushMock, :send, fn _message, _device_os, _device_token -> :ok end)
 
       expect(QuorumClientMock, :eth_call, 2, fn params, _block, _opts ->
         assert Map.has_key?(params, :data)

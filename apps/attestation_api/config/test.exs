@@ -6,7 +6,7 @@ config :attestation_api, AttestationApi.Endpoint,
 
 config :attestation_api, :dependencies,
   veriffme: VeriffmeMock,
-  push: PushMock
+  push: AttestationApiPushMock
 
 config :attestation_api, AttestationApi.Repo,
   username: "postgres",
