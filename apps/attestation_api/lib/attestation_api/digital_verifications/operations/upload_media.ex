@@ -7,19 +7,17 @@ defmodule AttestationApi.DigitalVerifications.Operations.UploadMedia do
   alias AttestationApi.DigitalVerifications.DigitalVerification
   alias AttestationApi.DigitalVerifications.DigitalVerificationDocument
   alias AttestationApi.Repo
-  alias AttestationApi.VerificationVendors
+  alias AttestationApi.VendorDocuments
 
   @veriffme_client Application.get_env(:attestation_api, :dependencies)[:veriffme]
 
-  @spec handle(binary, map) :: :ok | {:error, atom | binary}
-  def handle(
-        _account_address,
-        %{"session_id" => session_id, "vendor_id" => vendor_id, "document_type" => document_type} = params
-      ) do
+  @spec handle(map) :: :ok | {:error, atom | binary}
+  def handle(%{"session_id" => session_id} = params) do
     with %DigitalVerification{documents: documents} = verification <- get_verification_and_documents(session_id),
+         :ok <- VendorDocuments.check_context_items(verification, params),
          {:ok, new_document} <- create_digital_verification_document(params, verification),
          documents <- [new_document] ++ documents,
-         :ok <- check_all_documents_are_loaded(documents, vendor_id, document_type),
+         :ok <- check_all_documents_are_loaded(documents, verification),
          :ok <- veriffme_upload_media(session_id, documents),
          :ok <- veriffme_close_session(session_id),
          {:ok, _verification} <- set_pending_status(verification) do
@@ -30,12 +28,12 @@ defmodule AttestationApi.DigitalVerifications.Operations.UploadMedia do
     end
   end
 
-  @spec check_all_documents_are_loaded(list, binary, binary) :: :ok | {:error, atom}
-  defp check_all_documents_are_loaded(documents, vendor_id, document_type) do
-    documents_context = Enum.map(documents, & &1.context)
+  @spec check_all_documents_are_loaded([DigitalVerificationDocument], DigitalVerification) :: :ok | {:error, atom}
+  defp check_all_documents_are_loaded(documents, %DigitalVerification{document_type: document_type}) do
+    document_contexts = Enum.map(documents, & &1.context)
 
-    with {:ok, contexts} = VerificationVendors.get_contexts(vendor_id, document_type),
-         true <- Enum.all?(contexts, &(&1 in documents_context)) do
+    with {:ok, %{"contexts" => vendor_contexts}} = VendorDocuments.get_document_type_data(document_type),
+         [] <- vendor_contexts -- document_contexts do
       :ok
     else
       _ -> {:error, :wait_more_documents}
@@ -64,7 +62,7 @@ defmodule AttestationApi.DigitalVerifications.Operations.UploadMedia do
     |> Repo.one()
     |> case do
       %DigitalVerification{} = verification -> verification
-      _ -> {:error, :not_found}
+      _ -> {:error, {:not_found, "Verification not found"}}
     end
   end
 

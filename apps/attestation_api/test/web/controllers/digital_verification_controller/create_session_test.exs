@@ -8,10 +8,7 @@ defmodule AttestationApi.DigitalVerificationController.CreateSessionTest do
 
   alias Ecto.UUID
 
-  @moduletag :authorized
   @moduletag :account_address
-
-  @kimlic_vendor_id Application.get_env(:attestation_api, :kimlic_vendor_id)
 
   describe "create session" do
     test "success", %{conn: conn} do
@@ -39,7 +36,7 @@ defmodule AttestationApi.DigitalVerificationController.CreateSessionTest do
 
       assert %{"data" => %{"session_id" => ^session_id}} =
                conn
-               |> post(digital_verification_path(conn, :create_session, @kimlic_vendor_id), request_data)
+               |> post(digital_verification_path(conn, :create_session), request_data)
                |> json_response(200)
     end
 
@@ -62,7 +59,7 @@ defmodule AttestationApi.DigitalVerificationController.CreateSessionTest do
 
       assert %{"error" => %{"message" => _, "type" => "internal_error"}} =
                conn
-               |> post(digital_verification_path(conn, :create_session, @kimlic_vendor_id), request_data)
+               |> post(digital_verification_path(conn, :create_session), request_data)
                |> json_response(504)
     end
   end
@@ -75,7 +72,7 @@ defmodule AttestationApi.DigitalVerificationController.CreateSessionTest do
 
       assert [%{"entry" => "$.timestamp"}] =
                conn
-               |> post(digital_verification_path(conn, :create_session, @kimlic_vendor_id), request_data)
+               |> post(digital_verification_path(conn, :create_session), request_data)
                |> json_response(422)
                |> get_in(~w(error invalid))
     end

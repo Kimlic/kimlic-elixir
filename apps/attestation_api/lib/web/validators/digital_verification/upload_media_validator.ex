@@ -10,7 +10,6 @@ defmodule AttestationApi.Validators.UploadMediaValidator do
 
   @primary_key false
   embedded_schema do
-    field(:vendor_id, :string)
     field(:session_id, :string)
     field(:country, :string)
     field(:document_type, :string)
@@ -27,10 +26,8 @@ defmodule AttestationApi.Validators.UploadMediaValidator do
     |> cast(params, fields)
     |> validate_required(fields)
     |> validate_inclusion(:context, Veriffme.contexts())
-    |> VeriffValidator.validate_vendor_id(:vendor_id)
     |> VeriffValidator.validate_base64_size(:content)
     |> VeriffValidator.validate_timestamp(:timestamp)
-    |> VeriffValidator.validate_upload_media()
     |> VeriffValidator.validate_session_id_exists(:session_id)
   end
 end

@@ -8,7 +8,7 @@ defmodule AttestationApi.DigitalVerificationController do
   alias AttestationApi.Plugs.RequestValidator
   alias AttestationApi.Validators.CreateSessionValidator
   alias AttestationApi.Validators.UploadMediaValidator
-  alias AttestationApi.VerificationVendors
+  alias AttestationApi.VendorDocuments
   alias Plug.Conn
 
   action_fallback(AttestationApi.FallbackController)
@@ -17,15 +17,15 @@ defmodule AttestationApi.DigitalVerificationController do
   plug(RequestValidator, [validator: UploadMediaValidator] when action in [:upload_media])
 
   @spec create_session(Conn.t(), map) :: Conn.t()
-  def create_session(conn, %{"vendor_id" => _} = params) do
+  def create_session(conn, params) do
     with {:ok, session_id} <- DigitalVerifications.create_session(conn.assigns.account_address, params) do
       json(conn, %{session_id: session_id})
     end
   end
 
   @spec upload_media(Conn.t(), map) :: Conn.t()
-  def upload_media(conn, %{"vendor_id" => _, "session_id" => _} = params) do
-    with :ok <- UploadMedia.handle(conn.assigns.account_address, params) do
+  def upload_media(conn, %{"session_id" => _} = params) do
+    with :ok <- UploadMedia.handle(params) do
       json(conn, %{status: "ok"})
     end
   end
@@ -46,6 +46,6 @@ defmodule AttestationApi.DigitalVerificationController do
 
   @spec get_vendors(Conn.t(), map) :: Conn.t()
   def get_vendors(conn, _params) do
-    json(conn, VerificationVendors.all())
+    json(conn, VendorDocuments.all())
   end
 end

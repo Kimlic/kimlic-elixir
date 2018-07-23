@@ -25,6 +25,7 @@ defmodule AttestationApi.DigitalVerifications do
              account_address: account_address,
              session_id: session_id,
              contract_address: params["contract_address"],
+             document_type: params["document_type"],
              device_os: params["device_os"],
              device_token: params["device_token"]
            }) do
