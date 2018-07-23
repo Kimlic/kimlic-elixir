@@ -1,6 +1,8 @@
 use Mix.Config
 
-config :core, :dependencies, messenger: Core.Clients.Messenger
+config :core, :dependencies,
+  messenger: Core.Clients.Messenger,
+  push: Core.Clients.Push
 
 config :core,
   verifications_ttl: [

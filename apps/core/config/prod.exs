@@ -11,6 +11,20 @@ config :core, Core.Clients.Mailer,
   access_key: "${AMAZON_SES_ACCESS_KEY}",
   secret: "${AMAZON_SES_SECRET_KEY}"
 
+config :pigeon, :apns,
+  apns_default: %{
+    key: "${PIGEON_APNS_KEY}",
+    key_identifier: "${PIGEON_APNS_KEY_IDENTIFIER}",
+    team_id: "${PIGEON_APNS_TEAM_ID}",
+    mode: :prod
+  }
+
+config :pigeon, :fcm,
+  fcm_default: %{
+    key: "${PIGEON_FCM_KEY}",
+    mode: :prod
+  }
+
 config :ex_twilio,
   account_sid: "${TWILIO_ACCOUNT_SID}",
   auth_token: "${TWILIO_AUTH_TOKEN}"
