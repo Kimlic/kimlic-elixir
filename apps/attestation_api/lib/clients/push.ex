@@ -24,9 +24,7 @@ defmodule AttestationApi.Clients.Push do
   end
 
   @spec push_url :: binary
-  def push_url do
-    Confex.fetch_env!(:attestation_api, __MODULE__)[:push_url]
-  end
+  def push_url, do: Confex.fetch_env!(:attestation_api, __MODULE__)[:push_url]
 
   @spec headers :: list
   defp headers, do: ["Content-Type": "application/json"]
