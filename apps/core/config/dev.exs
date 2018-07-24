@@ -19,9 +19,8 @@ config :core,
 
 config :pigeon, :apns,
   apns_default: %{
-    key: "AuthKey.p8",
-    key_identifier: "key_identifier",
-    team_id: "team_id",
+    cert: "cert.pem",
+    key: "key_unencrypted.pem",
     mode: :dev
   }
 

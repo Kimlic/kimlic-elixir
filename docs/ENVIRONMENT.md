@@ -47,12 +47,11 @@ Mobile API and Core application
 
 ### Push notifications
 
-| VAR_NAME                   | Default Value   | Description                     |
-| -------------------------- | --------------- | ------------------------------- |
-| PIGEON_APNS_KEY            | not set         | IOS push server key.            |
-| PIGEON_APNS_KEY_IDENTIFIER | not set         | IOS push server key identifier. |
-| PIGEON_APNS_TEAM_ID        | not set         | IOS team id.                    |
-| PIGEON_FCM_KEY             | not set         | Android push server key.        |
+| VAR_NAME                     | Default Value   | Description                   |
+| ---------------------------- | --------------- | ----------------------------- |
+| PIGEON_APNS_CERT             | not set         | Path to IOS cert.             |
+| PIGEON_APNS_CERT_UNENCRYPTED | not set         | Path to IOS unencrypted cert. |
+| PIGEON_FCM_KEY               | not set         | Android push server key.      |
 
 ### Quorum
 

@@ -41,6 +41,7 @@ defmodule Core.MixProject do
       {:swoosh, "~> 0.14"},
       {:gen_smtp, "~> 0.12.0"},
       {:ex_twilio, "~> 0.6.0"},
+      {:task_bunny, "~> 0.3.2"},
       {:httpoison, "~> 1.2", override: true},
       {:pigeon, "~> 1.2.0"},
       {:kadabra, "~> 0.4.2"},
