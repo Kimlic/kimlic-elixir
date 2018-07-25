@@ -14,6 +14,7 @@ RUN apk add --no-cache \
       automake \
       make \
       g++ \
+      git \
       gcc
 
 RUN mix do \
