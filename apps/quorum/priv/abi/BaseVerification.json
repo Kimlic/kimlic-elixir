@@ -16,11 +16,11 @@
   {
     "constant": true,
     "inputs": [],
-    "name": "attestationParty",
+    "name": "_status",
     "outputs": [
       {
         "name": "",
-        "type": "address"
+        "type": "uint8"
       }
     ],
     "payable": false,
@@ -35,20 +35,6 @@
       {
         "name": "",
         "type": "address"
-      }
-    ],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "constant": true,
-    "inputs": [],
-    "name": "status",
-    "outputs": [
-      {
-        "name": "",
-        "type": "uint8"
       }
     ],
     "payable": false,
@@ -149,13 +135,27 @@
     "type": "function"
   },
   {
+    "constant": true,
+    "inputs": [],
+    "name": "rewardAmount",
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [
       {
         "name": "contextStorage",
         "type": "address"
       },
       {
-        "name": "rewardAmount",
+        "name": "reward",
         "type": "uint256"
       },
       {
@@ -169,10 +169,6 @@
       {
         "name": "index",
         "type": "uint256"
-      },
-      {
-        "name": "attestationPartyAddress",
-        "type": "address"
       },
       {
         "name": "fieldName",
@@ -220,7 +216,7 @@
         "type": "bool"
       }
     ],
-    "name": "setVerificationResult",
+    "name": "finalizeVerification",
     "outputs": [],
     "payable": false,
     "stateMutability": "nonpayable",
@@ -247,6 +243,34 @@
     "outputs": [],
     "payable": false,
     "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [],
+    "name": "getStatus",
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint8"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [],
+    "name": "getStatusName",
+    "outputs": [
+      {
+        "name": "",
+        "type": "string"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
     "type": "function"
   }
 ]

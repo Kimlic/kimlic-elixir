@@ -17,3 +17,10 @@ Local configuration:
 - set `:quorum, kimlic_ap_address: "%Kimlic.address%"`
 - set `:quorum, kimlic_ap_password: "%Kimlic.password%"`
 - profit
+
+## Integration tests
+- Create `test_integration.priv.exs` from `test_integration.example.exs` in `quorum/config`
+- Set quorum credentials in `test_integration.priv.exs`
+- Run `mix clear` in project root directory
+- Enter particular project `cd apps/core`, `cd apps/attestation_api`
+- Run test `mix test --only integration`

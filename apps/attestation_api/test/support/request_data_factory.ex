@@ -12,7 +12,7 @@ defmodule AttestationApi.RequestDataFactory do
       "first_name" => "John",
       "last_name" => "Doe",
       "lang" => "en",
-      "document_type" => "DRIVERS_LICENSE",
+      "document_type" => "ID_CARD",
       "timestamp" => generate(:unix_timestamp),
       "contract_address" => generate(:account_address),
       "device_os" => Enum.random(["ios", "android"]),
