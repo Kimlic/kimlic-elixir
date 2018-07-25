@@ -43,15 +43,12 @@ before_install:
 - sudo ./bin/ci/init-db.sh
 jobs:
   include:
-    - stage: "Tests"
-      name: "Tests, code style, code coverage"
-      script: ./bin/mix_tests.sh || travis_terminate 1
-
-    - stage: "Build mobile_api"
-      name: "Build Docker container for mobile_api"
+    - stage: "Test and build"
+      name: "Run tests and build Docker container for mobile_api"
       env:
        - APPLICATION_PATH="apps/mobile_api"
       script:
+        - ./bin/mix_tests.sh || travis_terminate 1
         - source ./bin/ci/rel/fetch-project-environment.sh
         - source ./bin/ci/release/fetch-source-version.sh
         - ./bin/ci/release/check-version-error.sh || travis_terminate 1
@@ -61,11 +58,12 @@ jobs:
         - sudo ./bin/ci/release/check-container.sh || travis_terminate 1
         - ./bin/ci/rel/push-changes.sh || travis_terminate 1
 
-    - stage: "Deploy attestation_api"
-      name: "Build Docker container for attestation_api"
+    - stage: "Test and build"
+      name: "Run tests and build Docker container for attestation_api"
       env:
         - APPLICATION_PATH="apps/attestation_api"
       script:
+        - ./bin/mix_tests.sh || travis_terminate 1
         - source ./bin/ci/rel/fetch-project-environment.sh
         - source ./bin/ci/release/fetch-source-version.sh
         - ./bin/ci/release/check-version-error.sh || travis_terminate 1
