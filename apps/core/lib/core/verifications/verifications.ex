@@ -22,7 +22,7 @@ defmodule Core.Verifications do
       {:ok, verification}
     else
       {:error, :account_field_not_set} ->
-        {:error, {:conflict, "Account.email not set via AccountStorageAdapter.setAccountFieldMainData"}}
+        {:error, {:conflict, "Account.email not set via AccountStorageAdapter.setFieldMainData"}}
 
       err ->
         err
@@ -36,7 +36,7 @@ defmodule Core.Verifications do
       {:ok, verification}
     else
       {:error, :account_field_not_set} ->
-        {:error, {:conflict, "Account.phone not set via AccountStorageAdapter.setAccountFieldMainData"}}
+        {:error, {:conflict, "Account.phone not set via AccountStorageAdapter.setFieldMainData"}}
 
       err ->
         err

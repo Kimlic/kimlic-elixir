@@ -135,7 +135,7 @@
         "type": "string"
       }
     ],
-    "name": "setAccountFieldMainData",
+    "name": "setFieldMainData",
     "outputs": [],
     "payable": false,
     "stateMutability": "nonpayable",
@@ -188,7 +188,7 @@
         "type": "string"
       }
     ],
-    "name": "getLastAccountDataVerificationContractAddress",
+    "name": "getLastFieldVerificationContractAddress",
     "outputs": [
       {
         "name": "verificationContract",
@@ -215,7 +215,7 @@
         "type": "uint256"
       }
     ],
-    "name": "getAccountDataVerificationContractAddress",
+    "name": "getFieldVerificationContractAddress",
     "outputs": [
       {
         "name": "verificationContract",
@@ -238,7 +238,7 @@
         "type": "string"
       }
     ],
-    "name": "getAccountFieldLastMainData",
+    "name": "getFieldLastMainData",
     "outputs": [
       {
         "name": "data",
@@ -265,7 +265,7 @@
         "type": "uint256"
       }
     ],
-    "name": "getAccountFieldMainData",
+    "name": "getFieldMainData",
     "outputs": [
       {
         "name": "data",
@@ -288,7 +288,7 @@
         "type": "string"
       }
     ],
-    "name": "getAccountFieldLastVerificationData",
+    "name": "getFieldLastVerificationData",
     "outputs": [
       {
         "name": "verificationStatus",
@@ -323,7 +323,7 @@
         "type": "uint256"
       }
     ],
-    "name": "getAccountFieldVerificationData",
+    "name": "getFieldVerificationData",
     "outputs": [
       {
         "name": "verificationStatus",
@@ -336,6 +336,33 @@
       {
         "name": "verifiedAt",
         "type": "uint256"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [
+      {
+        "name": "accountAddress",
+        "type": "address"
+      },
+      {
+        "name": "accountFieldName",
+        "type": "string"
+      },
+      {
+        "name": "index",
+        "type": "uint256"
+      }
+    ],
+    "name": "getIsFieldVerificationContractExist",
+    "outputs": [
+      {
+        "name": "result",
+        "type": "bool"
       }
     ],
     "payable": false,
@@ -358,7 +385,7 @@
         "type": "address"
       }
     ],
-    "name": "setAccountFieldVerificationContractAddress",
+    "name": "setFieldLastVerificationContractAddress",
     "outputs": [],
     "payable": false,
     "stateMutability": "nonpayable",
@@ -384,7 +411,7 @@
         "type": "address"
       }
     ],
-    "name": "setAccountFieldVerificationContractAddress",
+    "name": "setFieldVerificationContractAddress",
     "outputs": [],
     "payable": false,
     "stateMutability": "nonpayable",

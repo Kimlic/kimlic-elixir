@@ -1,7 +1,25 @@
 defmodule Core.Integration.VerificationsTest do
-  @moduledoc false
+  @moduledoc """
+  Test written for manual testing.
+    Before running you should change in Quorum config/test.exs :quorum, :client
+    from QuorumClientMock to Ethereumex.HttpClient:
 
-  use ExUnit.Case
+    change
+      :quorum, :client: QuorumClientMock,
+    to
+      :quorum, :client: Ethereumex.HttpClient,
+
+    and enable RabbitMQ workers for TaskBunny by removing [worker: false]:
+
+    change
+      [name: "transaction", jobs: [TransactionCreate], worker: false],
+      [name: "transaction-status", jobs: [TransactionStatus], worker: false]
+    to
+      [name: "transaction", jobs: [TransactionCreate]],
+      [name: "transaction-status", jobs: [TransactionStatus]]
+  """
+
+  use ExUnit.Case, async: false
 
   import Core.Factory
   import Mox
@@ -14,25 +32,8 @@ defmodule Core.Integration.VerificationsTest do
 
   setup :set_mox_global
 
-  @doc """
-  Test written for manual testing.
-  Before running you should change in Quorum config/test.exs :quorum, :client
-  from QuorumClientMock to Ethereumex.HttpClient:
+  @moduletag :integration
 
-  change
-    :quorum, :client: QuorumClientMock,
-  to
-    :quorum, :client: Ethereumex.HttpClient,
-
-  and enable RabbitMQ workers for TaskBunny by removing [worker: false]:
-
-  change
-    [name: "transaction", jobs: [TransactionCreate], worker: false],
-    [name: "transaction-status", jobs: [TransactionStatus], worker: false]
-  to
-    [name: "transaction", jobs: [TransactionCreate]],
-    [name: "transaction-status", jobs: [TransactionStatus]]
-  """
   @tag :pending
   test "create Email verification and verify email" do
     expect(MessengerMock, :send, fn _to, _message ->
@@ -56,12 +57,10 @@ defmodule Core.Integration.VerificationsTest do
 
   @tag :pending
   test "create Email verification when Account field email not set" do
-    token = TokenGenerator.generate(:email)
-
     account_address = init_quorum_user("phone")
     email = "test@example.com"
 
-    assert {:error, :account_field_not_set} = Verifications.create_email_verification(email, account_address)
+    assert {:error, {:conflict, _}} = Verifications.create_email_verification(email, account_address)
   end
 
   @tag :pending
@@ -101,11 +100,11 @@ defmodule Core.Integration.VerificationsTest do
 
   defp assert_contract_verified(contract_address, sleep \\ 50) do
     :timer.sleep(sleep)
-
-    data = Contract.hash_data(:base_verification, "status", [{}])
+    data = Contract.hash_data(:base_verification, "getStatus", [{}])
 
     case QuorumHttpClient.eth_call(%{to: contract_address, data: data}, "latest", []) do
-      {:ok, "0x0000000000000000000000000000000000000000000000000000000000000001"} ->
+      # Verified status
+      {:ok, "0x0000000000000000000000000000000000000000000000000000000000000002"} ->
         :ok
 
       _ ->
@@ -124,7 +123,7 @@ defmodule Core.Integration.VerificationsTest do
       from: account_address,
       to: Context.get_account_storage_adapter_address(),
       data:
-        Contract.hash_data(:account_storage_adapter, "setAccountFieldMainData", [
+        Contract.hash_data(:account_storage_adapter, "setFieldMainData", [
           {"#{:rand.uniform()}", doc_type}
         ]),
       gas: "0x500000",

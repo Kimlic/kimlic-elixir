@@ -32,10 +32,13 @@ defmodule AttestationApi.Integration.DigitalVerificationsTest do
   alias Quorum.Contract
   alias Quorum.Contract.Context
 
-  @status_new DigitalVerification.status(:new)
-  @status_pending DigitalVerification.status(:pending)
+  @moduletag :integration
 
   @quorum_client Application.get_env(:quorum, :client)
+
+  @status_new DigitalVerification.status(:new)
+  @status_pending DigitalVerification.status(:pending)
+  @document_type "documents.id_card"
 
   setup :set_mox_global
 
@@ -51,7 +54,7 @@ defmodule AttestationApi.Integration.DigitalVerificationsTest do
 
   @spec init_mocks :: :ok
   defp init_mocks do
-    expect(VeriffmeMock, :create_session, fn _, _, _, _ ->
+    expect(VeriffmeMock, :create_session, fn _first_name, _last_name, _lang, _document_type, _unix_timestamp ->
       {:ok,
        %HTTPoison.Response{
          status_code: 201,
@@ -106,6 +109,8 @@ defmodule AttestationApi.Integration.DigitalVerificationsTest do
        }}
     end)
 
+    expect(AttestationApiPushMock, :send, fn _message, _device_os, _device_token -> :ok end)
+
     :ok
   end
 
@@ -118,8 +123,8 @@ defmodule AttestationApi.Integration.DigitalVerificationsTest do
       from: account_address,
       to: Context.get_account_storage_adapter_address(),
       data:
-        Contract.hash_data(:account_storage_adapter, "setAccountFieldMainData", [
-          {"#{:rand.uniform()}", "documents.id_card"}
+        Contract.hash_data(:account_storage_adapter, "setFieldMainData", [
+          {"#{:rand.uniform()}", @document_type}
         ]),
       gas: "0x500000",
       gasPrice: "0x0"
@@ -142,14 +147,14 @@ defmodule AttestationApi.Integration.DigitalVerificationsTest do
     verification_contract_factory_address = Context.get_verification_contract_factory_address()
 
     {:ok, _} =
-      @quorum_client.request("personal_unlockAccount", [relaying_party_address, "FirstRelyingPartyp@ssw0rd"], [])
+      @quorum_client.request("personal_unlockAccount", [relaying_party_address, "firstRelyingPartyp@ssw0rd"], [])
 
     transaction_data = %{
       from: relaying_party_address,
       to: verification_contract_factory_address,
       data:
-        Contract.hash_data(:verification_factory, "createDocumentVerification", [
-          {account_address, veriff_ap_address, return_key}
+        Contract.hash_data(:verification_contract_factory, "createBaseVerificationContract", [
+          {account_address, veriff_ap_address, return_key, @document_type}
         ]),
       gas: "0x500000",
       gasPrice: "0x0"
@@ -162,7 +167,7 @@ defmodule AttestationApi.Integration.DigitalVerificationsTest do
     :timer.sleep(100)
 
     params = %{
-      data: Contract.hash_data(:verification_factory, "getVerificationContract", [{return_key}]),
+      data: Contract.hash_data(:verification_contract_factory, "getVerificationContract", [{return_key}]),
       to: verification_contract_factory_address
     }
 
@@ -192,7 +197,7 @@ defmodule AttestationApi.Integration.DigitalVerificationsTest do
           "context" => context
         })
 
-      assert :ok = UploadMedia.handle(account_address, verification_data)
+      assert :ok = UploadMedia.handle(verification_data)
     end
 
     assert %DigitalVerification{status: @status_pending} = DigitalVerifications.get_by(%{session_id: session_id})
@@ -217,9 +222,9 @@ defmodule AttestationApi.Integration.DigitalVerificationsTest do
   @spec assert_contract_verified(binary) :: {:ok, binary}
   defp assert_contract_verified(contract_address) do
     :timer.sleep(100)
-    data = Contract.hash_data(:base_verification, "status", [{}])
+    data = Contract.hash_data(:base_verification, "getStatus", [{}])
+    verified_status = "0x0000000000000000000000000000000000000000000000000000000000000002"
 
-    assert {:ok, "0x0000000000000000000000000000000000000000000000000000000000000001"} =
-             @quorum_client.eth_call(%{to: contract_address, data: data}, "latest", [])
+    assert {:ok, ^verified_status} = @quorum_client.eth_call(%{to: contract_address, data: data}, "latest", [])
   end
 end

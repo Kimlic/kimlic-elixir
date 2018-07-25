@@ -12,16 +12,17 @@ defmodule Quorum.Unit.SmartContractTest do
   test "create Email verification contract" do
     account_address = init_quorum_user()
     kimlic_ap_address = Context.get_kimlic_attestation_party_address()
+    kimlic_ap_password = Confex.fetch_env!(:quorum, :kimlic_ap_address)
     verification_contract_factory_address = Context.get_verification_contract_factory_address()
 
     assert {:ok, _} = QuorumHttpClient.request("personal_unlockAccount", [account_address, "p@ssW0rd"], [])
-    assert {:ok, _} = QuorumHttpClient.request("personal_unlockAccount", [kimlic_ap_address, "Kimlicp@ssw0rd"], [])
+    assert {:ok, _} = QuorumHttpClient.request("personal_unlockAccount", [kimlic_ap_address, kimlic_ap_password], [])
 
     return_key = UUID.uuid4()
 
     data =
-      Contract.hash_data(:verification_contract_factory, "createEmailVerification", [
-        {account_address, kimlic_ap_address, return_key}
+      Contract.hash_data(:verification_contract_factory, "createBaseVerificationContract", [
+        {account_address, kimlic_ap_address, return_key, "email"}
       ])
 
     tx_data = %{
@@ -51,7 +52,7 @@ defmodule Quorum.Unit.SmartContractTest do
 
     contract_address = String.replace(contract_address, String.duplicate("0", 24), "")
 
-    data = Contract.hash_data(:base_verification, "setVerificationResult", [{true}])
+    data = Contract.hash_data(:base_verification, "finalizeVerification", [{true}])
 
     tx_data = %{
       from: kimlic_ap_address,
@@ -102,7 +103,7 @@ defmodule Quorum.Unit.SmartContractTest do
       from: account_address,
       to: Context.get_account_storage_adapter_address(),
       data:
-        Contract.hash_data(:account_storage_adapter, "setAccountFieldMainData", [
+        Contract.hash_data(:account_storage_adapter, "setFieldMainData", [
           {"#{:rand.uniform()}", "email"}
         ]),
       gas: "0x500000",

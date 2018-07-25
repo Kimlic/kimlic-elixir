@@ -1,20 +1,24 @@
 defmodule Quorum.Unit.ABITest do
+  @moduledoc false
+
   use ExUnit.Case
+
   alias Quorum.Contract
   alias Quorum.ABI.{TypeDecoder, TypeEncoder}
 
   test "encode string" do
     email = String.duplicate("1234567890", 6) <> "@example.com"
-    hash = Contract.hash_data(:account_storage_adapter, "setAccountFieldMainData", [{"email", email}])
+    hash = Contract.hash_data(:account_storage_adapter, "setFieldMainData", [{"email", email}])
 
-    assert "0xf5464ddf" <> File.read!("test/data/setAccountFieldMainData.txt") == hash
+    # setFieldMainData decoded signature
+    assert "0x849b177e" <> File.read!("test/data/setFieldMainData.txt") == hash
   end
 
   test "decode string" do
     email = String.duplicate("1234567890", 6) <> "@example.com"
 
     decoded =
-      "test/data/setAccountFieldMainData.txt"
+      "test/data/setFieldMainData.txt"
       |> File.read!()
       |> Base.decode16!(case: :lower)
       |> TypeDecoder.decode_raw([{:tuple, [:string, :string]}])

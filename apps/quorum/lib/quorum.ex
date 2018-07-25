@@ -23,16 +23,12 @@ defmodule Quorum do
 
   @spec create_verification_contract(atom, binary, callback) :: :ok | {:error, map}
   def create_verification_contract(type, account_address, callback) do
-    with {:ok, contract_function} <- get_contract_function(type),
-         :ok <- validate_account_field(account_address, Atom.to_string(type)) do
-      create_verification_transaction(account_address, contract_function, callback)
+    verification_field = Atom.to_string(type)
+
+    with :ok <- validate_account_field(account_address, verification_field) do
+      create_verification_transaction(account_address, verification_field, callback)
     end
   end
-
-  @spec get_contract_function(atom) :: {:ok, binary} | {:error, atom}
-  defp get_contract_function(:email), do: {:ok, "createEmailVerification"}
-  defp get_contract_function(:phone), do: {:ok, "createPhoneVerification"}
-  defp get_contract_function(_), do: {:error, :invalid_verification_type}
 
   @spec validate_account_field(binary, binary) :: :ok | {:error, atom}
   def validate_account_field(account_address, field) do
@@ -58,7 +54,7 @@ defmodule Quorum do
   end
 
   @spec create_verification_transaction(binary, binary, callback) :: :ok
-  defp create_verification_transaction(account_address, contract_func, callback) when is_callback(callback) do
+  defp create_verification_transaction(account_address, verification_field, callback) when is_callback(callback) do
     return_key = UUID.uuid4()
     kimlic_ap_address = Context.get_kimlic_attestation_party_address()
     kimlic_ap_password = Confex.fetch_env!(:quorum, :kimlic_ap_password)
@@ -71,7 +67,9 @@ defmodule Quorum do
     }
 
     hashed_data =
-      hash_data(:verification_contract_factory, contract_func, [{account_address, kimlic_ap_address, return_key}])
+      hash_data(:verification_contract_factory, "createBaseVerificationContract", [
+        {account_address, kimlic_ap_address, return_key, verification_field}
+      ])
 
     transaction_data = %{
       from: kimlic_ap_address,
@@ -86,7 +84,7 @@ defmodule Quorum do
 
   @spec set_verification_result_transaction(binary) :: :ok
   def set_verification_result_transaction(contract_address) do
-    data = hash_data(:base_verification, "setVerificationResult", [{true}])
+    data = hash_data(:base_verification, "finalizeVerification", [{true}])
     kimlic_ap_address = Context.get_kimlic_attestation_party_address()
     kimlic_ap_password = Confex.fetch_env!(:quorum, :kimlic_ap_password)
 
@@ -97,7 +95,7 @@ defmodule Quorum do
 
   @spec set_digital_verification_result_transaction(binary, boolean) :: :ok
   def set_digital_verification_result_transaction(contract_address, status) when is_boolean(status) do
-    data = hash_data(:base_verification, "setVerificationResult", [{status}])
+    data = hash_data(:base_verification, "finalizeVerification", [{status}])
     veriff_ap_address = Confex.fetch_env!(:quorum, :veriff_ap_address)
     veriff_ap_password = Confex.fetch_env!(:quorum, :veriff_ap_password)
 
