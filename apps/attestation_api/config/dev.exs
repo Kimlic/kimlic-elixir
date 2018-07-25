@@ -20,20 +20,6 @@ config :attestation_api, AttestationApi.Clients.Veriffme,
   auth_client: {:system, "VERIFFME_AUTH_CLIENT"},
   api_secret: {:system, "VERIFFME_API_SECRET"}
 
-config :pigeon, :apns,
-  apns_default: %{
-    key: "AuthKey.p8",
-    key_identifier: "key_identifier",
-    team_id: "team_id",
-    mode: :dev
-  }
-
-config :pigeon, :fcm,
-  fcm_default: %{
-    key: "your_fcm_key_here",
-    mode: :dev
-  }
-
 config :logger, :console, format: "[$level] $message\n"
 
 config :phoenix, :stacktrace_depth, 20

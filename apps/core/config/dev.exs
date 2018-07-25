@@ -17,6 +17,20 @@ config :core,
     "documents.residence_permit_card"
   ]
 
+config :pigeon, :apns,
+  apns_default: %{
+    key: "AuthKey.p8",
+    key_identifier: "key_identifier",
+    team_id: "team_id",
+    mode: :dev
+  }
+
+config :pigeon, :fcm,
+  fcm_default: %{
+    key: "your_fcm_key_here",
+    mode: :dev
+  }
+
 config :ex_twilio,
   account_sid: "${TWILIO_ACCOUNT_SID}",
   auth_token: "${TWILIO_AUTH_TOKEN}"

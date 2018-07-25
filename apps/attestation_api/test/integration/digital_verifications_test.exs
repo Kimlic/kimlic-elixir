@@ -32,7 +32,6 @@ defmodule AttestationApi.Integration.DigitalVerificationsTest do
   alias Quorum.Contract
   alias Quorum.Contract.Context
 
-  @kimlic_vendor_id "87177897-2441-43af-a6bf-4860afcdd067"
   @status_new DigitalVerification.status(:new)
   @status_pending DigitalVerification.status(:pending)
 
@@ -190,7 +189,6 @@ defmodule AttestationApi.Integration.DigitalVerificationsTest do
       verification_data =
         data_for(:digital_verification_upload_media, %{
           "session_id" => session_id,
-          "vendor_id" => @kimlic_vendor_id,
           "context" => context
         })
 

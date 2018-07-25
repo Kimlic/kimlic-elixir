@@ -74,6 +74,7 @@ Mobile API and Core application
 | HOST       | `80`             | HTTP host for web app to listen on. |
 | PORT       | `localhost`      | HTTP port for web app to listen on. |
 | SECRET_KEY | `b9WHCgR5TGcr`.. | Phoenix [`:secret_key_base`].       |
+| PUSH_URL   | not set          | URL for sending push notifications. (Mobile api endpoint) |
 
 ### Database
 

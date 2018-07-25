@@ -1,2 +1,2 @@
 Mox.defmock(VeriffmeMock, for: AttestationApi.Clients.VeriffmeBehaviour)
-Mox.defmock(PushMock, for: AttestationApi.Clients.PushBehaviour)
+Mox.defmock(AttestationApiPushMock, for: AttestationApi.Clients.PushBehaviour)

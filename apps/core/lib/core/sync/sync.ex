@@ -16,15 +16,14 @@ defmodule Core.Sync do
     |> Confex.fetch_env!(:sync_fields)
     |> Enum.filter(&Kernel.==(Quorum.validate_account_field(account_address, &1), :ok))
     |> Enum.reduce([], fn sync_field, acc ->
-      with {:ok, {field_value_sha256, verification_status, verification_contract_address, verified_on}} <-
+      with {:ok, {field_value, verification_status, verification_contract_address, verified_on}} <-
              get_field_details(account_address, sync_field, account_storage_adapter_address) do
         verification_contract_address = "0x" <> Base.encode16(verification_contract_address, case: :lower)
-        verification_status = if verification_status == 1, do: "PASSED", else: "FAILED"
 
         [
           %{
             "name" => sync_field,
-            "value" => %{"#{sync_field}" => field_value_sha256},
+            "value" => field_value,
             "status" => verification_status,
             "verification_contract" => verification_contract_address,
             "verified_on" => to_timestamp(verified_on)

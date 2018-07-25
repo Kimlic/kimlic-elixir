@@ -235,7 +235,16 @@ defmodule Quorum.ABI.TypeEncoder do
 
   @spec encode_bytes(term) :: binary
   def encode_bytes(bytes) do
-    pad(bytes, byte_size(bytes), :right)
+    case byte_size(bytes) > 64 do
+      false ->
+        pad(bytes, byte_size(bytes), :right)
+
+      true ->
+        bytes
+        |> Stream.unfold(&String.split_at(&1, 64))
+        |> Enum.take_while(&(&1 != ""))
+        |> Enum.map_join(&pad(&1, byte_size(&1), :right))
+    end
   end
 
   # Note, we'll accept a binary or an integer here, so long as the

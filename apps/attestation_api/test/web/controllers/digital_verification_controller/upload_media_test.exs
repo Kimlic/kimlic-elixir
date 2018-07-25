@@ -10,10 +10,7 @@ defmodule AttestationApi.DigitalVerificationController.UploadMediaTest do
   alias AttestationApi.DigitalVerifications.DigitalVerification
   alias Ecto.UUID
 
-  @moduletag :authorized
   @moduletag :account_address
-
-  @kimlic_vendor_id Application.get_env(:attestation_api, :kimlic_vendor_id)
 
   @status_new DigitalVerification.status(:new)
   @status_pending DigitalVerification.status(:pending)
@@ -27,7 +24,7 @@ defmodule AttestationApi.DigitalVerificationController.UploadMediaTest do
 
       assert %{"data" => %{"status" => "ok"}} =
                conn
-               |> post(digital_verification_path(conn, :upload_media, @kimlic_vendor_id, session_id), request_data)
+               |> post(digital_verification_path(conn, :upload_media, session_id), request_data)
                |> json_response(200)
 
       assert %DigitalVerification{status: @status_pending} = DigitalVerifications.get_by(%{session_id: session_id})
@@ -45,7 +42,7 @@ defmodule AttestationApi.DigitalVerificationController.UploadMediaTest do
 
       assert %{"data" => %{"status" => "ok"}} =
                conn
-               |> post(digital_verification_path(conn, :upload_media, @kimlic_vendor_id, session_id), request_data)
+               |> post(digital_verification_path(conn, :upload_media, session_id), request_data)
                |> json_response(200)
 
       assert %DigitalVerification{status: @status_new} = DigitalVerifications.get_by(%{session_id: session_id})
@@ -60,7 +57,7 @@ defmodule AttestationApi.DigitalVerificationController.UploadMediaTest do
 
       assert %{"data" => %{"status" => "ok"}} =
                conn
-               |> post(digital_verification_path(conn, :upload_media, @kimlic_vendor_id, session_id), request_data)
+               |> post(digital_verification_path(conn, :upload_media, session_id), request_data)
                |> json_response(200)
 
       assert %DigitalVerification{status: @status_new} = DigitalVerifications.get_by(%{session_id: session_id})
@@ -79,7 +76,7 @@ defmodule AttestationApi.DigitalVerificationController.UploadMediaTest do
 
       assert %{"error" => %{"type" => "internal_error", "message" => _}} =
                conn
-               |> post(digital_verification_path(conn, :upload_media, @kimlic_vendor_id, session_id), request_data)
+               |> post(digital_verification_path(conn, :upload_media, session_id), request_data)
                |> json_response(500)
     end
 
@@ -113,7 +110,7 @@ defmodule AttestationApi.DigitalVerificationController.UploadMediaTest do
 
       assert %{"error" => %{"type" => "internal_error", "message" => _}} =
                conn
-               |> post(digital_verification_path(conn, :upload_media, @kimlic_vendor_id, session_id), request_data)
+               |> post(digital_verification_path(conn, :upload_media, session_id), request_data)
                |> json_response(500)
 
       assert %DigitalVerification{status: @status_new} = DigitalVerifications.get_by(%{session_id: session_id})
@@ -128,26 +125,13 @@ defmodule AttestationApi.DigitalVerificationController.UploadMediaTest do
       assert [err] =
                conn
                |> post(
-                 digital_verification_path(conn, :upload_media, @kimlic_vendor_id, invalid_session_id),
+                 digital_verification_path(conn, :upload_media, invalid_session_id),
                  request_data
                )
                |> json_response(422)
                |> get_in(~w(error invalid))
 
       assert %{"entry" => "$.session_id"} = err
-    end
-
-    test "invalid vendor id", %{conn: conn} do
-      session_id = UUID.generate()
-      invalid_vendor_id = UUID.generate()
-      request_data = data_for(:digital_verification_upload_media)
-      insert(:digital_verification, %{account_address: get_account_address(conn), session_id: session_id})
-
-      assert [_err, _] =
-               conn
-               |> post(digital_verification_path(conn, :upload_media, invalid_vendor_id, session_id), request_data)
-               |> json_response(422)
-               |> get_in(~w(error invalid))
     end
 
     test "base64 image size should be less than 5mb", %{conn: conn} do
@@ -159,7 +143,7 @@ defmodule AttestationApi.DigitalVerificationController.UploadMediaTest do
       request_data = data_for(:digital_verification_upload_media, %{"content" => content})
 
       assert conn
-             |> post(digital_verification_path(conn, :upload_media, @kimlic_vendor_id, session_id), request_data)
+             |> post(digital_verification_path(conn, :upload_media, session_id), request_data)
              |> json_response(422)
 
       # 4.99 mb
@@ -167,7 +151,7 @@ defmodule AttestationApi.DigitalVerificationController.UploadMediaTest do
       request_data = data_for(:digital_verification_upload_media, %{"content" => content})
 
       assert conn
-             |> post(digital_verification_path(conn, :upload_media, @kimlic_vendor_id, session_id), request_data)
+             |> post(digital_verification_path(conn, :upload_media, session_id), request_data)
              |> json_response(200)
     end
   end

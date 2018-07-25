@@ -14,6 +14,8 @@ config :attestation_api, :dependencies,
   veriffme: AttestationApi.Clients.Veriffme,
   push: AttestationApi.Clients.Push
 
+config :attestation_api, AttestationApi.Clients.Push, push_url: {:system, "PUSH_URL"}
+
 config :attestation_api, AttestationApi.Clients.Veriffme,
   api_url: {:system, "VERIFFME_API_URL"},
   auth_client: {:system, "VERIFFME_AUTH_CLIENT"},

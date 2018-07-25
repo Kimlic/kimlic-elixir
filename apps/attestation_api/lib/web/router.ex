@@ -31,8 +31,8 @@ defmodule AttestationApi.Router do
   scope "/api/verifications/digital", AttestationApi do
     pipe_through([:api, :eview_response])
 
-    post("/:vendor_id/sessions", DigitalVerificationController, :create_session)
-    post("/:vendor_id/sessions/:session_id/media", DigitalVerificationController, :upload_media)
+    post("/sessions", DigitalVerificationController, :create_session)
+    post("/sessions/:session_id/media", DigitalVerificationController, :upload_media)
 
     get("/vendors", DigitalVerificationController, :get_vendors)
   end
