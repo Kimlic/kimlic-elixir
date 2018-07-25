@@ -18,6 +18,7 @@ defmodule MobileApi.Validators.Push.SendPushValidator do
     %__MODULE__{}
     |> cast(params, fields)
     |> validate_required(fields)
+    |> validate_length(:message, max: 4096)
     |> validate_inclusion(:device_os, ~w(ios android))
   end
 end
