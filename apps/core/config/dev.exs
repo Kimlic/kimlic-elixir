@@ -19,8 +19,8 @@ config :core,
 
 config :pigeon, :apns,
   apns_default: %{
-    cert: "cert.pem",
-    key: "key_unencrypted.pem",
+    cert: {:core, "cert.pem"},
+    key: {:core, "key_unencrypted.pem"},
     mode: :dev
   }
 

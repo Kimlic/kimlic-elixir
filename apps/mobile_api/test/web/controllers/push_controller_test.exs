@@ -1,14 +1,17 @@
 defmodule MobileApi.PushControllerTest do
   @moduledoc false
 
-  use MobileApi.ConnCase, async: true
+  use MobileApi.ConnCase, async: false
   import Mox
+  alias Pigeon.APNS.Notification, as: IOSNotification
 
   @moduletag :account_address
 
+  setup :set_mox_global
+
   describe "send push" do
     test "success", %{conn: conn} do
-      expect(PushMock, :send, fn _message, _device_os, _device_token -> :ok end)
+      expect(PushSenderMock, :send, fn _message, _device_os, _device_token -> %IOSNotification{response: :success} end)
 
       assert %{"data" => %{}} =
                conn

@@ -2,7 +2,7 @@ use Mix.Config
 
 config :core, :dependencies,
   messenger: MessengerMock,
-  push: PushMock
+  push_sender: PushSenderMock
 
 config :core, Redix, "redis://localhost:6379/1"
 
@@ -16,6 +16,14 @@ config :core,
     "documents.passport",
     "documents.driver_license",
     "documents.residence_permit_card"
+  ]
+
+config :task_bunny,
+  core_queue: [
+    namespace: "core-test.",
+    queues: [
+      [name: "push_notifications", jobs: Core.Push.Job, worker: false]
+    ]
   ]
 
 # Print only warnings and errors during test

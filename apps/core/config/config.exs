@@ -2,7 +2,7 @@ use Mix.Config
 
 config :core, :dependencies,
   messenger: Core.Clients.Messenger,
-  push: Core.Clients.Push
+  push_sender: Core.Push.PushSender
 
 config :core,
   verifications_ttl: [
@@ -28,7 +28,7 @@ config :task_bunny,
   core_queue: [
     namespace: "core.",
     queues: [
-      [name: "push_notifications", jobs: Core.Clients.PushJob, worker: [concurrency: 1]]
+      [name: "push_notifications", jobs: Core.Push.Job, worker: [concurrency: 1]]
     ]
   ],
   failure_backend: [Quorum.Loggers.TaskBunny]
