@@ -13,7 +13,7 @@ defmodule Quorum.Unit.SmartContractTest do
   test "create Email verification contract" do
     account_address = init_quorum_user()
     kimlic_ap_address = Context.get_kimlic_attestation_party_address()
-    kimlic_ap_password = Confex.fetch_env!(:quorum, :kimlic_ap_address)
+    kimlic_ap_password = Confex.fetch_env!(:quorum, :kimlic_ap_password)
     verification_contract_factory_address = Context.get_verification_contract_factory_address()
 
     assert {:ok, _} = QuorumHttpClient.request("personal_unlockAccount", [account_address, "p@ssW0rd"], [])

@@ -3,11 +3,9 @@ defmodule Quorum.Contracts.Generated.BaseVerificationBehaviour do
 
   @callback tokens_unlock_at(keyword) :: {:ok, binary}
 
-  @callback attestation_party(keyword) :: {:ok, binary}
+  @callback _status(keyword) :: {:ok, binary}
 
   @callback account_address(keyword) :: {:ok, binary}
-
-  @callback status(keyword) :: {:ok, binary}
 
   @callback renounce_ownership(keyword) :: :ok
 
@@ -23,9 +21,15 @@ defmodule Quorum.Contracts.Generated.BaseVerificationBehaviour do
 
   @callback data_index(keyword) :: {:ok, binary}
 
-  @callback set_verification_result(term, keyword) :: :ok
+  @callback reward_amount(keyword) :: {:ok, binary}
+
+  @callback finalize_verification(term, keyword) :: :ok
 
   @callback get_data(keyword) :: {:ok, binary}
 
   @callback withdraw(keyword) :: :ok
+
+  @callback get_status(keyword) :: {:ok, binary}
+
+  @callback get_status_name(keyword) :: {:ok, binary}
 end

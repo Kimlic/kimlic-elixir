@@ -10,4 +10,6 @@ defmodule Quorum.Contracts.Generated.VerificationContractFactoryBehaviour do
   @callback create_phone_verification(term, term, term, keyword) :: :ok
 
   @callback create_document_verification(term, term, term, keyword) :: :ok
+
+  @callback create_base_verification_contract(term, term, term, term, keyword) :: :ok
 end
