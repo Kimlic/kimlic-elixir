@@ -23,7 +23,7 @@ RUN mix do \
       deps.compile, \
       release
 
-FROM alpine:3.7
+FROM alpine:3.8
 
 ARG APP_NAME
 ARG APP_VERSION
@@ -42,6 +42,6 @@ COPY --from=builder /app/_build/prod/rel/${APP_NAME}/releases/${APP_VERSION}/${A
 RUN tar -xzf ${APP_NAME}.tar.gz; rm ${APP_NAME}.tar.gz
 
 ENV REPLACE_OS_VARS=true \
-    APP=${APP_NAME}
+      APP=${APP_NAME}
 
 CMD ./bin/${APP} foreground
