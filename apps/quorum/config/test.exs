@@ -17,7 +17,7 @@ config :quorum,
 config :ethereumex, url: "http://localhost:22000"
 
 config :task_bunny,
-  queue: [
+  quorum_queue: [
     namespace: "kimlic-core-test.",
     queues: [
       [name: "transaction", jobs: [TransactionCreate], worker: false],

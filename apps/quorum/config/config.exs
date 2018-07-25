@@ -31,7 +31,7 @@ config :task_bunny,
       connect_options: "amqp://localhost?heartbeat=30"
     ]
   ],
-  queue: [
+  quorum_queue: [
     namespace: "kimlic-core.",
     queues: [
       [name: "transaction", jobs: [TransactionCreate]],

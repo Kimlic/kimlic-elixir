@@ -2,7 +2,7 @@ use Mix.Config
 
 config :core, :dependencies,
   messenger: Core.Clients.Messenger,
-  push: Core.Clients.Push
+  push_sender: Core.Push.PushSender
 
 config :core,
   verifications_ttl: [
@@ -20,6 +20,18 @@ config :core, :emails,
   }
 
 config :core, sync_fields: {:system, :list, "SYNC_VERIFICATIONS"}
+
+config :task_bunny,
+  hosts: [
+    default: [connect_options: "amqp://localhost?heartbeat=30"]
+  ],
+  core_queue: [
+    namespace: "core.",
+    queues: [
+      [name: "push_notifications", jobs: Core.Push.Job, worker: [concurrency: 1]]
+    ]
+  ],
+  failure_backend: [Quorum.Loggers.TaskBunny]
 
 config :logger, :console,
   format: "$message\n",

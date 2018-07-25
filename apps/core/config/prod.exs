@@ -11,11 +11,21 @@ config :core, Core.Clients.Mailer,
   access_key: "${AMAZON_SES_ACCESS_KEY}",
   secret: "${AMAZON_SES_SECRET_KEY}"
 
+config :task_bunny,
+  hosts: [
+    default: [
+      connect_options: [
+        host: "${RABBITMQ_HOST}",
+        username: "${RABBITMQ_USERNAME}",
+        password: "${RABBITMQ_PASSWORD}"
+      ]
+    ]
+  ]
+
 config :pigeon, :apns,
   apns_default: %{
-    key: "${PIGEON_APNS_KEY}",
-    key_identifier: "${PIGEON_APNS_KEY_IDENTIFIER}",
-    team_id: "${PIGEON_APNS_TEAM_ID}",
+    cert: "${PIGEON_APNS_CERT}",
+    key: "${PIGEON_APNS_CERT_UNENCRYPTED}",
     mode: :prod
   }
 
