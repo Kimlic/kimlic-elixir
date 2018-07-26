@@ -2,11 +2,11 @@ defmodule MobileApi.ConfigController do
   @moduledoc false
 
   use MobileApi, :controller
-  alias Core.ExternalConfig
+  alias Core.ConfigKeeper
   action_fallback(MobileApi.FallbackController)
 
   @spec get_config(Conn.t(), map) :: Conn.t()
   def get_config(conn, _params) do
-    json(conn, ExternalConfig.all())
+    json(conn, ConfigKeeper.all())
   end
 end

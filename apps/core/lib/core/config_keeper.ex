@@ -1,4 +1,4 @@
-defmodule Core.ExternalConfig do
+defmodule Core.ConfigKeeper do
   @moduledoc false
 
   alias Quorum.Contract.Context
