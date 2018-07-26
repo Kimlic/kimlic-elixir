@@ -27,10 +27,10 @@ defmodule MobileApi.Plugs.NodeIdTest do
       assert %Plug.Conn{status: 422, assigns: %{message: _}} = NodeId.call(conn, [])
     end
 
-    test "node-id header not found", %{conn: conn} do
+    test "node-id header is invalid", %{conn: conn} do
       expect(QuorumClientMock, :request, fn _method, _params, _opts -> {:ok, []} end)
 
-      assert %Plug.Conn{status: 404, assigns: %{message: _}} =
+      assert %Plug.Conn{status: 401} =
                conn
                |> put_req_header("node-id", generate(:node_id))
                |> NodeId.call([])

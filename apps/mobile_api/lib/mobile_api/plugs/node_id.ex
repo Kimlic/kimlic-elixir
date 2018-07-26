@@ -34,13 +34,13 @@ defmodule MobileApi.Plugs.NodeId do
     end
   end
 
-  @spec validate_node_id_exists(binary) :: :ok | {:error, tuple}
+  @spec validate_node_id_exists(binary) :: :ok | {:error, tuple} | {:error, :atom}
   def validate_node_id_exists(node_id) do
     with {:ok, nodes_id} <- get_all_nodes_id(),
          true <- node_id in nodes_id do
       :ok
     else
-      false -> {:error, {:not_found, "Node-id header not found"}}
+      false -> {:error, :access_denied}
       err -> err
     end
   end

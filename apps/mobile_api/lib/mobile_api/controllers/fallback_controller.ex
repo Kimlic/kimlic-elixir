@@ -13,6 +13,12 @@ defmodule MobileApi.FallbackController do
   @spec call(Plug.Conn.t(), fallback_param_t) :: Plug.Conn.t()
   def call(conn, nil), do: call(conn, {:error, :not_found})
 
+  def call(conn, {:error, :access_denied}) do
+    conn
+    |> put_status(:unauthorized)
+    |> render(Error, :"401")
+  end
+
   def call(conn, {:error, :not_found}) do
     conn
     |> put_status(:not_found)
