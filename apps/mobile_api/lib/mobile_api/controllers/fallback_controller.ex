@@ -31,10 +31,10 @@ defmodule MobileApi.FallbackController do
     |> render(Error, :"409", %{message: reason})
   end
 
-  def call(conn, {:error, {:unprocessable_entity, error}}) do
+  def call(conn, {:error, {:unprocessable_entity, error}}) when is_binary(error) do
     conn
     |> put_status(422)
-    |> render(Error, :"422", %{message: error})
+    |> render(Error, :"400", %{message: error})
   end
 
   def call(conn, %Ecto.Changeset{valid?: false} = changeset), do: call(conn, {:error, changeset})
