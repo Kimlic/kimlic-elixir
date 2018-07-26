@@ -17,9 +17,9 @@ addons:
     packages:
     - docker-ce
 elixir:
-- 1.6.6
+- 1.7.0
 otp_release:
-- 21.0
+- 21.0.3
 notifications:
   slack: kimlic:1fQoIvvw0ckjFF5Bgftxggmf
 env:
@@ -37,11 +37,6 @@ branches:
   except:
   - "/[0-9]*\\.[0-9]*\\.[0-9]*/"
 before_install:
-# update docker
-- curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
-- sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
-- sudo apt-get update
-- sudo apt-get -y install docker-ce
 # Expose RabbitMQ to Docker container
 - sudo ./bin/ci/init-rabbitmq.sh
 # Expose Postgres

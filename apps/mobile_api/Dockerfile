@@ -1,4 +1,4 @@
-FROM elixir:1.6.6-alpine as builder
+FROM bitwalker/alpine-elixir:1.7.0 as builder
 
 ARG APP_NAME
 ARG APP_VERSION
@@ -14,7 +14,6 @@ RUN apk add --no-cache \
       automake \
       make \
       g++ \
-      git \
       gcc
 
 RUN mix do \
