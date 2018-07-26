@@ -3,16 +3,19 @@ defmodule AttestationApi.Clients.Push do
 
   @behaviour AttestationApi.Clients.PushBehaviour
 
+  @quorum_client Application.get_env(:quorum, :client)
+
   @available_device_os ["ios", "android"]
   @request_options [ssl: [{:versions, [:"tlsv1.2"]}]]
 
   @spec send(binary, binary, binary) :: :ok
   def send(message, device_os, device_token) when device_os in @available_device_os do
-    with {:ok, _response} <-
+    with {:ok, node_id} <- get_node_id(),
+         {:ok, _response} <-
            HTTPoison.post(
              push_url(),
              Jason.encode!(%{"message" => message, "device_os" => device_os, "device_token" => device_token}),
-             headers(),
+             headers(node_id),
              @request_options
            ) do
       :ok
@@ -23,9 +26,20 @@ defmodule AttestationApi.Clients.Push do
     end
   end
 
-  @spec push_url :: binary
-  def push_url, do: Confex.fetch_env!(:attestation_api, __MODULE__)[:push_url]
+  @spec get_node_id :: {:ok, binary} | {:error, binary}
+  defp get_node_id do
+    with {:ok, %{"id" => node_id}} <- @quorum_client.request("admin_nodeInfo", %{"id" => 1}, []) do
+      {:ok, node_id}
+    end
+  end
 
-  @spec headers :: list
-  defp headers, do: ["Content-Type": "application/json"]
+  @spec push_url :: binary
+  defp push_url, do: Confex.fetch_env!(:attestation_api, __MODULE__)[:push_url]
+
+  @spec headers(binary) :: list
+  defp headers(node_id),
+    do: [
+      "Content-Type": "application/json",
+      "node-id": node_id
+    ]
 end
