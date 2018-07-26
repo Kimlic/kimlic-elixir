@@ -5,6 +5,7 @@ defmodule MobileApi.Router do
   use Plug.ErrorHandler
 
   alias MobileApi.Plugs.AccountAddress
+  alias MobileApi.Plugs.NodeId
   alias MobileApi.Plugs.PhoneVerificationLimiter
   alias Plug.LoggerJSON
 
@@ -16,6 +17,10 @@ defmodule MobileApi.Router do
     plug(:accepts, ["json"])
     plug(EView)
     plug(AccountAddress)
+  end
+
+  pipeline :node_id do
+    plug(NodeId)
   end
 
   pipeline :quorum_proxy do
@@ -43,7 +48,11 @@ defmodule MobileApi.Router do
       post("/phone/approve", VerificationController, :verify_phone)
     end
 
-    post("/push", PushController, :send_push)
+    scope "/" do
+      pipe_through(:node_id)
+      post("/push", PushController, :send_push)
+    end
+
     get("/sync", SyncController, :sync_profile)
     get("/config", ConfigController, :get_config)
   end

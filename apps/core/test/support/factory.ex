@@ -57,6 +57,10 @@ defmodule Core.Factory do
   def generate(:email), do: "test#{random_string()}@email.local"
 
   @spec generate(atom) :: binary
+  def generate(:node_id),
+    do: 128 |> :crypto.strong_rand_bytes() |> Base.encode16() |> String.slice(0, 128) |> String.downcase()
+
+  @spec generate(atom) :: binary
   def generate(:account_address) do
     account_address =
       :sha256

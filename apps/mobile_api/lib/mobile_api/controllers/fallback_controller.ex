@@ -13,6 +13,12 @@ defmodule MobileApi.FallbackController do
   @spec call(Plug.Conn.t(), fallback_param_t) :: Plug.Conn.t()
   def call(conn, nil), do: call(conn, {:error, :not_found})
 
+  def call(conn, {:error, :access_denied}) do
+    conn
+    |> put_status(:unauthorized)
+    |> render(Error, :"401")
+  end
+
   def call(conn, {:error, :not_found}) do
     conn
     |> put_status(:not_found)
@@ -31,10 +37,10 @@ defmodule MobileApi.FallbackController do
     |> render(Error, :"409", %{message: reason})
   end
 
-  def call(conn, {:error, {:unprocessable_entity, error}}) do
+  def call(conn, {:error, {:unprocessable_entity, error}}) when is_binary(error) do
     conn
     |> put_status(422)
-    |> render(Error, :"422", %{message: error})
+    |> render(Error, :"400", %{message: error})
   end
 
   def call(conn, %Ecto.Changeset{valid?: false} = changeset), do: call(conn, {:error, changeset})
