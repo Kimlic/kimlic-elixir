@@ -10,9 +10,9 @@ defmodule Mix.Tasks.Quorum.Contracts.Generate do
 
   @shortdoc "quorum.contracts.generate"
 
-  EEx.function_from_file(:def, :generate_contract, __DIR__ <> "/contract_stub.exs", [:module_name, :functions])
+  EEx.function_from_file(:def, :generate_contract, __DIR__ <> "/contract_stub.eex", [:module_name, :functions])
 
-  EEx.function_from_file(:def, :generate_contract_behaviour, __DIR__ <> "/contract_behaviour_stub.exs", [
+  EEx.function_from_file(:def, :generate_contract_behaviour, __DIR__ <> "/contract_behaviour_stub.eex", [
     :module_name,
     :functions
   ])
@@ -46,5 +46,6 @@ defmodule Mix.Tasks.Quorum.Contracts.Generate do
   @spec format_contracts :: :ok
   defp format_contracts, do: Format.run([])
 
+  @spec generated_path(binary) :: binary
   defp generated_path(path), do: __DIR__ <> "/../generated/#{path}.ex"
 end

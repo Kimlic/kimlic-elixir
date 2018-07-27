@@ -11,6 +11,8 @@ defmodule Quorum do
   @type callback :: nil | {module :: module, function :: atom, args :: list}
   @type quorum_client_response_t :: {:ok, term} | {:error, map | binary | atom}
 
+  @account_storage_adapter Application.get_env(:quorum, :contracts)[:account_storage_adapter]
+
   @gas "0x500000"
   @gas_price "0x0"
 
@@ -32,12 +34,19 @@ defmodule Quorum do
 
   @spec validate_account_field(binary, binary) :: :ok | {:error, atom}
   def validate_account_field(account_address, field) do
-    params = %{
-      to: Context.get_account_storage_adapter_address(),
-      data: hash_data(:account_storage_adapter, "getFieldHistoryLength", [{account_address, field}])
-    }
+    res =
+      @account_storage_adapter.get_field_history_length(
+        account_address,
+        field,
+        to: Context.get_account_storage_adapter_address()
+      )
 
-    case @quorum_client.eth_call(params, "latest", []) do
+    #    params = %{
+    #      to: Context.get_account_storage_adapter_address(),
+    #      data: hash_data(:account_storage_adapter, "getFieldHistoryLength", [{account_address, field}])
+    #    }
+
+    case res do
       {:ok, @hashed_false} ->
         {:error, :account_field_not_set}
 

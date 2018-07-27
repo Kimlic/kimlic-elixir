@@ -6,184 +6,215 @@ defmodule Quorum.Contracts.Generated.AccountStorageAdapter do
 
   @behaviour Quorum.Contracts.Generated.AccountStorageAdapterBehaviour
 
+  @spec renounce_ownership(keyword) :: :ok
   def renounce_ownership(options) do
     data = Contract.hash_data(:account_storage_adapter, "renounceOwnership", [{}])
     transaction_via_queue(data, options)
   end
 
+  @spec renounce_ownership_raw(keyword) :: :ok
   def renounce_ownership_raw(options) do
     data = Contract.hash_data(:account_storage_adapter, "renounceOwnership", [{}])
     quorum_send_transaction(data, options)
   end
 
+  @spec owner(keyword) :: {:ok, binary}
   def owner(options) do
     data = Contract.hash_data(:account_storage_adapter, "owner", [{}])
     quorum_client_request(data, options)
   end
 
-  def transfer_ownership(newOwner, options) do
-    data = Contract.hash_data(:account_storage_adapter, "transferOwnership", [{newOwner}])
+  @spec transfer_ownership(term, keyword) :: :ok
+  def transfer_ownership(new_owner, options) do
+    data = Contract.hash_data(:account_storage_adapter, "transferOwnership", [{new_owner}])
     transaction_via_queue(data, options)
   end
 
-  def transfer_ownership_raw(newOwner, options) do
-    data = Contract.hash_data(:account_storage_adapter, "transferOwnership", [{newOwner}])
+  @spec transfer_ownership_raw(term, keyword) :: :ok
+  def transfer_ownership_raw(new_owner, options) do
+    data = Contract.hash_data(:account_storage_adapter, "transferOwnership", [{new_owner}])
     quorum_send_transaction(data, options)
   end
 
-  def add_allowed_field_name(fieldName, options) do
-    data = Contract.hash_data(:account_storage_adapter, "addAllowedFieldName", [{fieldName}])
+  @spec add_allowed_field_name(term, keyword) :: :ok
+  def add_allowed_field_name(field_name, options) do
+    data = Contract.hash_data(:account_storage_adapter, "addAllowedFieldName", [{field_name}])
     transaction_via_queue(data, options)
   end
 
-  def add_allowed_field_name_raw(fieldName, options) do
-    data = Contract.hash_data(:account_storage_adapter, "addAllowedFieldName", [{fieldName}])
+  @spec add_allowed_field_name_raw(term, keyword) :: :ok
+  def add_allowed_field_name_raw(field_name, options) do
+    data = Contract.hash_data(:account_storage_adapter, "addAllowedFieldName", [{field_name}])
     quorum_send_transaction(data, options)
   end
 
-  def remove_allowed_field_name(fieldName, options) do
-    data = Contract.hash_data(:account_storage_adapter, "removeAllowedFieldName", [{fieldName}])
+  @spec remove_allowed_field_name(term, keyword) :: :ok
+  def remove_allowed_field_name(field_name, options) do
+    data = Contract.hash_data(:account_storage_adapter, "removeAllowedFieldName", [{field_name}])
     transaction_via_queue(data, options)
   end
 
-  def remove_allowed_field_name_raw(fieldName, options) do
-    data = Contract.hash_data(:account_storage_adapter, "removeAllowedFieldName", [{fieldName}])
+  @spec remove_allowed_field_name_raw(term, keyword) :: :ok
+  def remove_allowed_field_name_raw(field_name, options) do
+    data = Contract.hash_data(:account_storage_adapter, "removeAllowedFieldName", [{field_name}])
     quorum_send_transaction(data, options)
   end
 
-  def is_allowed_field_name(fieldName, options) do
-    data = Contract.hash_data(:account_storage_adapter, "isAllowedFieldName", [{fieldName}])
+  @spec is_allowed_field_name(term, keyword) :: {:ok, binary}
+  def is_allowed_field_name(field_name, options) do
+    data = Contract.hash_data(:account_storage_adapter, "isAllowedFieldName", [{field_name}])
     quorum_client_request(data, options)
   end
 
-  def set_field_main_data(data, accountFieldName, options) do
-    data = Contract.hash_data(:account_storage_adapter, "setFieldMainData", [{data, accountFieldName}])
+  @spec set_field_main_data(term, term, keyword) :: :ok
+  def set_field_main_data(data, account_field_name, options) do
+    data = Contract.hash_data(:account_storage_adapter, "setFieldMainData", [{data, account_field_name}])
     transaction_via_queue(data, options)
   end
 
-  def set_field_main_data_raw(data, accountFieldName, options) do
-    data = Contract.hash_data(:account_storage_adapter, "setFieldMainData", [{data, accountFieldName}])
+  @spec set_field_main_data_raw(term, term, keyword) :: :ok
+  def set_field_main_data_raw(data, account_field_name, options) do
+    data = Contract.hash_data(:account_storage_adapter, "setFieldMainData", [{data, account_field_name}])
     quorum_send_transaction(data, options)
   end
 
-  def get_field_details(accountAddress, accountFieldName, options) do
-    data = Contract.hash_data(:account_storage_adapter, "getFieldDetails", [{accountAddress, accountFieldName}])
+  @spec get_field_details(term, term, keyword) :: {:ok, binary}
+  def get_field_details(account_address, account_field_name, options) do
+    data = Contract.hash_data(:account_storage_adapter, "getFieldDetails", [{account_address, account_field_name}])
     quorum_client_request(data, options)
   end
 
-  def get_last_field_verification_contract_address(accountAddress, accountFieldName, options) do
+  @spec get_last_field_verification_contract_address(term, term, keyword) :: {:ok, binary}
+  def get_last_field_verification_contract_address(account_address, account_field_name, options) do
     data =
       Contract.hash_data(:account_storage_adapter, "getLastFieldVerificationContractAddress", [
-        {accountAddress, accountFieldName}
+        {account_address, account_field_name}
       ])
 
     quorum_client_request(data, options)
   end
 
-  def get_field_verification_contract_address(accountAddress, accountFieldName, index, options) do
+  @spec get_field_verification_contract_address(term, term, term, keyword) :: {:ok, binary}
+  def get_field_verification_contract_address(account_address, account_field_name, index, options) do
     data =
       Contract.hash_data(:account_storage_adapter, "getFieldVerificationContractAddress", [
-        {accountAddress, accountFieldName, index}
+        {account_address, account_field_name, index}
       ])
 
     quorum_client_request(data, options)
   end
 
-  def get_field_last_main_data(accountAddress, accountFieldName, options) do
-    data = Contract.hash_data(:account_storage_adapter, "getFieldLastMainData", [{accountAddress, accountFieldName}])
+  @spec get_field_last_main_data(term, term, keyword) :: {:ok, binary}
+  def get_field_last_main_data(account_address, account_field_name, options) do
+    data = Contract.hash_data(:account_storage_adapter, "getFieldLastMainData", [{account_address, account_field_name}])
     quorum_client_request(data, options)
   end
 
-  def get_field_main_data(accountAddress, accountFieldName, index, options) do
-    data = Contract.hash_data(:account_storage_adapter, "getFieldMainData", [{accountAddress, accountFieldName, index}])
-    quorum_client_request(data, options)
-  end
-
-  def get_field_last_verification_data(accountAddress, accountFieldName, options) do
+  @spec get_field_main_data(term, term, term, keyword) :: {:ok, binary}
+  def get_field_main_data(account_address, account_field_name, index, options) do
     data =
-      Contract.hash_data(:account_storage_adapter, "getFieldLastVerificationData", [{accountAddress, accountFieldName}])
+      Contract.hash_data(:account_storage_adapter, "getFieldMainData", [{account_address, account_field_name, index}])
 
     quorum_client_request(data, options)
   end
 
-  def get_field_verification_data(accountAddress, accountFieldName, index, options) do
+  @spec get_field_last_verification_data(term, term, keyword) :: {:ok, binary}
+  def get_field_last_verification_data(account_address, account_field_name, options) do
+    data =
+      Contract.hash_data(:account_storage_adapter, "getFieldLastVerificationData", [
+        {account_address, account_field_name}
+      ])
+
+    quorum_client_request(data, options)
+  end
+
+  @spec get_field_verification_data(term, term, term, keyword) :: {:ok, binary}
+  def get_field_verification_data(account_address, account_field_name, index, options) do
     data =
       Contract.hash_data(:account_storage_adapter, "getFieldVerificationData", [
-        {accountAddress, accountFieldName, index}
+        {account_address, account_field_name, index}
       ])
 
     quorum_client_request(data, options)
   end
 
-  def get_is_field_verification_contract_exist(accountAddress, accountFieldName, index, options) do
+  @spec get_is_field_verification_contract_exist(term, term, term, keyword) :: {:ok, binary}
+  def get_is_field_verification_contract_exist(account_address, account_field_name, index, options) do
     data =
       Contract.hash_data(:account_storage_adapter, "getIsFieldVerificationContractExist", [
-        {accountAddress, accountFieldName, index}
+        {account_address, account_field_name, index}
       ])
 
     quorum_client_request(data, options)
   end
 
+  @spec set_field_last_verification_contract_address(term, term, term, keyword) :: :ok
   def set_field_last_verification_contract_address(
-        accountAddress,
-        accountFieldName,
-        verificationContractAddress,
+        account_address,
+        account_field_name,
+        verification_contract_address,
         options
       ) do
     data =
       Contract.hash_data(:account_storage_adapter, "setFieldLastVerificationContractAddress", [
-        {accountAddress, accountFieldName, verificationContractAddress}
+        {account_address, account_field_name, verification_contract_address}
       ])
 
     transaction_via_queue(data, options)
   end
 
+  @spec set_field_last_verification_contract_address_raw(term, term, term, keyword) :: :ok
   def set_field_last_verification_contract_address_raw(
-        accountAddress,
-        accountFieldName,
-        verificationContractAddress,
+        account_address,
+        account_field_name,
+        verification_contract_address,
         options
       ) do
     data =
       Contract.hash_data(:account_storage_adapter, "setFieldLastVerificationContractAddress", [
-        {accountAddress, accountFieldName, verificationContractAddress}
+        {account_address, account_field_name, verification_contract_address}
       ])
 
     quorum_send_transaction(data, options)
   end
 
+  @spec set_field_verification_contract_address(term, term, term, term, keyword) :: :ok
   def set_field_verification_contract_address(
-        accountAddress,
-        accountFieldName,
+        account_address,
+        account_field_name,
         index,
-        verificationContractAddress,
+        verification_contract_address,
         options
       ) do
     data =
       Contract.hash_data(:account_storage_adapter, "setFieldVerificationContractAddress", [
-        {accountAddress, accountFieldName, index, verificationContractAddress}
+        {account_address, account_field_name, index, verification_contract_address}
       ])
 
     transaction_via_queue(data, options)
   end
 
+  @spec set_field_verification_contract_address_raw(term, term, term, term, keyword) :: :ok
   def set_field_verification_contract_address_raw(
-        accountAddress,
-        accountFieldName,
+        account_address,
+        account_field_name,
         index,
-        verificationContractAddress,
+        verification_contract_address,
         options
       ) do
     data =
       Contract.hash_data(:account_storage_adapter, "setFieldVerificationContractAddress", [
-        {accountAddress, accountFieldName, index, verificationContractAddress}
+        {account_address, account_field_name, index, verification_contract_address}
       ])
 
     quorum_send_transaction(data, options)
   end
 
-  def get_field_history_length(accountAddress, accountFieldName, options) do
-    data = Contract.hash_data(:account_storage_adapter, "getFieldHistoryLength", [{accountAddress, accountFieldName}])
+  @spec get_field_history_length(term, term, keyword) :: {:ok, binary}
+  def get_field_history_length(account_address, account_field_name, options) do
+    data =
+      Contract.hash_data(:account_storage_adapter, "getFieldHistoryLength", [{account_address, account_field_name}])
+
     quorum_client_request(data, options)
   end
 

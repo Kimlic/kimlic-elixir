@@ -6,83 +6,93 @@ defmodule Quorum.Contracts.Generated.VerificationContractFactory do
 
   @behaviour Quorum.Contracts.Generated.VerificationContractFactoryBehaviour
 
+  @spec created_contracts(term, keyword) :: {:ok, binary}
   def created_contracts(param1, options) do
     data = Contract.hash_data(:verification_contract_factory, "createdContracts", [{param1}])
     quorum_client_request(data, options)
   end
 
+  @spec get_verification_contract(term, keyword) :: {:ok, binary}
   def get_verification_contract(key, options) do
     data = Contract.hash_data(:verification_contract_factory, "getVerificationContract", [{key}])
     quorum_client_request(data, options)
   end
 
-  def create_email_verification(account, attestationPartyAddress, key, options) do
+  @spec create_email_verification(term, term, term, keyword) :: :ok
+  def create_email_verification(account, attestation_party_address, key, options) do
     data =
       Contract.hash_data(:verification_contract_factory, "createEmailVerification", [
-        {account, attestationPartyAddress, key}
+        {account, attestation_party_address, key}
       ])
 
     transaction_via_queue(data, options)
   end
 
-  def create_email_verification_raw(account, attestationPartyAddress, key, options) do
+  @spec create_email_verification_raw(term, term, term, keyword) :: :ok
+  def create_email_verification_raw(account, attestation_party_address, key, options) do
     data =
       Contract.hash_data(:verification_contract_factory, "createEmailVerification", [
-        {account, attestationPartyAddress, key}
+        {account, attestation_party_address, key}
       ])
 
     quorum_send_transaction(data, options)
   end
 
-  def create_phone_verification(account, attestationPartyAddress, key, options) do
+  @spec create_phone_verification(term, term, term, keyword) :: :ok
+  def create_phone_verification(account, attestation_party_address, key, options) do
     data =
       Contract.hash_data(:verification_contract_factory, "createPhoneVerification", [
-        {account, attestationPartyAddress, key}
+        {account, attestation_party_address, key}
       ])
 
     transaction_via_queue(data, options)
   end
 
-  def create_phone_verification_raw(account, attestationPartyAddress, key, options) do
+  @spec create_phone_verification_raw(term, term, term, keyword) :: :ok
+  def create_phone_verification_raw(account, attestation_party_address, key, options) do
     data =
       Contract.hash_data(:verification_contract_factory, "createPhoneVerification", [
-        {account, attestationPartyAddress, key}
+        {account, attestation_party_address, key}
       ])
 
     quorum_send_transaction(data, options)
   end
 
-  def create_document_verification(account, attestationPartyAddress, key, options) do
+  @spec create_document_verification(term, term, term, keyword) :: :ok
+  def create_document_verification(account, attestation_party_address, key, options) do
     data =
       Contract.hash_data(:verification_contract_factory, "createDocumentVerification", [
-        {account, attestationPartyAddress, key}
+        {account, attestation_party_address, key}
       ])
 
     transaction_via_queue(data, options)
   end
 
-  def create_document_verification_raw(account, attestationPartyAddress, key, options) do
+  @spec create_document_verification_raw(term, term, term, keyword) :: :ok
+  def create_document_verification_raw(account, attestation_party_address, key, options) do
     data =
       Contract.hash_data(:verification_contract_factory, "createDocumentVerification", [
-        {account, attestationPartyAddress, key}
+        {account, attestation_party_address, key}
       ])
 
     quorum_send_transaction(data, options)
   end
 
-  def create_base_verification_contract(account, attestationPartyAddress, key, accountFieldName, options) do
+  @spec create_base_verification_contract(term, term, term, term, keyword) :: :ok
+  def create_base_verification_contract(account, attestation_party_address, key, account_field_name, options) do
     data =
       Contract.hash_data(:verification_contract_factory, "createBaseVerificationContract", [
-        {account, attestationPartyAddress, key, accountFieldName}
+        {account, attestation_party_address, key, account_field_name}
       ])
 
     transaction_via_queue(data, options)
   end
 
-  def create_base_verification_contract_raw(account, attestationPartyAddress, key, accountFieldName, options) do
+  @spec create_base_verification_contract_raw(term, term, term, term, keyword) :: :ok
+  def create_base_verification_contract_raw(account, attestation_party_address, key, account_field_name, options) do
     data =
       Contract.hash_data(:verification_contract_factory, "createBaseVerificationContract", [
-        {account, attestationPartyAddress, key, accountFieldName}
+        {account, attestation_party_address, key, account_field_name}
       ])
 
     quorum_send_transaction(data, options)
