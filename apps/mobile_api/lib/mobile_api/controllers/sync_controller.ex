@@ -15,6 +15,7 @@ defmodule MobileApi.SyncController do
 
     Logger.warn(fn ->
       %{"message" => "#{__MODULE__} Request sync_profile from elixir Logger", "log_tag" => "profile_sync"}
+      |> Jason.encode!()
     end)
 
     sync_data = Sync.handle(conn.assigns.account_address)
