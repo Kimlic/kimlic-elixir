@@ -3,7 +3,7 @@ defmodule Quorum.Unit.SmartContractTest do
 
   alias Quorum.Contract
   alias Quorum.Contract.Context
-  alias Quorum.Contracts.Generated.AccountStorageAdapter
+  alias Quorum.Contract.Generated.AccountStorageAdapter
   alias Ethereumex.HttpClient, as: QuorumHttpClient
 
   @hashed_true "0x0000000000000000000000000000000000000000000000000000000000000001"

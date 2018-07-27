@@ -1,10 +1,10 @@
-defmodule Quorum.Contracts.Generated.KimlicContractsContext do
+defmodule Quorum.Contract.Generated.KimlicContractsContext do
   @moduledoc false
 
   alias Quorum.Contract
   alias Ethereumex.HttpClient, as: QuorumClient
 
-  @behaviour Quorum.Contracts.Generated.KimlicContractsContextBehaviour
+  @behaviour Quorum.Contract.Generated.KimlicContractsContextBehaviour
 
   @spec renounce_ownership(keyword) :: :ok
   def renounce_ownership(options) do

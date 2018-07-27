@@ -1,4 +1,4 @@
-defmodule Quorum.Contracts.Generated.VerificationContractFactoryBehaviour do
+defmodule Quorum.Contract.Generated.VerificationContractFactoryBehaviour do
   @moduledoc false
 
   @callback created_contracts(term, keyword) :: {:ok, binary}

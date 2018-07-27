@@ -1,4 +1,4 @@
-defmodule Quorum.Contracts.Generated.BaseVerificationBehaviour do
+defmodule Quorum.Contract.Generated.BaseVerificationBehaviour do
   @moduledoc false
 
   @callback tokens_unlock_at(keyword) :: {:ok, binary}

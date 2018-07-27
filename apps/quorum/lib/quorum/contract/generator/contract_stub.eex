@@ -1,11 +1,11 @@
-defmodule Quorum.Contracts.Generated.<%= module_name %> do
+defmodule Quorum.Contract.Generated.<%= module_name %> do
   <% module_name_atom = module_name |> Macro.underscore() %>
   @moduledoc false
 
   alias Quorum.Contract
   alias Ethereumex.HttpClient, as: QuorumClient
 
-  @behaviour Quorum.Contracts.Generated.<%= module_name %>Behaviour
+  @behaviour Quorum.Contract.Generated.<%= module_name %>Behaviour
 
   <%= for %{"name" => function_name, "type" => type, "inputs" => args, "constant" => constant?} <- functions, type == "function" do %>
      <% function_quorum_name = function_name %>

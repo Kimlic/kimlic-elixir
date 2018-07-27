@@ -1,10 +1,10 @@
-defmodule Quorum.Contracts.Generated.AccountStorage do
+defmodule Quorum.Contract.Generated.AccountStorage do
   @moduledoc false
 
   alias Quorum.Contract
   alias Ethereumex.HttpClient, as: QuorumClient
 
-  @behaviour Quorum.Contracts.Generated.AccountStorageBehaviour
+  @behaviour Quorum.Contract.Generated.AccountStorageBehaviour
 
   @spec delete_bytes32(term, keyword) :: :ok
   def delete_bytes32(key, options) do

@@ -1,4 +1,4 @@
-defmodule Quorum.Contracts.Generated.KimlicContractsContextBehaviour do
+defmodule Quorum.Contract.Generated.KimlicContractsContextBehaviour do
   @moduledoc false
 
   @callback renounce_ownership(keyword) :: :ok

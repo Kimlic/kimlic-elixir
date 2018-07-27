@@ -14,12 +14,12 @@ config :quorum,
 
 config :quorum,
   contracts: [
-    account_storage: Quorum.Contracts.Generated.AccountStorage,
-    account_storage_adapter: Quorum.Contracts.Generated.AccountStorageAdapter,
-    base_verification: Quorum.Contracts.Generated.BaseVerification,
-    kimlic_context_storage: Quorum.Contracts.Generated.KimlicContextStorage,
-    kimlic_contracts_context: Quorum.Contracts.Generated.KimlicContractsContext,
-    verification_contract_factory: Quorum.Contracts.Generated.VerificationContractFactory
+    account_storage: Quorum.Contract.Generated.AccountStorage,
+    account_storage_adapter: Quorum.Contract.Generated.AccountStorageAdapter,
+    base_verification: Quorum.Contract.Generated.BaseVerification,
+    kimlic_context_storage: Quorum.Contract.Generated.KimlicContextStorage,
+    kimlic_contracts_context: Quorum.Contract.Generated.KimlicContractsContext,
+    verification_contract_factory: Quorum.Contract.Generated.VerificationContractFactory
   ]
 
 config :task_bunny,

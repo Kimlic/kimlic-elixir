@@ -1,10 +1,10 @@
-defmodule Quorum.Contracts.Generated.VerificationContractFactory do
+defmodule Quorum.Contract.Generated.VerificationContractFactory do
   @moduledoc false
 
   alias Quorum.Contract
   alias Ethereumex.HttpClient, as: QuorumClient
 
-  @behaviour Quorum.Contracts.Generated.VerificationContractFactoryBehaviour
+  @behaviour Quorum.Contract.Generated.VerificationContractFactoryBehaviour
 
   @spec created_contracts(term, keyword) :: {:ok, binary}
   def created_contracts(param1, options) do

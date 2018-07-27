@@ -1,4 +1,4 @@
-defmodule Quorum.Contracts.Generated.KimlicContextStorageBehaviour do
+defmodule Quorum.Contract.Generated.KimlicContextStorageBehaviour do
   @moduledoc false
 
   @callback delete_bytes32(term, keyword) :: :ok

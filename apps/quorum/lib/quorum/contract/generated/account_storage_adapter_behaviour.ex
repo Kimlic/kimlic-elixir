@@ -1,4 +1,4 @@
-defmodule Quorum.Contracts.Generated.AccountStorageAdapterBehaviour do
+defmodule Quorum.Contract.Generated.AccountStorageAdapterBehaviour do
   @moduledoc false
 
   @callback renounce_ownership(keyword) :: :ok

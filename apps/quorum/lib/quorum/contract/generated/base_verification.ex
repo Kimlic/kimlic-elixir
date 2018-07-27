@@ -1,10 +1,10 @@
-defmodule Quorum.Contracts.Generated.BaseVerification do
+defmodule Quorum.Contract.Generated.BaseVerification do
   @moduledoc false
 
   alias Quorum.Contract
   alias Ethereumex.HttpClient, as: QuorumClient
 
-  @behaviour Quorum.Contracts.Generated.BaseVerificationBehaviour
+  @behaviour Quorum.Contract.Generated.BaseVerificationBehaviour
 
   @spec tokens_unlock_at(keyword) :: {:ok, binary}
   def tokens_unlock_at(options) do

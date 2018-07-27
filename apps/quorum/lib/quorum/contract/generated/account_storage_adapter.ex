@@ -1,10 +1,10 @@
-defmodule Quorum.Contracts.Generated.AccountStorageAdapter do
+defmodule Quorum.Contract.Generated.AccountStorageAdapter do
   @moduledoc false
 
   alias Quorum.Contract
   alias Ethereumex.HttpClient, as: QuorumClient
 
-  @behaviour Quorum.Contracts.Generated.AccountStorageAdapterBehaviour
+  @behaviour Quorum.Contract.Generated.AccountStorageAdapterBehaviour
 
   @spec renounce_ownership(keyword) :: :ok
   def renounce_ownership(options) do

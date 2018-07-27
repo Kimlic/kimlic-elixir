@@ -1,10 +1,10 @@
-defmodule Quorum.Contracts.Generated.KimlicContextStorage do
+defmodule Quorum.Contract.Generated.KimlicContextStorage do
   @moduledoc false
 
   alias Quorum.Contract
   alias Ethereumex.HttpClient, as: QuorumClient
 
-  @behaviour Quorum.Contracts.Generated.KimlicContextStorageBehaviour
+  @behaviour Quorum.Contract.Generated.KimlicContextStorageBehaviour
 
   @spec delete_bytes32(term, keyword) :: :ok
   def delete_bytes32(key, options) do

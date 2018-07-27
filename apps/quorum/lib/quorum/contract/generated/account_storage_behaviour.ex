@@ -1,4 +1,4 @@
-defmodule Quorum.Contracts.Generated.AccountStorageBehaviour do
+defmodule Quorum.Contract.Generated.AccountStorageBehaviour do
   @moduledoc false
 
   @callback delete_bytes32(term, keyword) :: :ok

@@ -1,4 +1,4 @@
-defmodule Quorum.Contracts.Generated.<%= module_name %>Behaviour do
+defmodule Quorum.Contract.Generated.<%= module_name %>Behaviour do
   @moduledoc false
 
   <%= for %{"name" => function_name, "type" => type, "inputs" => args, "constant" => constant} <- functions, type == "function" do %>
