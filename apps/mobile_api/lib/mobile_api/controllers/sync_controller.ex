@@ -8,6 +8,10 @@ defmodule MobileApi.SyncController do
 
   @spec sync_profile(Conn.t(), map) :: Conn.t()
   def sync_profile(conn, _params) do
+    Log.info(%{"message" => "#{__MODULE__} Request sync_profile", "log_tag" => "profile_sync"})
+    Log.warn(%{"message" => "#{__MODULE__} Request sync_profile", "log_tag" => "profile_sync"})
+    Log.error(%{"message" => "#{__MODULE__} Request sync_profile", "log_tag" => "profile_sync"})
+
     sync_data = Sync.handle(conn.assigns.account_address)
 
     json(conn, %{"data_fields" => sync_data})

@@ -21,7 +21,7 @@ defmodule Log do
   defp do_log(%{} = log_data, log_function) do
     log_function.(fn ->
       log_data
-      |> Map.merge(%{"request_id" => Logger.metadata()[:request_id]})
+      |> Map.merge(%{"request_id" => Logger.metadata()[:request_id], "is_custom" => true})
       |> Jason.encode!()
     end)
   end
