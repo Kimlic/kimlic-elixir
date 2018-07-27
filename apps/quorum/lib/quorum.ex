@@ -11,12 +11,11 @@ defmodule Quorum do
   @type callback :: nil | {module :: module, function :: atom, args :: list}
   @type quorum_client_response_t :: {:ok, term} | {:error, map | binary | atom}
 
+  @quorum_client Application.get_env(:quorum, :client)
   @account_storage_adapter Application.get_env(:quorum, :contracts)[:account_storage_adapter]
 
   @gas "0x500000"
   @gas_price "0x0"
-
-  @quorum_client Application.get_env(:quorum, :client)
   @hashed_false "0x0000000000000000000000000000000000000000000000000000000000000000"
 
   defguardp is_callback(mfa)
@@ -26,27 +25,25 @@ defmodule Quorum do
   @spec create_verification_contract(atom, binary, callback) :: :ok | {:error, map}
   def create_verification_contract(type, account_address, callback) do
     verification_field = Atom.to_string(type)
+    account_storage_adapter_address = Context.get_account_storage_adapter_address()
 
-    with :ok <- validate_account_field(account_address, verification_field) do
+    with :ok <-
+           validate_account_field_exists_and_set(account_address, verification_field, account_storage_adapter_address),
+         :ok <-
+           validate_account_field_has_no_verification(
+             account_address,
+             verification_field,
+             account_storage_adapter_address
+           ) do
       create_verification_transaction(account_address, verification_field, callback)
     end
   end
 
-  @spec validate_account_field(binary, binary) :: :ok | {:error, atom}
-  def validate_account_field(account_address, field) do
-    res =
-      @account_storage_adapter.get_field_history_length(
-        account_address,
-        field,
-        to: Context.get_account_storage_adapter_address()
-      )
-
-    #    params = %{
-    #      to: Context.get_account_storage_adapter_address(),
-    #      data: hash_data(:account_storage_adapter, "getFieldHistoryLength", [{account_address, field}])
-    #    }
-
-    case res do
+  @spec validate_account_field_exists_and_set(binary, binary, binary) :: :ok | {:error, atom}
+  def validate_account_field_exists_and_set(account_address, field, to) do
+    account_address
+    |> @account_storage_adapter.get_field_history_length(field, to: to)
+    |> case do
       {:ok, @hashed_false} ->
         {:error, :account_field_not_set}
 
@@ -59,6 +56,17 @@ defmodule Quorum do
 
       err ->
         err
+    end
+  end
+
+  @spec validate_account_field_has_no_verification(binary, binary, binary) :: :ok | {:error, atom}
+  def validate_account_field_has_no_verification(account_address, field, to) do
+    account_address
+    |> @account_storage_adapter.get_last_field_verification_contract_address(field, to: to)
+    |> case do
+      {:ok, @hashed_false} -> :ok
+      {:ok, _resp} -> {:error, :account_field_has_verification}
+      err -> err
     end
   end
 

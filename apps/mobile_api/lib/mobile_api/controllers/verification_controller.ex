@@ -12,20 +12,9 @@ defmodule MobileApi.VerificationController do
 
   action_fallback(FallbackController)
 
-  plug(
-    RequestValidator,
-    [validator: ApproveValidator, error_handler: FallbackController] when action in ~w(verify_email verify_phone)a
-  )
-
-  plug(
-    RequestValidator,
-    [validator: EmailValidator, error_handler: FallbackController] when action == :create_email_verification
-  )
-
-  plug(
-    RequestValidator,
-    [validator: PhoneValidator, error_handler: FallbackController] when action == :create_phone_verification
-  )
+  plug(RequestValidator, [validator: ApproveValidator] when action in ~w(verify_email verify_phone)a)
+  plug(RequestValidator, [validator: EmailValidator] when action == :create_email_verification)
+  plug(RequestValidator, [validator: PhoneValidator] when action == :create_phone_verification)
 
   @spec create_email_verification(Conn.t(), map) :: Conn.t()
   def create_email_verification(conn, params) do
