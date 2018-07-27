@@ -24,6 +24,9 @@ defmodule Core.Verifications do
       {:error, :account_field_not_set} ->
         {:error, {:conflict, "Account.email not set via AccountStorageAdapter.setFieldMainData"}}
 
+      {:error, :account_field_has_verification} ->
+        {:error, {:conflict, "There is already a verification contract for this email"}}
+
       err ->
         err
     end
@@ -37,6 +40,9 @@ defmodule Core.Verifications do
     else
       {:error, :account_field_not_set} ->
         {:error, {:conflict, "Account.phone not set via AccountStorageAdapter.setFieldMainData"}}
+
+      {:error, :account_field_has_verification} ->
+        {:error, {:conflict, "There is already a verification contract for this phone number"}}
 
       err ->
         err

@@ -14,7 +14,12 @@ defmodule Core.Sync do
 
     :core
     |> Confex.fetch_env!(:sync_fields)
-    |> Enum.filter(&Kernel.==(Quorum.validate_account_field(account_address, &1), :ok))
+    |> Enum.filter(
+      &Kernel.==(
+        Quorum.validate_account_field_exists_and_set(account_address, &1, account_storage_adapter_address),
+        :ok
+      )
+    )
     |> Enum.reduce([], fn sync_field, acc ->
       with {:ok, {field_value, verification_status, verification_contract_address, verified_on}} <-
              get_field_details(account_address, sync_field, account_storage_adapter_address) do

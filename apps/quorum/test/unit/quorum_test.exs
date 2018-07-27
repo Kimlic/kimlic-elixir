@@ -15,6 +15,7 @@ defmodule Quorum.Unit.QuorumTest do
   @queue_transaction_create "kimlic-core-test.transaction"
   @queue_transaction_status "kimlic-core-test.transaction-status"
   @hashed_true "0x" <> String.duplicate("0", 63) <> "1"
+  @hashed_false "0x" <> String.duplicate("0", 64)
 
   setup do
     clean(Queue.queue_with_subqueues(@queue_transaction_create))
@@ -49,6 +50,10 @@ defmodule Quorum.Unit.QuorumTest do
 
       expect(AccountStorageAdapterMock, :get_field_history_length, fn _, _, _opts ->
         {:ok, @hashed_true}
+      end)
+
+      expect(AccountStorageAdapterMock, :get_last_field_verification_contract_address, fn _, _, _opts ->
+        {:ok, @hashed_false}
       end)
 
       # get
