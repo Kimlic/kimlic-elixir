@@ -14,20 +14,7 @@ defmodule Quorum.Unit.QuorumTest do
 
   @queue_transaction_create "kimlic-core-test.transaction"
   @queue_transaction_status "kimlic-core-test.transaction-status"
-
-  defmodule QuorumContextExpect do
-    defmacro __using__(_) do
-      quote do
-        # Quorum.getContext()
-        # Quorum.getVerificationContractFactory()
-        expect(QuorumClientMock, :eth_call, 2, fn params, _block, _opts ->
-          assert Map.has_key?(params, :data)
-          assert Map.has_key?(params, :to)
-          {:ok, "0x111f4029f7e13575d5f4eab2c65ccc43b21aa67f4cfa200"}
-        end)
-      end
-    end
-  end
+  @hashed_true "0x" <> String.duplicate("0", 63) <> "1"
 
   setup do
     clean(Queue.queue_with_subqueues(@queue_transaction_create))
@@ -39,7 +26,13 @@ defmodule Quorum.Unit.QuorumTest do
 
   describe "create verification_contract" do
     test "success" do
-      use QuorumContextExpect
+      # Quorum.getContext()
+      # Quorum.getVerificationContractFactory()
+      expect(QuorumClientMock, :eth_call, 2, fn params, _block, _opts ->
+        assert Map.has_key?(params, :data)
+        assert Map.has_key?(params, :to)
+        {:ok, "0x111f4029f7e13575d5f4eab2c65ccc43b21aa67f4cfa200"}
+      end)
 
       expect(QuorumClientMock, :request, fn method, _params, _opts ->
         assert "personal_unlockAccount" == method
@@ -54,8 +47,8 @@ defmodule Quorum.Unit.QuorumTest do
         {:ok, %{"status" => "0x1"}}
       end)
 
-      expect(QuorumClientMock, :eth_call, fn %{data: "0xbbe78c1b" <> _}, _block, _opts ->
-        {:ok, "0x0000000000000000000000000000000000000000000000000000000000000001"}
+      expect(AccountStorageAdapterMock, :get_field_history_length, fn _, _, _opts ->
+        {:ok, @hashed_true}
       end)
 
       # get

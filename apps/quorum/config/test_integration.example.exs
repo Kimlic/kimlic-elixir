@@ -12,6 +12,16 @@ config :quorum,
   relying_party_address: "",
   relying_party_password: "firstRelyingPartyp@ssw0rd"
 
+config :quorum,
+  contracts: [
+    account_storage: Quorum.Contract.Generated.AccountStorage,
+    account_storage_adapter: Quorum.Contract.Generated.AccountStorageAdapter,
+    base_verification: Quorum.Contract.Generated.BaseVerification,
+    kimlic_context_storage: Quorum.Contract.Generated.KimlicContextStorage,
+    kimlic_contracts_context: Quorum.Contract.Generated.KimlicContractsContext,
+    verification_contract_factory: Quorum.Contract.Generated.VerificationContractFactory
+  ]
+
 config :task_bunny,
   queue: [
     namespace: "kimlic-core-test.",

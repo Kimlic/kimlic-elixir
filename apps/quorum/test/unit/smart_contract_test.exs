@@ -3,6 +3,7 @@ defmodule Quorum.Unit.SmartContractTest do
 
   alias Quorum.Contract
   alias Quorum.Contract.Context
+  alias Quorum.Contract.Generated.AccountStorageAdapter
   alias Ethereumex.HttpClient, as: QuorumHttpClient
 
   @hashed_true "0x0000000000000000000000000000000000000000000000000000000000000001"
@@ -12,7 +13,7 @@ defmodule Quorum.Unit.SmartContractTest do
   test "create Email verification contract" do
     account_address = init_quorum_user()
     kimlic_ap_address = Context.get_kimlic_attestation_party_address()
-    kimlic_ap_password = Confex.fetch_env!(:quorum, :kimlic_ap_address)
+    kimlic_ap_password = Confex.fetch_env!(:quorum, :kimlic_ap_password)
     verification_contract_factory_address = Context.get_verification_contract_factory_address()
 
     assert {:ok, _} = QuorumHttpClient.request("personal_unlockAccount", [account_address, "p@ssW0rd"], [])
@@ -87,12 +88,12 @@ defmodule Quorum.Unit.SmartContractTest do
   test "check that account field email set" do
     account_address = init_quorum_user()
 
-    params = %{
-      to: Context.get_account_storage_adapter_address(),
-      data: Contract.hash_data(:account_storage_adapter, "getFieldHistoryLength", [{account_address, "email"}])
-    }
-
-    assert {:ok, @hashed_true} = QuorumHttpClient.eth_call(params)
+    assert {:ok, @hashed_true} =
+             AccountStorageAdapter.get_field_history_length(
+               account_address,
+               "email",
+               to: Context.get_account_storage_adapter_address()
+             )
   end
 
   defp init_quorum_user do

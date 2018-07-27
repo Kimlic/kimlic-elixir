@@ -8,7 +8,6 @@ defmodule MobileApi.VerificationControllerTest do
   alias Core.Verifications
   alias Core.Verifications.Verification
 
-  @moduletag :authorized
   @moduletag :account_address
 
   @hashed_true "0x0000000000000000000000000000000000000000000000000000000000000001"
@@ -47,9 +46,7 @@ defmodule MobileApi.VerificationControllerTest do
         {:ok, "0x000000000000000000000000d37debc7b53d678788661c74c94f265b62a412ac"}
       end)
 
-      # Quorum.getFieldHistoryLength(account_address, email)
-      # Check that Account field email is set
-      expect(QuorumClientMock, :eth_call, fn _params, _block, _opts ->
+      expect(AccountStorageAdapterMock, :get_field_history_length, fn _, _, _opts ->
         {:ok, @hashed_true}
       end)
 
@@ -72,10 +69,8 @@ defmodule MobileApi.VerificationControllerTest do
         {:ok, true}
       end)
 
-      # Quorum.getFieldHistoryLength(account_address, email)
       # Check that Account field email is set
-      # Response - email not set
-      expect(QuorumClientMock, :eth_call, fn _params, _block, _opts ->
+      expect(AccountStorageAdapterMock, :get_field_history_length, fn _, _, _opts ->
         {:ok, @hashed_false}
       end)
 
@@ -203,9 +198,8 @@ defmodule MobileApi.VerificationControllerTest do
         {:ok, "0x000000000000000000000000d37debc7b53d678788661c74c94f265b62a412ac"}
       end)
 
-      # Quorum.getFieldHistoryLength(account_address, phone)
       # Check that Account field phone is set
-      expect(QuorumClientMock, :eth_call, fn _params, _block, _opts ->
+      expect(AccountStorageAdapterMock, :get_field_history_length, fn _, _, _opts ->
         {:ok, @hashed_true}
       end)
 
@@ -229,9 +223,8 @@ defmodule MobileApi.VerificationControllerTest do
 
       expect(MessengerMock, :send, fn ^phone, _message -> {:ok, %{}} end)
 
-      # Quorum.getFieldHistoryLength(account_address, phone)
       # Check that Account field phone is set
-      expect(QuorumClientMock, :eth_call, fn _params, _block, _opts ->
+      expect(AccountStorageAdapterMock, :get_field_history_length, fn _, _, _opts ->
         {:ok, @hashed_false}
       end)
 
@@ -281,15 +274,11 @@ defmodule MobileApi.VerificationControllerTest do
       stub(QuorumClientMock, :eth_call, fn params, _block, _opts ->
         assert Map.has_key?(params, :data)
         assert Map.has_key?(params, :to)
+        {:ok, generate(:account_address)}
+      end)
 
-        case params.data do
-          # 0xbbe78c1b - hashed getFieldHistoryLength(address,string)
-          "0xbbe78c1b" <> _ ->
-            {:ok, "0x" <> String.duplicate("0", 63) <> "1"}
-
-          _ ->
-            {:ok, generate(:account_address)}
-        end
+      expect(AccountStorageAdapterMock, :get_field_history_length, attempts, fn _, _, _opts ->
+        {:ok, @hashed_true}
       end)
 
       phone = generate(:phone)
