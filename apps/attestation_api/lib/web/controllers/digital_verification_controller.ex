@@ -46,6 +46,10 @@ defmodule AttestationApi.DigitalVerificationController do
 
   @spec get_vendors(Conn.t(), map) :: Conn.t()
   def get_vendors(conn, _params) do
+    Log.info(%{"message" => "#{__MODULE__} Request get_vendors", "log_tag" => "get_vendors"})
+    Log.warn(%{"message" => "#{__MODULE__} Request get_vendors", "log_tag" => "get_vendors"})
+    Log.error(%{"message" => "#{__MODULE__} Request get_vendors", "log_tag" => "get_vendors"})
+
     json(conn, VendorDocuments.all())
   end
 end
