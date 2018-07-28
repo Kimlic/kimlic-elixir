@@ -5,11 +5,11 @@ alias Quorum.Jobs.{TransactionCreate, TransactionStatus}
 config :quorum,
   client: Ethereumex.HttpClient,
   proxy_client: Quorum.Proxy.Client,
+  context_storage_address: {:system, "CONTEXT_STORAGE_ADDRESS"},
   kimlic_ap_address: {:system, "KIMLIC_AP_ADDRESS"},
   kimlic_ap_password: {:system, "KIMLIC_AP_PASSWORD"},
   veriff_ap_address: {:system, "VERIFF_AP_ADDRESS"},
   veriff_ap_password: {:system, "VERIFF_AP_PASSWORD"},
-  context_storage_address: {:system, "CONTEXT_STORAGE_ADDRESS"},
 
   # User address is used to access `AccountStorageAdapter.getFieldDetails`
   user_address: {:system, "USER_ADDRESS"},

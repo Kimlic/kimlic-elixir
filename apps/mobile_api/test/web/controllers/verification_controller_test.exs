@@ -17,10 +17,20 @@ defmodule MobileApi.VerificationControllerTest do
   @entity_type_phone Verification.entity_type(:phone)
 
   setup do
-    expect(QuorumClientMock, :eth_call, 2, fn params, _block, _opts ->
-      assert Map.has_key?(params, :data)
-      assert Map.has_key?(params, :to)
-      {:ok, generate(:account_address)}
+    context_address = generate(:account_address)
+    account_storage_adapter_address = generate(:account_address)
+    verification_contract_factory_address = generate(:account_address)
+
+    expect(KimlicContextStorageMock, :get_context, 2, fn _ ->
+      {:ok, context_address}
+    end)
+
+    expect(KimlicContractsContextMock, :get_account_storage_adapter, fn _ ->
+      {:ok, account_storage_adapter_address}
+    end)
+
+    expect(KimlicContractsContextMock, :get_verification_contract_factory, fn _ ->
+      {:ok, verification_contract_factory_address}
     end)
 
     :ok
@@ -36,16 +46,6 @@ defmodule MobileApi.VerificationControllerTest do
         {:ok, true}
       end)
 
-      # Quorum.getAccountStorageAdapter()
-      expect(QuorumClientMock, :eth_call, fn _params, _block, _opts ->
-        {:ok, "0x000000000000000000000000d37debc7b53d678788661c74c94f265b62a412ac"}
-      end)
-
-      # Quorum.getVerificationContractFactory()
-      expect(QuorumClientMock, :eth_call, fn _params, _block, _opts ->
-        {:ok, "0x000000000000000000000000d37debc7b53d678788661c74c94f265b62a412ac"}
-      end)
-
       # Check that Account field email is set
       expect(AccountStorageAdapterMock, :get_field_history_length, fn _, _, _opts ->
         {:ok, @hashed_true}
@@ -54,6 +54,8 @@ defmodule MobileApi.VerificationControllerTest do
       expect(AccountStorageAdapterMock, :get_last_field_verification_contract_address, fn _, _, _opts ->
         {:ok, @hashed_false}
       end)
+
+      expect(VerificationContractFactoryMock, :create_base_verification_contract, fn _, _, _, _, _opts -> :ok end)
 
       assert %{"data" => %{}, "meta" => %{"code" => 201}} =
                conn
@@ -142,20 +144,7 @@ defmodule MobileApi.VerificationControllerTest do
         {:ok, true}
       end)
 
-      account_address = get_account_address(conn)
-      %{token: token} = insert(:verification, %{account_address: account_address})
-
-      assert %{"data" => %{"status" => "ok"}} =
-               conn
-               |> post(verification_path(conn, :verify_email), %{"code" => token})
-               |> json_response(200)
-    end
-
-    test "cant access", %{conn: conn} do
-      expect(QuorumClientMock, :request, fn method, _params, _opts ->
-        assert "personal_unlockAccount" == method
-        {:ok, true}
-      end)
+      expect(BaseVerificationMock, :finalize_verification, fn _status, _opts -> :ok end)
 
       account_address = get_account_address(conn)
       %{token: token} = insert(:verification, %{account_address: account_address})
@@ -212,18 +201,6 @@ defmodule MobileApi.VerificationControllerTest do
       account_address = get_account_address(conn)
       phone = generate(:phone)
 
-      expect(MessengerMock, :send, fn ^phone, _message -> {:ok, %{}} end)
-
-      # Quorum.getAccountStorageAdapter()
-      expect(QuorumClientMock, :eth_call, fn _params, _block, _opts ->
-        {:ok, "0x000000000000000000000000d37debc7b53d678788661c74c94f265b62a412ac"}
-      end)
-
-      # Quorum.getVerificationContractFactory()
-      expect(QuorumClientMock, :eth_call, fn _params, _block, _opts ->
-        {:ok, "0x000000000000000000000000d37debc7b53d678788661c74c94f265b62a412ac"}
-      end)
-
       # Check that Account field phone is set
       expect(AccountStorageAdapterMock, :get_field_history_length, fn _, _, _opts ->
         {:ok, @hashed_true}
@@ -232,6 +209,8 @@ defmodule MobileApi.VerificationControllerTest do
       expect(AccountStorageAdapterMock, :get_last_field_verification_contract_address, fn _, _, _opts ->
         {:ok, @hashed_false}
       end)
+
+      expect(VerificationContractFactoryMock, :create_base_verification_contract, fn _, _, _, _, _opts -> :ok end)
 
       expect(QuorumClientMock, :request, fn method, _params, _opts ->
         assert "personal_unlockAccount" == method
@@ -249,10 +228,6 @@ defmodule MobileApi.VerificationControllerTest do
     end
 
     test "Account.phone not set", %{conn: conn} do
-      phone = generate(:phone)
-
-      expect(MessengerMock, :send, fn ^phone, _message -> {:ok, %{}} end)
-
       # Check that Account field phone is set
       expect(AccountStorageAdapterMock, :get_field_history_length, fn _, _, _opts ->
         {:ok, @hashed_false}
@@ -260,7 +235,7 @@ defmodule MobileApi.VerificationControllerTest do
 
       err_message =
         conn
-        |> post(verification_path(conn, :create_phone_verification), %{phone: phone})
+        |> post(verification_path(conn, :create_phone_verification), %{phone: generate(:phone)})
         |> json_response(409)
         |> get_in(~w(error message))
 
@@ -312,11 +287,17 @@ defmodule MobileApi.VerificationControllerTest do
 
     test "with limited requests", %{conn: conn} do
       attempts = Confex.fetch_env!(:mobile_api, :rate_limit_create_phone_verification_attempts)
+      context_address = generate(:account_address)
 
-      # Quorum.getContextAddress
-      stub(QuorumClientMock, :eth_call, fn params, _block, _opts ->
-        assert Map.has_key?(params, :data)
-        assert Map.has_key?(params, :to)
+      expect(KimlicContextStorageMock, :get_context, attempts * 2, fn _ ->
+        {:ok, context_address}
+      end)
+
+      expect(KimlicContractsContextMock, :get_account_storage_adapter, attempts, fn _opts ->
+        {:ok, generate(:account_address)}
+      end)
+
+      expect(KimlicContractsContextMock, :get_verification_contract_factory, attempts, fn _opts ->
         {:ok, generate(:account_address)}
       end)
 
@@ -328,14 +309,16 @@ defmodule MobileApi.VerificationControllerTest do
         {:ok, @hashed_false}
       end)
 
-      phone = generate(:phone)
-
-      stub(MessengerMock, :send, fn ^phone, _message -> {:ok, %{}} end)
+      expect(VerificationContractFactoryMock, :create_base_verification_contract, attempts, fn _, _, _, _, _opts ->
+        :ok
+      end)
 
       expect(QuorumClientMock, :request, attempts, fn method, _params, _opts ->
         assert "personal_unlockAccount" == method
         {:ok, true}
       end)
+
+      phone = generate(:phone)
 
       do_request = fn ->
         post(conn, verification_path(conn, :create_phone_verification), %{phone: phone})
@@ -354,6 +337,8 @@ defmodule MobileApi.VerificationControllerTest do
         assert "personal_unlockAccount" == method
         {:ok, true}
       end)
+
+      expect(BaseVerificationMock, :finalize_verification, fn _status, _opts -> :ok end)
 
       account_address = get_account_address(conn)
       %{token: token} = insert(:verification, %{entity_type: @entity_type_phone, account_address: account_address})

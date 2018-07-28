@@ -9,6 +9,9 @@ defmodule Quorum.Unit.QuorumTest do
   alias TaskBunny.Queue
   alias Quorum.Jobs.{TransactionCreate, TransactionStatus}
 
+  # Diabled due to contracts does not call queue, should be run with quorum enabled
+  @moduletag :pending
+
   setup :verify_on_exit!
   setup :set_mox_global
 

@@ -1,7 +1,11 @@
 defmodule Quorum.Jobs.TransactionStatus do
+  @moduledoc false
+
   use TaskBunny.Job
+
   alias Log
   alias Quorum.Contract
+  alias Quorum.Contract.Context
 
   @quorum_client Application.get_env(:quorum, :client)
 
@@ -34,7 +38,7 @@ defmodule Quorum.Jobs.TransactionStatus do
   defp maybe_callback(%{"callback" => %{"m" => module, "f" => function, "a" => args}} = meta, status, transaction_hash) do
     merged_args =
       args
-      |> Kernel.++([status])
+      |> Enum.concat([status])
       |> put_verification_contract_address(transaction_hash, meta)
 
     Kernel.apply(String.to_atom(module), String.to_atom(function), merged_args)
@@ -55,12 +59,12 @@ defmodule Quorum.Jobs.TransactionStatus do
 
     case fetch_verification_contract_address(params) do
       {:ok, _} = resp ->
-        Kernel.++(args, [resp])
+        args ++ [resp]
 
       {:error, err} = resp ->
         msg = "Cannot get Verification Contract address for transaction `#{transaction_hash}`. Error: #{inspect(err)}"
         Log.error(msg)
-        Kernel.++(args, [resp])
+        args ++ [resp]
     end
   end
 
@@ -71,7 +75,7 @@ defmodule Quorum.Jobs.TransactionStatus do
   defp fetch_verification_contract_address(params, attempt \\ 1) do
     case @quorum_client.eth_call(params, "latest", []) do
       {:ok, response} ->
-        {:ok, String.replace(response, String.duplicate("0", 24), "")}
+        {:ok, Context.address64_to_40(response)}
 
       {:error, err} ->
         case attempt do
