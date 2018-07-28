@@ -1,23 +1,5 @@
 defmodule Core.Integration.VerificationsTest do
-  @moduledoc """
-  Test written for manual testing.
-    Before running you should change in Quorum config/test.exs :quorum, :client
-    from QuorumClientMock to Ethereumex.HttpClient:
-
-    change
-      :quorum, :client: QuorumClientMock,
-    to
-      :quorum, :client: Ethereumex.HttpClient,
-
-    and enable RabbitMQ workers for TaskBunny by removing [worker: false]:
-
-    change
-      [name: "transaction", jobs: [TransactionCreate], worker: false],
-      [name: "transaction-status", jobs: [TransactionStatus], worker: false]
-    to
-      [name: "transaction", jobs: [TransactionCreate]],
-      [name: "transaction-status", jobs: [TransactionStatus]]
-  """
+  @moduledoc false
 
   use ExUnit.Case, async: false
 
@@ -26,13 +8,15 @@ defmodule Core.Integration.VerificationsTest do
 
   alias Core.Clients.Redis
   alias Core.Verifications
-  alias Quorum.Contract
   alias Quorum.Contract.Context
-  alias Ethereumex.HttpClient, as: QuorumHttpClient
-
-  setup :set_mox_global
 
   @moduletag :integration
+
+  @quorum_client Application.get_env(:quorum, :client)
+  @account_storage_adapter Application.get_env(:quorum, :contracts)[:account_storage_adapter]
+  @base_verification Application.get_env(:quorum, :contracts)[:base_verification]
+
+  setup :set_mox_global
 
   @tag :pending
   test "create Email verification and verify email" do
@@ -82,6 +66,7 @@ defmodule Core.Integration.VerificationsTest do
     assert_contract_verified(contract_address)
   end
 
+  @spec assert_contract_address(binary, integer) :: binary | no_return
   defp assert_contract_address(redis_key, sleep \\ 50) do
     :timer.sleep(sleep)
     assert {:ok, verification} = Redis.get(redis_key)
@@ -98,11 +83,11 @@ defmodule Core.Integration.VerificationsTest do
     end
   end
 
+  @spec assert_contract_verified(binary, integer) :: :ok | no_return
   defp assert_contract_verified(contract_address, sleep \\ 50) do
     :timer.sleep(sleep)
-    data = Contract.hash_data(:base_verification, "getStatus", [{}])
 
-    case QuorumHttpClient.eth_call(%{to: contract_address, data: data}, "latest", []) do
+    case @base_verification.get_status(to: contract_address) do
       # Verified status
       {:ok, "0x0000000000000000000000000000000000000000000000000000000000000002"} ->
         :ok
@@ -115,25 +100,22 @@ defmodule Core.Integration.VerificationsTest do
     end
   end
 
+  @spec init_quorum_user(binary) :: binary
   defp init_quorum_user(doc_type) do
-    assert {:ok, account_address} = QuorumHttpClient.request("personal_newAccount", ["p@ssW0rd"], [])
-    assert {:ok, _} = QuorumHttpClient.request("personal_unlockAccount", [account_address, "p@ssW0rd"], [])
+    assert {:ok, account_address} = @quorum_client.request("personal_newAccount", ["p@ssW0rd"], [])
+    assert {:ok, _} = @quorum_client.request("personal_unlockAccount", [account_address, "p@ssW0rd"], [])
 
-    transaction_data = %{
-      from: account_address,
-      to: Context.get_account_storage_adapter_address(),
-      data:
-        Contract.hash_data(:account_storage_adapter, "setFieldMainData", [
-          {"#{:rand.uniform()}", doc_type}
-        ]),
-      gas: "0x500000",
-      gasPrice: "0x0"
-    }
+    {:ok, transaction_hash} =
+      @account_storage_adapter.set_field_main_data_raw(
+        to_string(:rand.uniform()),
+        doc_type,
+        from: account_address,
+        to: Context.get_account_storage_adapter_address()
+      )
 
-    {:ok, transaction_hash} = QuorumHttpClient.eth_send_transaction(transaction_data, [])
     :timer.sleep(150)
 
-    {:ok, %{"status" => "0x1"}} = QuorumHttpClient.eth_get_transaction_receipt(transaction_hash, [])
+    {:ok, %{"status" => "0x1"}} = @quorum_client.eth_get_transaction_receipt(transaction_hash, [])
     :timer.sleep(150)
 
     account_address

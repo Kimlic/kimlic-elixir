@@ -21,6 +21,5 @@ Local configuration:
 ## Integration tests
 - Create `test_integration.priv.exs` from `test_integration.example.exs` in `quorum/config`
 - Set quorum credentials in `test_integration.priv.exs`
-- Run `mix clear` in project root directory
-- Enter particular project `cd apps/core`, `cd apps/attestation_api`
-- Run test `mix test --only integration`
+- Run `mix clean` in root directory
+- Run `mix test --only integration`

@@ -1,23 +1,5 @@
 defmodule AttestationApi.Integration.DigitalVerificationsTest do
-  @moduledoc """
-  Test written for manual testing.
-  Before running you should change in Quorum config/test.exs :quorum, :client
-  from QuorumClientMock to Ethereumex.HttpClient:
-
-  change
-    :quorum, :client: QuorumClientMock,
-  to
-    :quorum, :client: Ethereumex.HttpClient,
-
-  and enable RabbitMQ workers for TaskBunny by removing [worker: false]:
-
-  change
-    [name: "transaction", jobs: [TransactionCreate], worker: false],
-    [name: "transaction-status", jobs: [TransactionStatus], worker: false]
-  to
-    [name: "transaction", jobs: [TransactionCreate]],
-    [name: "transaction-status", jobs: [TransactionStatus]]
-  """
+  @moduledoc false
 
   use AttestationApi.ConnCase, async: true
 
@@ -29,18 +11,21 @@ defmodule AttestationApi.Integration.DigitalVerificationsTest do
   alias AttestationApi.DigitalVerifications.DigitalVerification
   alias AttestationApi.DigitalVerifications.Operations.UploadMedia
   alias Ecto.UUID
-  alias Quorum.Contract
   alias Quorum.Contract.Context
 
   @moduletag :integration
 
   @quorum_client Application.get_env(:quorum, :client)
+  @account_storage_adapter Application.get_env(:quorum, :contracts)[:account_storage_adapter]
+  @base_verification Application.get_env(:quorum, :contracts)[:base_verification]
+  @verification_contract_factory Application.get_env(:quorum, :contracts)[:verification_contract_factory]
 
   @status_new DigitalVerification.status(:new)
   @status_pending DigitalVerification.status(:pending)
   @document_type "documents.id_card"
 
   setup :set_mox_global
+  setup :verify_on_exit!
 
   @tag :pending
   test "digital verification proccess passes" do
@@ -119,18 +104,14 @@ defmodule AttestationApi.Integration.DigitalVerificationsTest do
     assert {:ok, account_address} = @quorum_client.request("personal_newAccount", ["p@ssW0rd"], [])
     assert {:ok, _} = @quorum_client.request("personal_unlockAccount", [account_address, "p@ssW0rd"], [])
 
-    transaction_data = %{
-      from: account_address,
-      to: Context.get_account_storage_adapter_address(),
-      data:
-        Contract.hash_data(:account_storage_adapter, "setFieldMainData", [
-          {"#{:rand.uniform()}", @document_type}
-        ]),
-      gas: "0x500000",
-      gasPrice: "0x0"
-    }
+    {:ok, transaction_hash} =
+      @account_storage_adapter.set_field_main_data_raw(
+        to_string(:rand.uniform()),
+        @document_type,
+        from: account_address,
+        to: Context.get_account_storage_adapter_address()
+      )
 
-    {:ok, transaction_hash} = @quorum_client.eth_send_transaction(transaction_data, [])
     :timer.sleep(100)
 
     {:ok, %{"status" => "0x1"}} = @quorum_client.eth_get_transaction_receipt(transaction_hash, [])
@@ -144,34 +125,28 @@ defmodule AttestationApi.Integration.DigitalVerificationsTest do
     return_key = UUID.generate()
     veriff_ap_address = Confex.fetch_env!(:quorum, :veriff_ap_address)
     relaying_party_address = Confex.fetch_env!(:quorum, :relying_party_address)
+    relaying_party_password = Confex.fetch_env!(:quorum, :relying_party_password)
     verification_contract_factory_address = Context.get_verification_contract_factory_address()
 
-    {:ok, _} =
-      @quorum_client.request("personal_unlockAccount", [relaying_party_address, "firstRelyingPartyp@ssw0rd"], [])
+    {:ok, _} = @quorum_client.request("personal_unlockAccount", [relaying_party_address, relaying_party_password], [])
 
-    transaction_data = %{
-      from: relaying_party_address,
-      to: verification_contract_factory_address,
-      data:
-        Contract.hash_data(:verification_contract_factory, "createBaseVerificationContract", [
-          {account_address, veriff_ap_address, return_key, @document_type}
-        ]),
-      gas: "0x500000",
-      gasPrice: "0x0"
-    }
+    {:ok, transaction_hash} =
+      @verification_contract_factory.create_base_verification_contract_raw(
+        account_address,
+        veriff_ap_address,
+        return_key,
+        @document_type,
+        from: relaying_party_address,
+        to: verification_contract_factory_address
+      )
 
-    {:ok, transaction_hash} = @quorum_client.eth_send_transaction(transaction_data, [])
     :timer.sleep(100)
 
     {:ok, %{"status" => "0x1"}} = @quorum_client.eth_get_transaction_receipt(transaction_hash, [])
     :timer.sleep(100)
 
-    params = %{
-      data: Contract.hash_data(:verification_contract_factory, "getVerificationContract", [{return_key}]),
-      to: verification_contract_factory_address
-    }
-
-    {:ok, document_verification_address} = @quorum_client.eth_call(params, "latest", [])
+    {:ok, document_verification_address} =
+      @verification_contract_factory.get_verification_contract(return_key, to: verification_contract_factory_address)
 
     Context.address64_to_40(document_verification_address)
   end
@@ -222,9 +197,8 @@ defmodule AttestationApi.Integration.DigitalVerificationsTest do
   @spec assert_contract_verified(binary) :: {:ok, binary}
   defp assert_contract_verified(contract_address) do
     :timer.sleep(100)
-    data = Contract.hash_data(:base_verification, "getStatus", [{}])
     verified_status = "0x0000000000000000000000000000000000000000000000000000000000000002"
 
-    assert {:ok, ^verified_status} = @quorum_client.eth_call(%{to: contract_address, data: data}, "latest", [])
+    assert {:ok, ^verified_status} = @base_verification.get_status(to: contract_address)
   end
 end

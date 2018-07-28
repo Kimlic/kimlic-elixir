@@ -4,18 +4,17 @@ defmodule MobileApi.ConfigControllerTest do
   use MobileApi.ConnCase, async: true
   import Mox
 
-  @moduletag :authorized
   @moduletag :account_address
 
   describe "get config" do
     test "success", %{conn: conn} do
-      address = generate(:account_address)
+      context_address = generate(:account_address)
 
-      expect(QuorumClientMock, :eth_call, fn _params, _block, _opts ->
-        {:ok, address}
+      expect(KimlicContextStorageMock, :get_context, fn _ ->
+        {:ok, context_address}
       end)
 
-      assert %{"data" => %{"context_contract" => ^address}} =
+      assert %{"data" => %{"context_contract" => ^context_address}} =
                conn
                |> get(config_path(conn, :get_config))
                |> json_response(200)

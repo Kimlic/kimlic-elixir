@@ -3,10 +3,9 @@ defmodule Core.Sync do
 
   alias Quorum.ABI.FunctionSelector
   alias Quorum.ABI.TypeDecoder
-  alias Quorum.Contract
   alias Quorum.Contract.Context
 
-  @quorum_client Application.get_env(:quorum, :client)
+  @account_storage_adapter Application.get_env(:quorum, :contracts)[:account_storage_adapter]
 
   @spec handle(binary) :: [map]
   def handle(account_address) do
@@ -44,13 +43,15 @@ defmodule Core.Sync do
   defp get_field_details(account_address, sync_field, account_storage_addapter_address) do
     function_selector = %FunctionSelector{types: [{:tuple, [:string, {:uint, 8}, :address, {:uint, 256}]}]}
 
-    params = %{
-      from: Confex.fetch_env!(:quorum, :user_address),
-      to: account_storage_addapter_address,
-      data: Contract.hash_data(:account_storage_adapter, "getFieldDetails", [{account_address, sync_field}])
-    }
+    field_details_response =
+      @account_storage_adapter.get_field_details(
+        account_address,
+        sync_field,
+        from: Confex.fetch_env!(:quorum, :user_address),
+        to: account_storage_addapter_address
+      )
 
-    with {_, {:ok, "0x" <> field_details_response}} <- {:quorum_error, @quorum_client.eth_call(params, "latest", [])},
+    with {_, {:ok, "0x" <> field_details_response}} <- {:quorum_error, field_details_response},
          true <- field_details_response != "",
          [{_sha256, _status, _contract_address, _verified_on} = fields] <-
            field_details_response
@@ -59,7 +60,7 @@ defmodule Core.Sync do
       {:ok, fields}
     else
       {:quorum_error, err} ->
-        Log.error("[Core.Sync]: Fail to sync with error: #{inspect(err)}")
+        Log.error("[#{__MODULE__}] Fail to sync with error: #{inspect(err)}")
         {:error, "Fail to sync"}
 
       _ ->

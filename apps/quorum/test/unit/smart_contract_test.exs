@@ -1,10 +1,16 @@
 defmodule Quorum.Unit.SmartContractTest do
-  use ExUnit.Case
+  @moduledoc false
 
-  alias Quorum.Contract
+  use ExUnit.Case
   alias Quorum.Contract.Context
-  alias Quorum.Contract.Generated.AccountStorageAdapter
-  alias Ethereumex.HttpClient, as: QuorumHttpClient
+
+  # Quorum environment enabled
+  @moduletag :integration
+
+  @quorum_client Application.get_env(:quorum, :client)
+  @account_storage_adapter Application.get_env(:quorum, :contracts)[:account_storage_adapter]
+  @base_verification Application.get_env(:quorum, :contracts)[:base_verification]
+  @verification_contract_factory Application.get_env(:quorum, :contracts)[:verification_contract_factory]
 
   @hashed_true "0x0000000000000000000000000000000000000000000000000000000000000001"
   @hashed_false "0x0000000000000000000000000000000000000000000000000000000000000000"
@@ -16,57 +22,45 @@ defmodule Quorum.Unit.SmartContractTest do
     kimlic_ap_password = Confex.fetch_env!(:quorum, :kimlic_ap_password)
     verification_contract_factory_address = Context.get_verification_contract_factory_address()
 
-    assert {:ok, _} = QuorumHttpClient.request("personal_unlockAccount", [account_address, "p@ssW0rd"], [])
-    assert {:ok, _} = QuorumHttpClient.request("personal_unlockAccount", [kimlic_ap_address, kimlic_ap_password], [])
+    assert {:ok, _} = @quorum_client.request("personal_unlockAccount", [account_address, "p@ssW0rd"], [])
+    assert {:ok, _} = @quorum_client.request("personal_unlockAccount", [kimlic_ap_address, kimlic_ap_password], [])
 
     return_key = UUID.uuid4()
 
-    data =
-      Contract.hash_data(:verification_contract_factory, "createBaseVerificationContract", [
-        {account_address, kimlic_ap_address, return_key, "email"}
-      ])
-
-    tx_data = %{
-      from: kimlic_ap_address,
-      data: data,
-      to: verification_contract_factory_address,
-      gasPrice: "0x0",
-      gas: "0x500000"
-    }
-
-    assert {:ok, transaction_hash} = QuorumHttpClient.eth_send_transaction(tx_data)
+    assert {:ok, transaction_hash} =
+             @verification_contract_factory.create_base_verification_contract_raw(
+               account_address,
+               kimlic_ap_address,
+               return_key,
+               "email",
+               from: kimlic_ap_address,
+               to: verification_contract_factory_address
+             )
 
     :timer.sleep(70)
-    assert {:ok, map} = QuorumHttpClient.eth_get_transaction_receipt(transaction_hash, [])
+    assert {:ok, map} = @quorum_client.eth_get_transaction_receipt(transaction_hash, [])
     assert is_map(map), "Expected map from Quorum.eth_get_transaction_receipt, get: #{inspect(map)}"
-    msg = "Invalid transaction status. Expected \"0x1\", get: #{map["status"]}"
-    assert "0x1" == map["status"], msg
-
-    data = Contract.hash_data(:verification_contract_factory, "getVerificationContract", [{return_key}])
+    assert "0x1" == map["status"], "Invalid transaction status. Expected \"0x1\", get: #{map["status"]}"
 
     :timer.sleep(50)
 
-    assert {:ok, contract_address} = QuorumHttpClient.eth_call(%{data: data, to: verification_contract_factory_address})
+    assert {:ok, contract_address} =
+             @verification_contract_factory.get_verification_contract(
+               return_key,
+               to: verification_contract_factory_address
+             )
+
     msg = "Expected address from Quorum.getVerificationContract, get: #{inspect(contract_address)}"
     assert is_binary(contract_address), msg
     refute @hashed_false == contract_address
 
-    contract_address = String.replace(contract_address, String.duplicate("0", 24), "")
+    contract_address = Context.address64_to_40(contract_address)
 
-    data = Contract.hash_data(:base_verification, "finalizeVerification", [{true}])
-
-    tx_data = %{
-      from: kimlic_ap_address,
-      data: data,
-      to: contract_address,
-      gasPrice: "0x0",
-      gas: "0x500000"
-    }
-
-    assert {:ok, transaction_hash} = QuorumHttpClient.eth_send_transaction(tx_data)
+    assert {:ok, transaction_hash} =
+             @base_verification.finalize_verification_raw(true, from: kimlic_ap_address, to: contract_address)
 
     :timer.sleep(70)
-    assert {:ok, map} = QuorumHttpClient.eth_get_transaction_receipt(transaction_hash, [])
+    assert {:ok, map} = @quorum_client.eth_get_transaction_receipt(transaction_hash, [])
     assert is_map(map), "Expected map from Quorum.eth_get_transaction_receipt, get: #{inspect(map)}"
     msg = "Invalid transaction status. Expected \"0x1\", get: #{map["status"]}"
     assert "0x1" == map["status"], msg
@@ -74,14 +68,14 @@ defmodule Quorum.Unit.SmartContractTest do
 
   @tag :pending
   test "check that account field email not set" do
-    assert {:ok, account_address} = QuorumHttpClient.request("personal_newAccount", ["p@ssW0rd"], [])
+    assert {:ok, account_address} = @quorum_client.request("personal_newAccount", ["p@ssW0rd"], [])
 
-    params = %{
-      to: Context.get_account_storage_adapter_address(),
-      data: Contract.hash_data(:account_storage_adapter, "getFieldHistoryLength", [{account_address, "email"}])
-    }
-
-    assert {:ok, @hashed_false} = QuorumHttpClient.eth_call(params)
+    assert {:ok, @hashed_false} =
+             @account_storage_adapter.get_field_history_length(
+               account_address,
+               "email",
+               to: Context.get_account_storage_adapter_address()
+             )
   end
 
   @tag :pending
@@ -89,32 +83,29 @@ defmodule Quorum.Unit.SmartContractTest do
     account_address = init_quorum_user()
 
     assert {:ok, @hashed_true} =
-             AccountStorageAdapter.get_field_history_length(
+             @account_storage_adapter.get_field_history_length(
                account_address,
                "email",
                to: Context.get_account_storage_adapter_address()
              )
   end
 
+  @spec init_quorum_user :: binary
   defp init_quorum_user do
-    assert {:ok, account_address} = QuorumHttpClient.request("personal_newAccount", ["p@ssW0rd"], [])
-    assert {:ok, _} = QuorumHttpClient.request("personal_unlockAccount", [account_address, "p@ssW0rd"], [])
+    assert {:ok, account_address} = @quorum_client.request("personal_newAccount", ["p@ssW0rd"], [])
+    assert {:ok, _} = @quorum_client.request("personal_unlockAccount", [account_address, "p@ssW0rd"], [])
 
-    transaction_data = %{
-      from: account_address,
-      to: Context.get_account_storage_adapter_address(),
-      data:
-        Contract.hash_data(:account_storage_adapter, "setFieldMainData", [
-          {"#{:rand.uniform()}", "email"}
-        ]),
-      gas: "0x500000",
-      gasPrice: "0x0"
-    }
+    {:ok, transaction_hash} =
+      @account_storage_adapter.set_field_main_data_raw(
+        to_string(:rand.uniform()),
+        "email",
+        from: account_address,
+        to: Context.get_account_storage_adapter_address()
+      )
 
-    {:ok, transaction_hash} = QuorumHttpClient.eth_send_transaction(transaction_data, [])
     :timer.sleep(75)
 
-    {:ok, %{"status" => "0x1"}} = QuorumHttpClient.eth_get_transaction_receipt(transaction_hash, [])
+    {:ok, %{"status" => "0x1"}} = @quorum_client.eth_get_transaction_receipt(transaction_hash, [])
     :timer.sleep(75)
 
     account_address
