@@ -15,8 +15,7 @@ config :quorum,
   context_storage_address: "",
   user_address: ""
 
-#config :ethereumex, url: "http://localhost:22000"
-config :ethereumex, url: "http://40.115.43.126:22000"
+config :ethereumex, url: "http://localhost:22000"
 
 config :task_bunny,
   quorum_queue: [

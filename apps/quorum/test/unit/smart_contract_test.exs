@@ -86,8 +86,7 @@ defmodule Quorum.Unit.SmartContractTest do
 
   @tag :pending
   test "check that account field email set" do
-#    account_address = init_quorum_user()
-    account_address = "0x72c5b8fb3c146fe3a0dbb721a1de50125db335e6"
+    account_address = init_quorum_user()
     assert {:ok, _} = QuorumHttpClient.request("personal_unlockAccount", [account_address, "p@ssW0rd"], [])
 
     assert {:ok, @hashed_true} =

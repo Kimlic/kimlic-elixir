@@ -7,6 +7,53 @@ defmodule Quorum.Contract do
 
   @behaviour Quorum.Contract.Behaviour
 
+  defmacro __using__(contract_name) do
+    quote do
+      import Quorum.Contract
+      @contract unquote(contract_name)
+      @contract_client Application.get_env(:quorum, :contract_client)
+    end
+  end
+
+  defmacro call_function(name, args) do
+    contract_args = Macro.escape(args)
+
+    function_name = name |> Macro.underscore() |> String.to_atom()
+    contract_function = Macro.escape(name)
+
+    quote bind_quoted: [
+            generated_function_name: function_name,
+            contract_function: contract_function,
+            contract_args: contract_args
+          ] do
+      def unquote(generated_function_name)(unquote_splicing(contract_args), options) do
+        @contract_client.call_function(
+          @contract,
+          unquote(contract_function),
+          [{unquote_splicing(contract_args)}],
+          options
+        )
+      end
+    end
+  end
+
+  defmacro eth_call(name, args) do
+    contract_args = Macro.escape(args)
+
+    function_name = name |> Macro.underscore() |> String.to_atom()
+    contract_function = Macro.escape(name)
+
+    quote bind_quoted: [
+            generated_function_name: function_name,
+            contract_function: contract_function,
+            contract_args: contract_args
+          ] do
+      def unquote(generated_function_name)(unquote_splicing(contract_args), options) do
+        @contract_client.eth_call(@contract, unquote(contract_function), [{unquote_splicing(contract_args)}], options)
+      end
+    end
+  end
+
   @spec call_function(atom, binary, list, map) :: {:ok, binary}
   def call_function(contract, function, args, options \\ %{}) do
     options
