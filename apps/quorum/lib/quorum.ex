@@ -7,12 +7,12 @@ defmodule Quorum do
 
   alias Quorum.Contract.Context
   alias Quorum.Jobs.TransactionCreate
+  alias Quorum.Contract.Generated.AccountStorageAdapter
 
   @type callback :: nil | {module :: module, function :: atom, args :: list}
   @type quorum_client_response_t :: {:ok, term} | {:error, map | binary | atom}
 
   @quorum_client Application.get_env(:quorum, :client)
-  @account_storage_adapter Application.get_env(:quorum, :contracts)[:account_storage_adapter]
 
   @gas "0x500000"
   @gas_price "0x0"
@@ -41,9 +41,7 @@ defmodule Quorum do
 
   @spec validate_account_field_exists_and_set(binary, binary, binary) :: :ok | {:error, atom}
   def validate_account_field_exists_and_set(account_address, field, to) do
-    account_address
-    |> @account_storage_adapter.get_field_history_length(field, to: to)
-    |> case do
+    case AccountStorageAdapter.get_field_history_length(account_address, field, %{to: to}) do
       {:ok, @hashed_false} ->
         {:error, :account_field_not_set}
 
@@ -61,9 +59,7 @@ defmodule Quorum do
 
   @spec validate_account_field_has_no_verification(binary, binary, binary) :: :ok | {:error, atom}
   def validate_account_field_has_no_verification(account_address, field, to) do
-    account_address
-    |> @account_storage_adapter.get_last_field_verification_contract_address(field, to: to)
-    |> case do
+    case AccountStorageAdapter.get_last_field_verification_contract_address(account_address, field, %{to: to}) do
       {:ok, @hashed_false} -> :ok
       {:ok, _resp} -> {:error, :account_field_has_verification}
       err -> err
