@@ -27,4 +27,6 @@ config :attestation_api, AttestationApi.Clients.Veriffme,
   auth_client: "${VERIFFME_AUTH_CLIENT}",
   api_secret: "${VERIFFME_API_SECRET}"
 
+config :ecto_logger_json, truncate_params: true
+
 config :logger, level: :info
