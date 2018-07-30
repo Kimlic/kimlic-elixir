@@ -6,8 +6,8 @@ defmodule Quorum do
   import Quorum.Contract
 
   alias Quorum.Contract.Context
-  alias Quorum.Jobs.TransactionCreate
   alias Quorum.Contract.Generated.AccountStorageAdapter
+  alias Quorum.Jobs.TransactionCreate
 
   @type callback :: nil | {module :: module, function :: atom, args :: list}
   @type quorum_client_response_t :: {:ok, term} | {:error, map | binary | atom}
