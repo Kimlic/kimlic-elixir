@@ -15,6 +15,7 @@ defmodule Quorum.Contract do
     end
   end
 
+  @spec call_function(binary, list) :: :ok
   defmacro call_function(name, args) do
     contract_args = Macro.escape(args)
 
@@ -37,6 +38,7 @@ defmodule Quorum.Contract do
     end
   end
 
+  @spec eth_call(binary, list) :: :ok
   defmacro eth_call(name, args) do
     contract_args = Macro.escape(args)
 
