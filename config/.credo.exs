@@ -5,7 +5,7 @@
       name: "default",
       files: %{
         included: ["apps/*/lib/*"],
-        excluded: ["apps/*/lib/tasks/tasks.ex"]
+        excluded: ["apps/*/lib/tasks/tasks.ex", "apps/quorum/lib/quorum/contract/contract.ex"]
       },
       checks: [
         {Credo.Check.Design.AliasUsage, if_nested_deeper_than: 2},
