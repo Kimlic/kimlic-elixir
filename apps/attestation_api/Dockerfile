@@ -6,6 +6,7 @@ ARG APP_VERSION
 ADD . /app
 
 WORKDIR /app
+RUN ls
 
 ENV MIX_ENV=prod
 
@@ -22,6 +23,8 @@ RUN mix do \
       deps.get, \
       deps.compile, \
       release
+
+RUN if [ -f /app/_build/prod/rel/${APP_NAME}/releases/${APP_VERSION}/${APP_NAME}.tar.gz ]; then echo "File Exist"; fi
 
 FROM alpine:3.8
 
