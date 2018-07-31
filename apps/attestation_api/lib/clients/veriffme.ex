@@ -92,6 +92,7 @@ defmodule AttestationApi.Clients.Veriffme do
   def close_session(session_id) do
     request_data = %{
       "verification" => %{
+        "frontState" => "done",
         "status" => "submitted",
         "timestamp" => timestamp()
       }

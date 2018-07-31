@@ -16,6 +16,7 @@ defmodule AttestationApi.DigitalVerifications do
 
   # todo: remove magic number accross code
   @verification_code_success 9001
+  @verification_code_resubmission 9103
 
   @spec create_session(binary, map) :: {:ok, binary} | {:error, binary}
   def create_session(account_address, params) do
@@ -109,8 +110,14 @@ defmodule AttestationApi.DigitalVerifications do
 
   @spec get_verification_data_from_result(map) :: map
   defp get_verification_data_from_result(verification_result) do
+    status =
+      case verification_result["code"] do
+        @verification_code_resubmission -> DigitalVerification.status(:resubmission_requested)
+        _ -> DigitalVerification.status(:failed)
+      end
+
     %{
-      status: DigitalVerification.status(:failed),
+      status: status,
       veriffme_code: verification_result["code"],
       veriffme_status: verification_result["status"],
       veriffme_reason: verification_result["reason"],
