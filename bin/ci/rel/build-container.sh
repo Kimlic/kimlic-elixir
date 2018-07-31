@@ -9,4 +9,4 @@ docker build --tag "${PROJECT_NAME}:${CONTAINER_VERSION}" \
              --file "${PROJECT_DIR}/Dockerfile" \
              --build-arg APP_VERSION=$PROJECT_VERSION \
              --build-arg APP_NAME=$PROJECT_NAME \
-             "$PROJECT_DIR/../../"
+             "${PROJECT_DIR}/../../"
