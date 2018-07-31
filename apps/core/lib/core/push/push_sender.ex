@@ -2,10 +2,10 @@ defmodule Core.Push.PushSender do
   @moduledoc false
 
   alias Core.Push.PushSenderBehaviour
-  alias Pigeon.APNS.Notification, as: IOSNotification
-  alias Pigeon.FCM.Notification, as: AndroidNotification
   alias Pigeon.APNS, as: IOSPush
+  alias Pigeon.APNS.Notification, as: IOSNotification
   alias Pigeon.FCM, as: AndroidPush
+  alias Pigeon.FCM.Notification, as: AndroidNotification
 
   @behaviour PushSenderBehaviour
 
