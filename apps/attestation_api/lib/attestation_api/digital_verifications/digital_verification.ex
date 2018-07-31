@@ -21,12 +21,14 @@ defmodule AttestationApi.DigitalVerifications.DigitalVerification do
   @status_pending "PENDING"
   @status_passed "PASSED"
   @status_failed "FAILED"
+  @status_resubmission_requested "RESUBMISSION_REQUESTED"
 
   @spec status(atom) :: binary
   def status(:new), do: @status_new
   def status(:pending), do: @status_pending
   def status(:passed), do: @status_passed
   def status(:failed), do: @status_failed
+  def status(:resubmission_requested), do: @status_resubmission_requested
 
   @primary_key {:id, :binary_id, autogenerate: true}
   schema "digital_verifications" do

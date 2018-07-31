@@ -106,6 +106,31 @@ defmodule AttestationApi.DigitalVerificationController.VerificationResultWebhook
                DigitalVerifications.get_by(%{session_id: session_id})
     end
 
+    test "verification ressubmission required", %{conn: conn} do
+      %{session_id: session_id} = prepare_success_data(conn)
+      ressubmission_code = 9103
+
+      request_data =
+        data_for(:digital_verification_result_webhook, %{
+          "verification" => %{
+            "id" => session_id,
+            "status" => "resubmission_requested",
+            "code" => ressubmission_code,
+            "reason" => "Resubmission_requested",
+            "comment" => []
+          }
+        })
+
+      assert conn
+             |> post(digital_verification_path(conn, :verification_result_webhook), request_data)
+             |> json_response(200)
+
+      status_resubmission_requested = DigitalVerification.status(:resubmission_requested)
+
+      assert %{status: ^status_resubmission_requested, veriffme_code: ^ressubmission_code} =
+               DigitalVerifications.get_by(%{session_id: session_id})
+    end
+
     test "verification not found on second call", %{conn: conn} do
       %{session_id: session_id} = prepare_success_data(conn)
 
