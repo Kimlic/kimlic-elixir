@@ -47,11 +47,13 @@ defmodule MobileApi.VerificationControllerTest do
       end)
 
       # Check that Account field email is set
-      expect(AccountStorageAdapterMock, :get_field_history_length, fn _, _, _opts ->
+      expect(QuorumContractMock, :eth_call, fn :account_storage_adapter, function, _args, _opts ->
+        assert "getFieldHistoryLength" == function
         {:ok, @hashed_true}
       end)
 
-      expect(AccountStorageAdapterMock, :get_last_field_verification_contract_address, fn _, _, _opts ->
+      expect(QuorumContractMock, :eth_call, fn :account_storage_adapter, function, _args, _opts ->
+        assert "getLastFieldVerificationContractAddress" == function
         {:ok, @hashed_false}
       end)
 
@@ -75,7 +77,8 @@ defmodule MobileApi.VerificationControllerTest do
       end)
 
       # Check that Account field email is set
-      expect(AccountStorageAdapterMock, :get_field_history_length, fn _, _, _opts ->
+      expect(QuorumContractMock, :eth_call, fn :account_storage_adapter, function, _args, _opts ->
+        assert "getFieldHistoryLength" == function
         {:ok, @hashed_false}
       end)
 
@@ -97,11 +100,13 @@ defmodule MobileApi.VerificationControllerTest do
       end)
 
       # Check that Account field email is set
-      expect(AccountStorageAdapterMock, :get_field_history_length, fn _, _, _opts ->
+      expect(QuorumContractMock, :eth_call, fn :account_storage_adapter, function, _args, _opts ->
+        assert "getFieldHistoryLength" == function
         {:ok, @hashed_true}
       end)
 
-      expect(AccountStorageAdapterMock, :get_last_field_verification_contract_address, fn _, _, _opts ->
+      expect(QuorumContractMock, :eth_call, fn :account_storage_adapter, function, _args, _opts ->
+        assert "getLastFieldVerificationContractAddress" == function
         {:ok, @hashed_true}
       end)
 
@@ -225,11 +230,13 @@ defmodule MobileApi.VerificationControllerTest do
       end)
 
       # Check that Account field phone is set
-      expect(AccountStorageAdapterMock, :get_field_history_length, fn _, _, _opts ->
+      expect(QuorumContractMock, :eth_call, fn :account_storage_adapter, function, _args, _opts ->
+        assert "getFieldHistoryLength" == function
         {:ok, @hashed_true}
       end)
 
-      expect(AccountStorageAdapterMock, :get_last_field_verification_contract_address, fn _, _, _opts ->
+      expect(QuorumContractMock, :eth_call, fn :account_storage_adapter, function, _args, _opts ->
+        assert "getLastFieldVerificationContractAddress" == function
         {:ok, @hashed_false}
       end)
 
@@ -254,7 +261,8 @@ defmodule MobileApi.VerificationControllerTest do
       expect(MessengerMock, :send, fn ^phone, _message -> {:ok, %{}} end)
 
       # Check that Account field phone is set
-      expect(AccountStorageAdapterMock, :get_field_history_length, fn _, _, _opts ->
+      expect(QuorumContractMock, :eth_call, fn :account_storage_adapter, function, _args, _opts ->
+        assert "getFieldHistoryLength" == function
         {:ok, @hashed_false}
       end)
 
@@ -273,11 +281,13 @@ defmodule MobileApi.VerificationControllerTest do
       expect(MessengerMock, :send, fn ^phone, _message -> {:ok, %{}} end)
 
       # Check that Account field phone is set
-      expect(AccountStorageAdapterMock, :get_field_history_length, fn _, _, _opts ->
+      expect(QuorumContractMock, :eth_call, fn :account_storage_adapter, function, _args, _opts ->
+        assert "getFieldHistoryLength" == function
         {:ok, @hashed_true}
       end)
 
-      expect(AccountStorageAdapterMock, :get_last_field_verification_contract_address, fn _, _, _opts ->
+      expect(QuorumContractMock, :eth_call, fn :account_storage_adapter, function, _args, _opts ->
+        assert "getLastFieldVerificationContractAddress" == function
         {:ok, @hashed_true}
       end)
 
@@ -320,12 +330,11 @@ defmodule MobileApi.VerificationControllerTest do
         {:ok, generate(:account_address)}
       end)
 
-      expect(AccountStorageAdapterMock, :get_field_history_length, attempts, fn _, _, _opts ->
-        {:ok, @hashed_true}
-      end)
-
-      expect(AccountStorageAdapterMock, :get_last_field_verification_contract_address, attempts, fn _, _, _opts ->
-        {:ok, @hashed_false}
+      expect(QuorumContractMock, :eth_call, attempts * 2, fn :account_storage_adapter, function, _args, _opts ->
+        case function do
+          "getFieldHistoryLength" -> {:ok, @hashed_true}
+          "getLastFieldVerificationContractAddress" -> {:ok, @hashed_false}
+        end
       end)
 
       phone = generate(:phone)
@@ -341,10 +350,16 @@ defmodule MobileApi.VerificationControllerTest do
         post(conn, verification_path(conn, :create_phone_verification), %{phone: phone})
       end
 
-      for _ <- 1..attempts, do: assert(%{status: 201} = do_request.())
+      for _ <- 1..attempts do
+        assert(%{status: code} = do_request.())
+        assert 201 == code
+      end
 
       # rate limited requests
-      for _ <- 1..10, do: assert(%{status: 429} = do_request.())
+      for _ <- 1..10 do
+        assert(%{status: code} = do_request.())
+        assert 429 == code
+      end
     end
   end
 

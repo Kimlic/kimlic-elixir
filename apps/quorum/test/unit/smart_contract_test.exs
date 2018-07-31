@@ -87,12 +87,13 @@ defmodule Quorum.Unit.SmartContractTest do
   @tag :pending
   test "check that account field email set" do
     account_address = init_quorum_user()
+    assert {:ok, _} = QuorumHttpClient.request("personal_unlockAccount", [account_address, "p@ssW0rd"], [])
 
     assert {:ok, @hashed_true} =
              AccountStorageAdapter.get_field_history_length(
                account_address,
                "email",
-               to: Context.get_account_storage_adapter_address()
+               %{to: Context.get_account_storage_adapter_address()}
              )
   end
 

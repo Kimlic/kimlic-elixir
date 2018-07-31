@@ -48,11 +48,13 @@ defmodule Quorum.Unit.QuorumTest do
         {:ok, %{"status" => "0x1"}}
       end)
 
-      expect(AccountStorageAdapterMock, :get_field_history_length, fn _, _, _opts ->
+      expect(QuorumContractMock, :eth_call, fn :account_storage_adapter, function, _args, _opts ->
+        assert "getFieldHistoryLength" == function
         {:ok, @hashed_true}
       end)
 
-      expect(AccountStorageAdapterMock, :get_last_field_verification_contract_address, fn _, _, _opts ->
+      expect(QuorumContractMock, :eth_call, fn :account_storage_adapter, function, _args, _opts ->
+        assert "getLastFieldVerificationContractAddress" == function
         {:ok, @hashed_false}
       end)
 
