@@ -160,8 +160,8 @@
         "type": "string"
       },
       {
-        "name": "verificationStatus",
-        "type": "uint8"
+        "name": "verificationStatusName",
+        "type": "string"
       },
       {
         "name": "verificationContractAddress",
@@ -433,6 +433,47 @@
     "outputs": [
       {
         "name": "length",
+        "type": "uint256"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "name": "accountAddress",
+        "type": "address"
+      },
+      {
+        "name": "milestone",
+        "type": "uint256"
+      }
+    ],
+    "name": "setRewardedAt",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [
+      {
+        "name": "accountAddress",
+        "type": "address"
+      },
+      {
+        "name": "milestone",
+        "type": "uint256"
+      }
+    ],
+    "name": "getRewardedAt",
+    "outputs": [
+      {
+        "name": "",
         "type": "uint256"
       }
     ],

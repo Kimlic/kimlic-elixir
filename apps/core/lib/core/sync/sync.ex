@@ -42,7 +42,7 @@ defmodule Core.Sync do
 
   @spec get_field_details(binary, binary, binary) :: {:ok, tuple} | {:error, binary}
   defp get_field_details(account_address, sync_field, account_storage_addapter_address) do
-    function_selector = %FunctionSelector{types: [{:tuple, [:string, {:uint, 8}, :address, {:uint, 256}]}]}
+    function_selector = %FunctionSelector{types: [{:tuple, [:string, :string, :address, {:uint, 256}]}]}
 
     params = %{
       from: Confex.fetch_env!(:quorum, :user_address),
