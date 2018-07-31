@@ -27,8 +27,9 @@ if [[ "${TRAVIS_PULL_REQUEST}" == "false" ]]; then
   echo "Build requires maintenance?: ${BUILD_REQUIRES_MAINTENANCE}"
   echo "Maintenance branch: ${MAINTENANCE_BRANCH}"
 
-  if [[ "${TRAVIS_BRANCH}" == "${TRUNK_BRANCH}" && "${BUILD_REQUIRES_MAINTENANCE}" == "0" || "${TRAVIS_BRANCH}" == "${MAINTENANCE_BRANCH}" ]]; then
-    ${DIR}/../release/push-container.sh -a $DOCKER_HUB_ACCOUNT -t $TRAVIS_BRANCH -l;
+  # testing docker push
+#  if [[ "${TRAVIS_BRANCH}" == "${TRUNK_BRANCH}" && "${BUILD_REQUIRES_MAINTENANCE}" == "0" || "${TRAVIS_BRANCH}" == "${MAINTENANCE_BRANCH}" ]]; then
+    ./push-container.sh -a $DOCKER_HUB_ACCOUNT -t $TRAVIS_BRANCH -l;
 
     # Save some useful information
     REPO=`git config remote.origin.url`
@@ -52,6 +53,6 @@ if [[ "${TRAVIS_PULL_REQUEST}" == "false" ]]; then
   else
     echo "[I] This build is not in a trunk or maintenance branch, new version will not be created"
   fi;
-else
-  echo "[I] This build is a pull request, new version will not be created"
-fi;
+#else
+#  echo "[I] This build is a pull request, new version will not be created"
+#fi;
