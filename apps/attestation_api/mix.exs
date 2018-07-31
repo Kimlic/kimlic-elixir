@@ -42,7 +42,7 @@ defmodule AttestationApi.Mixfile do
       {:ecto, "~> 2.2"},
       {:postgrex, ">= 0.0.0"},
       {:eview, "~> 0.12"},
-      {:ecto_logger_json, git: "https://github.com/edenlabllc/ecto_logger_json.git", branch: "query_params"},
+      {:ecto_logger_json, git: "https://github.com/edenlabllc/ecto_logger_json.git", branch: "truncate-params-option"},
       {:mox, "~> 0.3", only: :test},
       {:ex_machina, "~> 2.2", only: :test}
     ]
