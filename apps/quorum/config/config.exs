@@ -6,14 +6,12 @@ config :quorum,
   client: Ethereumex.HttpClient,
   proxy_client: Quorum.Proxy.Client,
   contract_client: Quorum.Contract,
+  context_storage_address: {:system, "CONTEXT_STORAGE_ADDRESS"},
   kimlic_ap_address: {:system, "KIMLIC_AP_ADDRESS"},
   kimlic_ap_password: {:system, "KIMLIC_AP_PASSWORD"},
   veriff_ap_address: {:system, "VERIFF_AP_ADDRESS"},
   veriff_ap_password: {:system, "VERIFF_AP_PASSWORD"},
-  context_storage_address: {:system, "CONTEXT_STORAGE_ADDRESS"},
-
-  # User address is used to access `AccountStorageAdapter.getFieldDetails`
-  user_address: {:system, "USER_ADDRESS"},
+  profile_sync_user_address: {:system, "PROFILE_SYNC_USER_ADDRESS"},
   allowed_rpc_methods:
     {:system, :list, "QUORUM_ALLOWED_RPC_METHODS",
      [
