@@ -31,7 +31,7 @@ defmodule Quorum.Unit.SmartContractTest do
       data: data,
       to: verification_contract_factory_address,
       gasPrice: "0x0",
-      gas: "0x500000"
+      gas: Quorum.gas()
     }
 
     assert {:ok, transaction_hash} = QuorumHttpClient.eth_send_transaction(tx_data)
@@ -60,7 +60,7 @@ defmodule Quorum.Unit.SmartContractTest do
       data: data,
       to: contract_address,
       gasPrice: "0x0",
-      gas: "0x500000"
+      gas: Quorum.gas()
     }
 
     assert {:ok, transaction_hash} = QuorumHttpClient.eth_send_transaction(tx_data)
@@ -108,8 +108,8 @@ defmodule Quorum.Unit.SmartContractTest do
         Contract.hash_data(:account_storage_adapter, "setFieldMainData", [
           {"#{:rand.uniform()}", "email"}
         ]),
-      gas: "0x500000",
-      gasPrice: "0x0"
+      gasPrice: "0x0",
+      gas: Quorum.gas()
     }
 
     {:ok, transaction_hash} = QuorumHttpClient.eth_send_transaction(transaction_data, [])

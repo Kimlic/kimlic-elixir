@@ -126,7 +126,7 @@ defmodule AttestationApi.Integration.DigitalVerificationsTest do
         Contract.hash_data(:account_storage_adapter, "setFieldMainData", [
           {"#{:rand.uniform()}", @document_type}
         ]),
-      gas: "0x500000",
+      gas: Quorum.gas(),
       gasPrice: "0x0"
     }
 
@@ -156,7 +156,7 @@ defmodule AttestationApi.Integration.DigitalVerificationsTest do
         Contract.hash_data(:verification_contract_factory, "createBaseVerificationContract", [
           {account_address, veriff_ap_address, return_key, @document_type}
         ]),
-      gas: "0x500000",
+      gas: Quorum.gas(),
       gasPrice: "0x0"
     }
 

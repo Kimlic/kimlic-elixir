@@ -112,6 +112,7 @@ Dependents for [Mobile API](#Mobile API), [Attestation API](#Attestation API)
 | VERIFF_AP_PASSWORD         | not set       | Veriff attestation party password. |
 | CONTEXT_STORAGE_ADDRESS    | not set       | Context storage address.           |
 | PROFILE_SYNC_USER_ADDRESS  | not set       | Address to access `AccountStorageAdapter.getFieldDetails`. |
+| QUORUM_GAS                 | not set       | Gas amount                         |
 | QUORUM_ALLOWED_RPC_METHODS | [`web3_clientVersion`, `eth_call`, `eth_sendTransaction`, `eth_sendRawTransaction`, `eth_getTransactionCount`] | Quorum allowed rpc methods. |
 
 ## RabbitMQ
