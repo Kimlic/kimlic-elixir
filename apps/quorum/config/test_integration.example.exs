@@ -10,6 +10,7 @@ config :quorum,
   veriff_ap_password: "veriffp@ssw0rd",
   context_storage_address: "",
   profile_sync_user_address: "",
+  profile_sync_user_password: "",
   relying_party_address: "",
   relying_party_password: "firstRelyingPartyp@ssw0rd"
 

@@ -10,6 +10,7 @@ defmodule Core.Sync do
 
   @spec handle(binary) :: [map]
   def handle(account_address) do
+    unlock_profile_sync_user()
     account_storage_adapter_address = Context.get_account_storage_adapter_address()
 
     :core
@@ -38,6 +39,15 @@ defmodule Core.Sync do
         _ -> acc
       end
     end)
+    |> Enum.reverse()
+  end
+
+  @spec unlock_profile_sync_user :: {:ok, binary} | {:error, binary}
+  defp unlock_profile_sync_user do
+    profile_sync_user_address = Confex.fetch_env!(:quorum, :profile_sync_user_address)
+    profile_sync_user_password = Confex.fetch_env!(:quorum, :profile_sync_user_password)
+
+    @quorum_client.request("personal_unlockAccount", [profile_sync_user_address, profile_sync_user_password], [])
   end
 
   @spec get_field_details(binary, binary, binary) :: {:ok, tuple} | {:error, binary}
@@ -59,7 +69,7 @@ defmodule Core.Sync do
       {:ok, fields}
     else
       {:quorum_error, err} ->
-        Log.error("[Core.Sync]: Fail to sync with error: #{inspect(err)}")
+        Log.error("[#{__MODULE__}]: Fail to sync with error: #{inspect(err)}")
         {:error, "Fail to sync"}
 
       _ ->

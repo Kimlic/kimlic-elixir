@@ -14,6 +14,7 @@ config :quorum,
   veriff_ap_address: "",
   veriff_ap_password: "Veriffp@ssw0rd",
   profile_sync_user_address: "",
+  profile_sync_user_password: "",
   gas: "0x1e8480"
 
 config :ethereumex, url: "http://localhost:22000"

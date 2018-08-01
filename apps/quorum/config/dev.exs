@@ -7,4 +7,5 @@ config :quorum,
   veriff_ap_address: "",
   veriff_ap_password: "veriffp@ssw0rd",
   profile_sync_user_address: "",
+  profile_sync_user_password: "",
   gas: "0x1e8480"

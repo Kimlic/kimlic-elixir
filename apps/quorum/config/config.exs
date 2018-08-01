@@ -12,6 +12,7 @@ config :quorum,
   veriff_ap_address: {:system, "VERIFF_AP_ADDRESS"},
   veriff_ap_password: {:system, "VERIFF_AP_PASSWORD"},
   profile_sync_user_address: {:system, "PROFILE_SYNC_USER_ADDRESS"},
+  profile_sync_user_password: {:system, "PROFILE_SYNC_USER_PASSWORD"},
   gas: {:system, "QUORUM_GAS"},
   allowed_rpc_methods:
     {:system, :list, "QUORUM_ALLOWED_RPC_METHODS",
