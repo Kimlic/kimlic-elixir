@@ -24,7 +24,7 @@ config :quorum,
        "eth_getTransactionCount",
        "getTransactionReceipt",
        "personal_newAccount",
-       "personal_unlockAccount",
+       "personal_unlockAccount"
      ]}
 
 config :ethereumex, url: "http://localhost:22000"
