@@ -259,6 +259,20 @@
     "type": "function"
   },
   {
+    "constant": true,
+    "inputs": [],
+    "name": "getKimlicWalletAddress",
+    "outputs": [
+      {
+        "name": "kimlicWalletAddress",
+        "type": "address"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "constant": false,
     "inputs": [
       {
@@ -435,6 +449,20 @@
       }
     ],
     "name": "setAttestationPartyStorage",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "name": "kimlicWalletAddress",
+        "type": "address"
+      }
+    ],
+    "name": "setKimlicWalletAddress",
     "outputs": [],
     "payable": false,
     "stateMutability": "nonpayable",

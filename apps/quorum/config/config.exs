@@ -21,7 +21,10 @@ config :quorum,
        "eth_call",
        "eth_sendTransaction",
        "eth_sendRawTransaction",
-       "eth_getTransactionCount"
+       "eth_getTransactionCount",
+       "getTransactionReceipt",
+       "personal_newAccount",
+       "personal_unlockAccount"
      ]}
 
 config :ethereumex, url: "http://localhost:22000"
