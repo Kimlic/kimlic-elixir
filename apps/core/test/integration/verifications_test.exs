@@ -126,7 +126,7 @@ defmodule Core.Integration.VerificationsTest do
         Contract.hash_data(:account_storage_adapter, "setFieldMainData", [
           {"#{:rand.uniform()}", doc_type}
         ]),
-      gas: "0x500000",
+      gas: Quorum.gas(),
       gasPrice: "0x0"
     }
 

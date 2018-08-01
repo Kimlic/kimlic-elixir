@@ -14,7 +14,6 @@ defmodule Quorum do
 
   @quorum_client Application.get_env(:quorum, :client)
 
-  @gas "0x500000"
   @gas_price "0x0"
   @hashed_false "0x0000000000000000000000000000000000000000000000000000000000000000"
 
@@ -157,7 +156,7 @@ defmodule Quorum do
   end
 
   @spec put_gas(map) :: map
-  defp put_gas(transaction_data), do: Map.merge(%{gasPrice: @gas_price, gas: @gas}, transaction_data)
+  defp put_gas(transaction_data), do: Map.merge(%{gasPrice: @gas_price, gas: gas()}, transaction_data)
 
   defp prepare_callback(%{callback: {module, function, args}} = meta),
     do: Map.put(meta, :callback, %{m: module, f: function, a: args})
@@ -167,4 +166,7 @@ defmodule Quorum do
   end
 
   defp prepare_callback(meta), do: meta
+
+  @spec gas :: binary
+  def gas, do: Confex.fetch_env!(:quorum, :gas)
 end
