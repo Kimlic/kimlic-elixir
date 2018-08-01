@@ -20,7 +20,9 @@ defmodule Core.Push.PushSender do
 
   @spec create_notification(atom, binary, binary) :: notification_t
   defp create_notification("ios", device_token, message), do: IOSNotification.new(message, device_token)
-  defp create_notification("android", device_token, message), do: AndroidNotification.new(device_token, message)
+
+  defp create_notification("android", device_token, message),
+    do: AndroidNotification.new(device_token, %{"body" => message})
 
   @spec do_send(atom, notification_t) :: notification_t
   defp do_send(notification, "ios"), do: IOSPush.push(notification)
