@@ -8,12 +8,12 @@ config :quorum,
   client: QuorumClientMock,
   proxy_client: QuorumClientProxyMock,
   contract_client: QuorumContractMock,
+  context_storage_address: "",
   kimlic_ap_address: "",
   kimlic_ap_password: "Kimlicp@ssw0rd",
   veriff_ap_address: "",
   veriff_ap_password: "Veriffp@ssw0rd",
-  context_storage_address: "",
-  user_address: ""
+  profile_sync_user_address: ""
 
 config :ethereumex, url: "http://localhost:22000"
 

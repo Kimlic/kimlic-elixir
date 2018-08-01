@@ -45,7 +45,7 @@ defmodule Core.Sync do
     function_selector = %FunctionSelector{types: [{:tuple, [:string, :string, :address, {:uint, 256}]}]}
 
     params = %{
-      from: Confex.fetch_env!(:quorum, :user_address),
+      from: Confex.fetch_env!(:quorum, :profile_sync_user_address),
       to: account_storage_addapter_address,
       data: Contract.hash_data(:account_storage_adapter, "getFieldDetails", [{account_address, sync_field}])
     }
