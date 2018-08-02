@@ -40,7 +40,11 @@ defmodule Quorum do
 
   @spec validate_account_field_exists_and_set(binary, binary, binary) :: :ok | {:error, atom}
   def validate_account_field_exists_and_set(account_address, field, to) do
-    case AccountStorageAdapter.get_field_history_length(account_address, field, %{to: to}) do
+    result = AccountStorageAdapter.get_field_history_length(account_address, field, %{to: to})
+
+    Log.info("[#{__MODULE__}] validate_account_field_exists_and_set: #{inspect(result)}")
+
+    case result do
       {:ok, @hashed_false} ->
         {:error, :account_field_not_set}
 
@@ -58,10 +62,20 @@ defmodule Quorum do
 
   @spec validate_account_field_has_no_verification(binary, binary, binary) :: :ok | {:error, atom}
   def validate_account_field_has_no_verification(account_address, field, to) do
-    case AccountStorageAdapter.get_last_field_verification_contract_address(account_address, field, %{to: to}) do
-      {:ok, @hashed_false} -> :ok
-      {:ok, _resp} -> {:error, :account_field_has_verification}
-      err -> err
+    result = AccountStorageAdapter.get_last_field_verification_contract_address(account_address, field, %{to: to})
+
+    Log.info("[#{__MODULE__}] validate_account_field_has_no_verification: #{inspect(result)}")
+
+    case result do
+      {:ok, @hashed_false} ->
+        :ok
+
+      {:ok, _resp} ->
+        {:error, :account_field_has_verification}
+
+      err ->
+        Log.error("[#{__MODULE__}] Fail to call get_last_field_verification_contract_address #{inspect(err)}")
+        err
     end
   end
 
