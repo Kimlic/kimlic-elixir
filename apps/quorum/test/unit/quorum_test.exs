@@ -35,7 +35,7 @@ defmodule Quorum.Unit.QuorumTest do
         {:ok, "0x111f4029f7e13575d5f4eab2c65ccc43b21aa67f4cfa200"}
       end)
 
-      expect(QuorumClientMock, :request, fn method, _params, _opts ->
+      expect(QuorumClientMock, :request, 2, fn method, _params, _opts ->
         assert "personal_unlockAccount" == method
         {:ok, true}
       end)
