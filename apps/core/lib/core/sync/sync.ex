@@ -1,7 +1,6 @@
 defmodule Core.Sync do
   @moduledoc false
 
-  alias Quorum.ABI.FunctionSelector
   alias Quorum.ABI.TypeDecoder
   alias Quorum.Contract
   alias Quorum.Contract.Context
@@ -52,7 +51,7 @@ defmodule Core.Sync do
 
   @spec get_field_details(binary, binary, binary) :: {:ok, tuple} | {:error, binary}
   defp get_field_details(account_address, sync_field, account_storage_addapter_address) do
-    function_selector = %FunctionSelector{types: [{:tuple, [:string, :string, :address, {:uint, 256}]}]}
+    types = [{:tuple, [:string, :string, :address, {:uint, 256}]}]
 
     params = %{
       from: Confex.fetch_env!(:quorum, :profile_sync_user_address),
@@ -61,11 +60,12 @@ defmodule Core.Sync do
     }
 
     with {_, {:ok, "0x" <> field_details_response}} <- {:quorum_error, @quorum_client.eth_call(params, "latest", [])},
+         _ <- Log.info("#{__MODULE__} get_field_details: #{inspect(field_details_response)}"),
          true <- field_details_response != "",
          [{_sha256, _status, _contract_address, _verified_on} = fields] <-
            field_details_response
            |> Base.decode16!(case: :lower)
-           |> TypeDecoder.decode(function_selector) do
+           |> TypeDecoder.decode_raw(types) do
       {:ok, fields}
     else
       {:quorum_error, err} ->

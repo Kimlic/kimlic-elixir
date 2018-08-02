@@ -234,18 +234,7 @@ defmodule Quorum.ABI.TypeEncoder do
   end
 
   @spec encode_bytes(term) :: binary
-  def encode_bytes(bytes) do
-    case byte_size(bytes) > 64 do
-      false ->
-        pad(bytes, byte_size(bytes), :right)
-
-      true ->
-        bytes
-        |> Stream.unfold(&String.split_at(&1, 64))
-        |> Enum.take_while(&(&1 != ""))
-        |> Enum.map_join(&pad(&1, byte_size(&1), :right))
-    end
-  end
+  def encode_bytes(bytes), do: pad(bytes, byte_size(bytes), :right)
 
   # Note, we'll accept a binary or an integer here, so long as the
   # binary is not longer than our allowed data size
@@ -262,8 +251,7 @@ defmodule Quorum.ABI.TypeEncoder do
 
   @spec pad(binary, integer, atom) :: binary
   defp pad(bin, size_in_bytes, direction) do
-    # TODO: Create `left_pad` repo, err, add to `ExthCrypto.Math`
-    total_size = size_in_bytes + mod(32 - size_in_bytes, 32)
+    total_size = size_in_bytes + mod(32 - mod(size_in_bytes, 32), 32)
     padding_size_bits = (total_size - byte_size(bin)) * 8
     padding = <<0::size(padding_size_bits)>>
 
