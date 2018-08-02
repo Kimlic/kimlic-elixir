@@ -62,7 +62,16 @@ defmodule Quorum do
 
   @spec validate_account_field_has_no_verification(binary, binary, binary) :: :ok | {:error, atom}
   def validate_account_field_has_no_verification(account_address, field, to) do
-    result = AccountStorageAdapter.get_last_field_verification_contract_address(account_address, field, %{to: to})
+    profile_sync_user_address = Confex.fetch_env!(:quorum, :profile_sync_user_address)
+    profile_sync_user_password = Confex.fetch_env!(:quorum, :profile_sync_user_password)
+
+    @quorum_client.request("personal_unlockAccount", [profile_sync_user_address, profile_sync_user_password], [])
+
+    result =
+      AccountStorageAdapter.get_last_field_verification_contract_address(account_address, field, %{
+        to: to,
+        from: profile_sync_user_address
+      })
 
     Log.info("[#{__MODULE__}] validate_account_field_has_no_verification: #{inspect(result)}")
 

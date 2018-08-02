@@ -31,7 +31,7 @@ defmodule MobileApi.VerificationControllerTest do
       account_address = get_account_address(conn)
       email = generate(:email)
 
-      expect(QuorumClientMock, :request, fn method, _params, _opts ->
+      expect(QuorumClientMock, :request, 2, fn method, _params, _opts ->
         assert "personal_unlockAccount" == method
         {:ok, true}
       end)
@@ -240,7 +240,7 @@ defmodule MobileApi.VerificationControllerTest do
         {:ok, @hashed_false}
       end)
 
-      expect(QuorumClientMock, :request, fn method, _params, _opts ->
+      expect(QuorumClientMock, :request, 2, fn method, _params, _opts ->
         assert "personal_unlockAccount" == method
         {:ok, true}
       end)
@@ -284,6 +284,11 @@ defmodule MobileApi.VerificationControllerTest do
       expect(QuorumContractMock, :eth_call, fn :account_storage_adapter, function, _args, _opts ->
         assert "getFieldHistoryLength" == function
         {:ok, @hashed_true}
+      end)
+
+      expect(QuorumClientMock, :request, fn method, _params, _opts ->
+        assert "personal_unlockAccount" == method
+        {:ok, true}
       end)
 
       expect(QuorumContractMock, :eth_call, fn :account_storage_adapter, function, _args, _opts ->
@@ -341,7 +346,7 @@ defmodule MobileApi.VerificationControllerTest do
 
       stub(MessengerMock, :send, fn ^phone, _message -> {:ok, %{}} end)
 
-      expect(QuorumClientMock, :request, attempts, fn method, _params, _opts ->
+      expect(QuorumClientMock, :request, attempts * 2, fn method, _params, _opts ->
         assert "personal_unlockAccount" == method
         {:ok, true}
       end)
