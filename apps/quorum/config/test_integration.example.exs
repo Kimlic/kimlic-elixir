@@ -18,7 +18,7 @@ config :task_bunny,
   queue: [
     namespace: "kimlic-core-test.",
     queues: [
-      [name: "transaction", jobs: [Quorum.Jobs.TransactionCreate]],
-      [name: "transaction-status", jobs: [Quorum.Jobs.TransactionStatus]]
+      [name: "transaction", jobs: [Quorum.Jobs.TransactionCreate], worker: [concurrency: 1]],
+      [name: "transaction-status", jobs: [Quorum.Jobs.TransactionStatus], worker: [concurrency: 1]]
     ]
   ]

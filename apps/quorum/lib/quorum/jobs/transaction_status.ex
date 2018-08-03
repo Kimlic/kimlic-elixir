@@ -1,4 +1,6 @@
 defmodule Quorum.Jobs.TransactionStatus do
+  @moduledoc false
+
   use TaskBunny.Job
   alias Log
   alias Quorum.Contract
@@ -9,13 +11,13 @@ defmodule Quorum.Jobs.TransactionStatus do
   def perform(%{"transaction_hash" => transaction_hash, "meta" => meta}) do
     case @quorum_client.eth_get_transaction_receipt(transaction_hash, []) do
       {:ok, %{"status" => "0x1"} = status} ->
-        Log.info("Quorum.eth_get_transaction_receipt response for #{transaction_hash}}: #{inspect(status)}}")
+        Log.info("[#{__MODULE__}]#perform status 0x1 response #{transaction_hash}}: #{inspect(status)}}")
 
         maybe_callback(meta, status, transaction_hash)
 
       {:ok, %{"status" => status} = resp} ->
         msg =
-          "Quorum.eth_get_transaction_receipt transaction status is `#{status}}`" <>
+          "[#{__MODULE__}]#perform transaction status is `#{status}}`" <>
             "for tx `#{transaction_hash}`. Response: #{inspect(resp)}"
 
         Log.error(msg)
@@ -25,7 +27,10 @@ defmodule Quorum.Jobs.TransactionStatus do
         :retry
 
       err ->
-        Log.error("Quorum.eth_get_transaction_receipt failed for tx `#{transaction_hash}` with: #{inspect(err)}")
+        Log.error(
+          "[#{__MODULE__}]#perform eth_get_transaction_receipt failed for tx `#{transaction_hash}` with: #{inspect(err)}"
+        )
+
         err
     end
   end
@@ -58,7 +63,10 @@ defmodule Quorum.Jobs.TransactionStatus do
         Kernel.++(args, [resp])
 
       {:error, err} = resp ->
-        msg = "Cannot get Verification Contract address for transaction `#{transaction_hash}`. Error: #{inspect(err)}"
+        msg =
+          "[#{__MODULE__}]#put_verification_contract_address " <>
+            "Cannot get Verification Contract address for transaction `#{transaction_hash}`. Error: #{inspect(err)}"
+
         Log.error(msg)
         Kernel.++(args, [resp])
     end
