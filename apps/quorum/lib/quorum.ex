@@ -26,6 +26,11 @@ defmodule Quorum do
     verification_field = Atom.to_string(type)
     account_storage_adapter_address = Context.get_account_storage_adapter_address()
 
+    Log.info(
+      "[#{__MODULE__}]#create_verification_contract data: " <>
+        "account_address: #{account_address}, verification_field: #{verification_field}"
+    )
+
     with :ok <-
            validate_account_field_exists_and_set(account_address, verification_field, account_storage_adapter_address),
          :ok <-
