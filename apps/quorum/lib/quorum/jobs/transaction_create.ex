@@ -11,10 +11,7 @@ defmodule Quorum.Jobs.TransactionCreate do
 
     case @quorum_client.eth_send_transaction(transaction_data, []) do
       {:ok, transaction_hash} ->
-        TransactionStatus.enqueue!(%{
-          meta: meta,
-          transaction_hash: transaction_hash
-        })
+        TransactionStatus.enqueue!(%{meta: meta, transaction_hash: transaction_hash}, delay: 200)
 
       err ->
         Log.error("Quorum.sendTransaction failed: #{inspect(err)}")

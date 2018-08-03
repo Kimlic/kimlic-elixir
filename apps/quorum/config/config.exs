@@ -38,8 +38,8 @@ config :task_bunny,
   quorum_queue: [
     namespace: "kimlic-core.",
     queues: [
-      [name: "transaction", jobs: [TransactionCreate]],
-      [name: "transaction-status", jobs: [TransactionStatus]]
+      [name: "transaction", jobs: [TransactionCreate], worker: [concurrency: 1]],
+      [name: "transaction-status", jobs: [TransactionStatus], worker: [concurrency: 1]]
     ]
   ],
   failure_backend: [Quorum.Loggers.TaskBunny]
