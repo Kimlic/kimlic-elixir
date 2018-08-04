@@ -10,10 +10,8 @@ defmodule MobileApi.Plugs.PhoneVerificationLimiter do
   def init(opts), do: opts
 
   @spec call(Conn.t(), Plug.opts()) :: Conn.t()
-  def call(%Conn{params: params} = conn, _opts) do
-    account_address = get_in(params, ["blockchain_data", "account_address"])
-    phone = get_in(params, ["source_data", "phone"])
-    user_rate_limit_key = "create_phone_verification_limiter:#{account_address}:#{phone}"
+  def call(%Conn{params: params, assigns: assigns} = conn, _opts) do
+    user_rate_limit_key = "create_phone_verification_limiter:#{assigns.account_address}:#{params["phone"]}"
 
     case Hammer.check_rate(user_rate_limit_key, timeout(), attempts()) do
       {:allow, _count} -> conn

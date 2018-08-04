@@ -108,20 +108,19 @@ defmodule Quorum do
       verification_contract_factory_address: verification_contract_factory_address
     }
 
-    hashed_data =
-      hash_data(:verification_contract_factory, "createBaseVerificationContract", [
-        {account_address, kimlic_ap_address, return_key, verification_field}
-      ])
-
-    transaction_data = %{
-      from: kimlic_ap_address,
-      to: verification_contract_factory_address,
-      data: hashed_data
-    }
-
     @quorum_client.request("personal_unlockAccount", [kimlic_ap_address, kimlic_ap_password], [])
 
-    create_transaction(transaction_data, meta)
+    VerificationContractFactory.create_base_verification_contract(
+      account_address,
+      kimlic_ap_address,
+      return_key,
+      verification_field,
+      %{
+        from: kimlic_ap_address,
+        to: verification_contract_factory_address,
+        meta: meta
+      }
+    )
   end
 
   @spec set_verification_result_transaction(binary) :: :ok
