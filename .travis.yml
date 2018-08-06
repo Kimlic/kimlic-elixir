@@ -46,16 +46,16 @@ jobs:
     - stage: "Test and build"
       name: "Run tests and build Docker container for mobile_api"
       env:
-       - APPLICATION_PATH="apps/mobile_api"
+        - APPLICATION_PATH="apps/mobile_api"
       script:
         - ./bin/mix_tests.sh || travis_terminate 1
         - source ./bin/ci/rel/fetch-project-environment.sh
-        - source ./bin/ci/release/fetch-source-version.sh
-        - ./bin/ci/release/check-version-error.sh || travis_terminate 1
-        - ./bin/ci/release/put-source-version.sh || travis_terminate 1
+        - source ./bin/ci/rel/fetch-source-version.sh
+        - ./bin/ci/rel/check-version-error.sh || travis_terminate 1
+        - ./bin/ci/rel/put-source-version.sh || travis_terminate 1
         - ./bin/ci/rel/build-container.sh || travis_terminate 1
         - sudo ./bin/ci/rel/start-container.sh
-        - sudo ./bin/ci/release/check-container.sh || travis_terminate 1
+        - sudo ./bin/ci/rel/check-container.sh || travis_terminate 1
         - ./bin/ci/rel/push-changes.sh || travis_terminate 1
 
     - stage: "Test and build"
@@ -65,10 +65,10 @@ jobs:
       script:
         - ./bin/mix_tests.sh || travis_terminate 1
         - source ./bin/ci/rel/fetch-project-environment.sh
-        - source ./bin/ci/release/fetch-source-version.sh
-        - ./bin/ci/release/check-version-error.sh || travis_terminate 1
-        - ./bin/ci/release/put-source-version.sh || travis_terminate 1
+        - source ./bin/ci/rel/fetch-source-version.sh
+        - ./bin/ci/rel/check-version-error.sh || travis_terminate 1
+        - ./bin/ci/rel/put-source-version.sh || travis_terminate 1
         - ./bin/ci/rel/build-container.sh || travis_terminate 1
         - sudo ./bin/ci/rel/start-container.sh
-        - sudo ./bin/ci/release/check-container.sh || travis_terminate 1
+        - sudo ./bin/ci/rel/check-container.sh || travis_terminate 1
         - ./bin/ci/rel/push-changes.sh || travis_terminate 1
