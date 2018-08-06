@@ -21,11 +21,7 @@ RUN mix do \
       local.rebar --force, \
       deps.get, \
       deps.compile, \
-      release
-
-RUN ls /app/_build/prod/rel/${APP_NAME}
-RUN ls /app/_build/prod/rel/${APP_NAME}/releases/
-RUN ls /app/_build/prod/rel/${APP_NAME}/releases/${APP_VERSION}
+      release --name="${APP_NAME}"
 
 FROM alpine:3.8
 
