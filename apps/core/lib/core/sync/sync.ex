@@ -2,8 +2,8 @@ defmodule Core.Sync do
   @moduledoc false
 
   alias Quorum.ABI.TypeDecoder
-  alias Quorum.Contract
   alias Quorum.Contract.Context
+  alias Quorum.Contract.Generated.AccountStorageAdapter
 
   @quorum_client Application.get_env(:quorum, :client)
 
@@ -53,13 +53,13 @@ defmodule Core.Sync do
   defp get_field_details(account_address, sync_field, account_storage_addapter_address) do
     types = [{:tuple, [:string, :string, :address, {:uint, 256}]}]
 
-    params = %{
-      from: Confex.fetch_env!(:quorum, :profile_sync_user_address),
-      to: account_storage_addapter_address,
-      data: Contract.hash_data(:account_storage_adapter, "getFieldDetails", [{account_address, sync_field}])
-    }
+    field_details =
+      AccountStorageAdapter.get_field_details(account_address, sync_field, %{
+        from: Confex.fetch_env!(:quorum, :profile_sync_user_address),
+        to: account_storage_addapter_address
+      })
 
-    with {_, {:ok, "0x" <> field_details_response}} <- {:quorum_error, @quorum_client.eth_call(params, "latest", [])},
+    with {_, {:ok, "0x" <> field_details_response}} <- {:quorum_error, field_details},
          _ <- Log.info("#{__MODULE__} get_field_details: #{inspect(field_details_response)}"),
          true <- field_details_response != "",
          [{_sha256, _status, _contract_address, _verified_on} = fields] <-

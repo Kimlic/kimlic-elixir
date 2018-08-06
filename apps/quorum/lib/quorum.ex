@@ -3,10 +3,10 @@ defmodule Quorum do
   Quorum client
   """
 
-  import Quorum.Contract
-
   alias Quorum.Contract.Context
   alias Quorum.Contract.Generated.AccountStorageAdapter
+  alias Quorum.Contract.Generated.BaseVerification
+  alias Quorum.Contract.Generated.VerificationContractFactory
   alias Quorum.Jobs.TransactionCreate
 
   @type callback :: nil | {module :: module, function :: atom, args :: list}
@@ -106,42 +106,39 @@ defmodule Quorum do
       verification_contract_factory_address: verification_contract_factory_address
     }
 
-    hashed_data =
-      hash_data(:verification_contract_factory, "createBaseVerificationContract", [
-        {account_address, kimlic_ap_address, return_key, verification_field}
-      ])
-
-    transaction_data = %{
-      from: kimlic_ap_address,
-      to: verification_contract_factory_address,
-      data: hashed_data
-    }
-
     @quorum_client.request("personal_unlockAccount", [kimlic_ap_address, kimlic_ap_password], [])
 
-    create_transaction(transaction_data, meta)
+    VerificationContractFactory.create_base_verification_contract(
+      account_address,
+      kimlic_ap_address,
+      return_key,
+      verification_field,
+      %{
+        from: kimlic_ap_address,
+        to: verification_contract_factory_address,
+        meta: meta
+      }
+    )
   end
 
   @spec set_verification_result_transaction(binary) :: :ok
   def set_verification_result_transaction(contract_address) do
-    data = hash_data(:base_verification, "finalizeVerification", [{true}])
     kimlic_ap_address = Context.get_kimlic_attestation_party_address()
     kimlic_ap_password = Confex.fetch_env!(:quorum, :kimlic_ap_password)
 
     @quorum_client.request("personal_unlockAccount", [kimlic_ap_address, kimlic_ap_password], [])
 
-    create_transaction(%{from: kimlic_ap_address, to: contract_address, data: data})
+    BaseVerification.finalize_verification(true, %{from: kimlic_ap_address, to: contract_address})
   end
 
   @spec set_digital_verification_result_transaction(binary, boolean) :: :ok
   def set_digital_verification_result_transaction(contract_address, status) when is_boolean(status) do
-    data = hash_data(:base_verification, "finalizeVerification", [{status}])
     veriff_ap_address = Confex.fetch_env!(:quorum, :veriff_ap_address)
     veriff_ap_password = Confex.fetch_env!(:quorum, :veriff_ap_password)
 
     @quorum_client.request("personal_unlockAccount", [veriff_ap_address, veriff_ap_password], [])
 
-    create_transaction(%{from: veriff_ap_address, to: contract_address, data: data})
+    BaseVerification.finalize_verification(true, %{from: veriff_ap_address, to: contract_address})
   end
 
   @doc """

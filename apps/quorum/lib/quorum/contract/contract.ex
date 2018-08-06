@@ -56,11 +56,14 @@ defmodule Quorum.Contract do
     end
   end
 
-  @spec call_function(atom, binary, list, map) :: {:ok, binary}
+  @spec call_function(atom, binary, list, map) :: :ok
   def call_function(contract, function, args, options \\ %{}) do
+    meta = Map.get(options, :meta, %{})
+
     options
+    |> Map.delete(:meta)
     |> Map.put(:data, hash_data(contract, function, args))
-    |> Quorum.create_transaction()
+    |> Quorum.create_transaction(meta)
   end
 
   @spec eth_call(atom, binary, list, map) :: {:ok, binary}

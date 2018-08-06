@@ -26,6 +26,8 @@ defmodule Quorum.Unit.QuorumTest do
   end
 
   describe "create verification_contract" do
+    # todo: refactor to integration test (mock of Quorum.Contract.Behaviour wouldn't run queue)
+    @tag :pending
     test "success" do
       # Quorum.getContext()
       # Quorum.getVerificationContractFactory()

@@ -14,20 +14,18 @@ defmodule AttestationApi.DigitalVerificationController.VerificationResultWebhook
 
   @moduletag :account_address
 
+  setup :verify_on_exit!
+
   describe "verification result webhook" do
     setup do
       expect(AttestationApiPushMock, :send, fn _message, _device_os, _device_token -> :ok end)
-
-      expect(QuorumClientMock, :eth_call, 2, fn params, _block, _opts ->
-        assert Map.has_key?(params, :data)
-        assert Map.has_key?(params, :to)
-        {:ok, "0x111f4029f7e13575d5f4eab2c65ccc43b21aa67f4cfa200"}
-      end)
 
       expect(QuorumClientMock, :request, fn method, _params, _opts ->
         assert "personal_unlockAccount" == method
         {:ok, true}
       end)
+
+      expect(QuorumContractMock, :call_function, fn :base_verification, "finalizeVerification", _args, _opts -> :ok end)
 
       :ok
     end
