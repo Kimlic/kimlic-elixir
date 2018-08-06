@@ -3,8 +3,6 @@ defmodule Quorum do
   Quorum client
   """
 
-  import Quorum.Contract
-
   alias Quorum.Contract.Context
   alias Quorum.Contract.Generated.AccountStorageAdapter
   alias Quorum.Contract.Generated.BaseVerification

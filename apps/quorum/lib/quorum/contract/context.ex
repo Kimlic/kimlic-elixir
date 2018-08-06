@@ -3,11 +3,8 @@ defmodule Quorum.Contract.Context do
   Module that fetch contract adresses from KimlicContractContext contract
   """
 
-  alias Quorum.Contract
   alias Quorum.Contract.Generated.KimlicContextStorage
   alias Quorum.Contract.Generated.KimlicContractsContext
-
-  @quorum_client Application.get_env(:quorum, :client)
 
   @spec get_kimlic_attestation_party_address :: binary
   def get_kimlic_attestation_party_address do
@@ -26,7 +23,6 @@ defmodule Quorum.Contract.Context do
 
   @spec get_account_storage_adapter_address :: binary
   def get_account_storage_adapter_address do
-    data = Contract.hash_data(:kimlic_contracts_context, "getAccountStorageAdapter", [{}])
     {:ok, address} = KimlicContractsContext.get_account_storage_adapter(%{to: get_context_address()})
 
     address64_to_40(address)

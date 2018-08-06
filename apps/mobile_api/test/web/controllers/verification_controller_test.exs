@@ -360,13 +360,19 @@ defmodule MobileApi.VerificationControllerTest do
       assert "$.phone" == err["entry"]
     end
 
-    @tag :pending
-    @tag :wip
     test "with limited requests", %{conn: conn} do
       attempts = Confex.fetch_env!(:mobile_api, :rate_limit_create_phone_verification_attempts)
 
+      expect(QuorumContractMock, :call_function, attempts, fn :verification_contract_factory, function, _args, _opts ->
+        assert "createBaseVerificationContract" == function
+        :ok
+      end)
+
       stub(QuorumContractMock, :eth_call, fn contract, function, _args, _opts ->
         case {contract, function} do
+          {:kimlic_contracts_context, "getVerificationContractFactory"} ->
+            {:ok, "0x111f4029f7e13575d5f4eab2c65ccc43b21aa67f4cfffff"}
+
           {:kimlic_context_storage, "getContext"} ->
             {:ok, "0x111f4029f7e13575d5f4eab2c65ccc43b21aa67f4cfffff"}
 
@@ -377,7 +383,7 @@ defmodule MobileApi.VerificationControllerTest do
             {:ok, @hashed_true}
 
           {:account_storage_adapter, "getLastFieldVerificationContractAddress"} ->
-            {:ok, @hashed_true}
+            {:ok, @hashed_false}
         end
       end)
 
@@ -386,8 +392,10 @@ defmodule MobileApi.VerificationControllerTest do
         {:ok, true}
       end)
 
+      phone = generate(:phone)
+
       do_request = fn ->
-        post(conn, verification_path(conn, :create_phone_verification), %{phone: generate(:phone)})
+        post(conn, verification_path(conn, :create_phone_verification), %{phone: phone})
       end
 
       for _ <- 1..attempts do
