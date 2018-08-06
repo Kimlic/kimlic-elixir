@@ -12,7 +12,6 @@ defmodule AttestationApi.Validators.UploadMediaValidator do
   embedded_schema do
     field(:session_id, :string)
     field(:country, :string)
-    field(:document_type, :string)
     field(:context, :string)
     field(:content, Base64)
     field(:timestamp, :integer)
