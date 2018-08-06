@@ -69,12 +69,15 @@ defmodule AttestationApi.DigitalVerifications.Operations.UploadMedia do
   @spec veriffme_upload_media(binary, list) :: :ok | {:error, {:internal_error, binary}}
   defp veriffme_upload_media(session_id, documents) do
     documents
-    |> Task.async_stream(fn %{context: context, content: image_base64, timestamp: timestamp} ->
-      with {:ok, %{body: body}} <- @veriffme_client.upload_media(session_id, context, image_base64, timestamp),
-           {:ok, %{"status" => "success"}} <- Jason.decode(body) do
-        :ok
-      end
-    end)
+    |> Task.async_stream(
+      fn %{context: context, content: image_base64, timestamp: timestamp} ->
+        with {:ok, %{body: body}} <- @veriffme_client.upload_media(session_id, context, image_base64, timestamp),
+             {:ok, %{"status" => "success"}} <- Jason.decode(body) do
+          :ok
+        end
+      end,
+      timeout: 30_000
+    )
     |> Enum.reduce_while(:ok, fn
       {:ok, :ok}, acc -> {:cont, acc}
       item, _ -> {:halt, item}
