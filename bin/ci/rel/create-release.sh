@@ -10,13 +10,13 @@ do
     export PROJECT_NAME=$(sed -n 's/.*app: :\([^, ]*\).*/\1/pg' "${PROJECT_DIR}/mix.exs")
 
     # Fetch application version
-    source ./bin/ci/release/fetch-source-version.sh
+    source ./bin/ci/rel/fetch-source-version.sh
 
     # Check for versioning error
-    ./bin/ci/release/check-version-error.sh
+    ./bin/ci/rel/check-version-error.sh
 
     # Increment version in mix.exs
-    ./bin/ci/release/put-source-version.sh || travis_terminate 1
+    ./bin/ci/rel/put-source-version.sh || travis_terminate 1
 
     # Run all tests except pending ones
     #./bin/mix_tests.sh || travis_terminate 1
