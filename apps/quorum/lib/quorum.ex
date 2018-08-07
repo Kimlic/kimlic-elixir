@@ -67,10 +67,7 @@ defmodule Quorum do
 
   @spec validate_account_field_has_no_verification(binary, binary, binary) :: :ok | {:error, atom}
   def validate_account_field_has_no_verification(account_address, field, to) do
-    profile_sync_user_address = Confex.fetch_env!(:quorum, :profile_sync_user_address)
-    profile_sync_user_password = Confex.fetch_env!(:quorum, :profile_sync_user_password)
-
-    @quorum_client.request("personal_unlockAccount", [profile_sync_user_address, profile_sync_user_password], [])
+    {:ok, profile_sync_user_address} = unlock_profile_sync_user()
 
     result =
       AccountStorageAdapter.get_last_field_verification_contract_address(account_address, field, %{
@@ -84,13 +81,36 @@ defmodule Quorum do
       {:ok, @hashed_false} ->
         :ok
 
-      {:ok, _resp} ->
-        {:error, :account_field_has_verification}
+      {:ok, contract_address} ->
+        validate_verification_contract_expired(contract_address, profile_sync_user_address)
 
       err ->
         Log.error("[#{__MODULE__}] Fail to call get_last_field_verification_contract_address #{inspect(err)}")
         err
     end
+  end
+
+  @spec validate_verification_contract_expired(binary, binary) :: :ok | {:error, atom}
+  defp validate_verification_contract_expired(contract_address, profile_sync_user_address) do
+    {:ok, time} = BaseVerification.tokens_unlock_at(%{from: profile_sync_user_address, to: contract_address})
+
+    case :os.system_time(:second) > time do
+      true ->
+        BaseVerification.withdraw(%{from: profile_sync_user_address, to: contract_address})
+        :ok
+
+      false ->
+        {:error, :account_field_has_verification}
+    end
+  end
+
+  @spec unlock_profile_sync_user :: {:ok, binary}
+  defp unlock_profile_sync_user do
+    address = Confex.fetch_env!(:quorum, :profile_sync_user_address)
+    password = Confex.fetch_env!(:quorum, :profile_sync_user_password)
+
+    {:ok, _} = @quorum_client.request("personal_unlockAccount", [address, password], [])
+    {:ok, address}
   end
 
   @spec create_verification_transaction(binary, binary, callback) :: :ok
