@@ -1,6 +1,9 @@
 defmodule Quorum.Contract.Generated.BaseVerification do
   @moduledoc false
 
+  @contract :base_verification
+  @contract_client Application.get_env(:quorum, :contract_client)
+
   use Quorum.Contract, :base_verification
 
   alias Quorum.ABI.TypeDecoder

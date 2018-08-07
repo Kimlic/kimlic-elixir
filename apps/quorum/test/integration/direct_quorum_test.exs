@@ -1,4 +1,4 @@
-defmodule Quorum.Unit.SmartContractTest do
+defmodule Quorum.Integration.DirectQuorumTest do
   use ExUnit.Case
 
   alias Quorum.Contract
@@ -56,7 +56,7 @@ defmodule Quorum.Unit.SmartContractTest do
     assert is_binary(contract_address), msg
     refute @hashed_false == contract_address
 
-    contract_address = String.replace(contract_address, String.duplicate("0", 24), "")
+    contract_address = Context.address64_to_40(contract_address)
 
     # finalize verification
     #
@@ -125,7 +125,7 @@ defmodule Quorum.Unit.SmartContractTest do
     assert is_binary(contract_address), msg
     refute @hashed_false == contract_address
 
-    contract_address = String.replace(contract_address, String.duplicate("0", 24), "")
+    contract_address = Context.address64_to_40(contract_address)
 
     # check contract expiration time
     #
@@ -133,17 +133,16 @@ defmodule Quorum.Unit.SmartContractTest do
     password = Confex.fetch_env!(:quorum, :profile_sync_user_password)
     assert {:ok, _} = QuorumHttpClient.request("personal_unlockAccount", [user_address, password], [])
 
-    #    data = Contract.hash_data(:verification_contract_factory, "tokensUnlockAt", [])
-    #    |> IO.inspect()
-
-    hash_tokens_unlock_at = "0x009aa2aa"
-    params = %{data: hash_tokens_unlock_at, from: user_address, to: contract_address}
+    # get tokensUnlockAt from contract
+    data = Contract.hash_data(:base_verification, "tokensUnlockAt", [])
+    params = %{data: data, from: user_address, to: contract_address}
 
     assert {:ok, hashed_time} = QuorumHttpClient.eth_call(params)
 
     assert {:ok, time} = BaseVerification.tokens_unlock_at(%{from: user_address, to: contract_address})
     assert is_integer(time)
 
+    # withdraw tokens
     assert :ok = BaseVerification.withdraw(%{from: user_address, to: contract_address})
   end
 
