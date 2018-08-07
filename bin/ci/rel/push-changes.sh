@@ -44,6 +44,7 @@ if [[ "${TRAVIS_PULL_REQUEST}" == "false" ]]; then
     ssh-add github_deploy_key
 
     echo "Pushing changes back to origin repo.";
+    git pull $SSH_REPO HEAD:$TRUNK_BRANCH;
     git push $SSH_REPO HEAD:$TRUNK_BRANCH;
     git push $SSH_REPO HEAD:$TRUNK_BRANCH --tags
     echo "Done.";
