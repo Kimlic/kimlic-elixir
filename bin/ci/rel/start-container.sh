@@ -22,8 +22,6 @@ while getopts "ia:" opt; do
   esac
 done
 
-docker image ls
-
 docker run -p 4000:4000 -p 4001:4001 -p 4002:4002 \
        --env-file "${PROJECT_DIR}/.env" \
        ${OPTS} ${ARGS} \
