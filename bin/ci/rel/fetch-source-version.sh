@@ -1,9 +1,11 @@
 PREVIOUS_VERSION=$PROJECT_VERSION
 
-LAST_COMMIT_MESSAGE=$(git log -1 --pretty=%B)
-MAJOR_CHANGES=$(grep -io '^\[major\]' <<< "${LAST_COMMIT_MESSAGE}" | wc -l)
-MINOR_CHANGES=$(grep -io '^\[minor\]' <<< "${LAST_COMMIT_MESSAGE}" | wc -l)
-PATCH_CHANGES=$(grep -io '^\[patch\]' <<< "${LAST_COMMIT_MESSAGE}" | wc -l)
+LAST_COMMIT=$(git log --pretty=format:"%h" -2)
+LAST_COMMITS_MESSAGE=$(git show --quiet --pretty=format:%B $LAST_COMMIT)
+
+MAJOR_CHANGES=$(grep -io '^\[major\]' <<< "${LAST_COMMITS_MESSAGE}" | wc -l)
+MINOR_CHANGES=$(grep -io '^\[minor\]' <<< "${LAST_COMMITS_MESSAGE}" | wc -l)
+PATCH_CHANGES=$(grep -io '^\[patch\]' <<< "${LAST_COMMITS_MESSAGE}" | wc -l)
 
 # Convert values to numbers (trims leading spaces)
 MAJOR_CHANGES=$(expr $MAJOR_CHANGES + 0)
