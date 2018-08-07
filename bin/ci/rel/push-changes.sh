@@ -26,10 +26,7 @@ if [[ "${TRAVIS_PULL_REQUEST}" == "false" ]]; then
 
   # todo: uncomment after test
 #  if [[ "${TRAVIS_BRANCH}" == "${TRUNK_BRANCH}" ]]; then
-  pwd
-  ls
-
-    push-container.sh -a $DOCKER_HUB_ACCOUNT -t $TRAVIS_BRANCH -l;
+    ./bin/ci/rel/push-container.sh -a $DOCKER_HUB_ACCOUNT -t $TRAVIS_BRANCH -l;
 
     # Save some useful information
     REPO=`git config remote.origin.url`
