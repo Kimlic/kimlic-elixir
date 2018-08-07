@@ -28,12 +28,10 @@ if [[ "${TRAVIS_PULL_REQUEST}" == "false" ]]; then
 #  if [[ "${TRAVIS_BRANCH}" == "${TRUNK_BRANCH}" ]]; then
 
     [ -f ./bin/ci/rel/push-container.sh ] && echo "Found" || echo "Not found"
-    [ -f ./push-container.sh ] && echo "Found" || echo "Not found"
-    [ -f ${PROJECT_DIR}/bin/ci/rel/push-container.sh ] && echo "Found" || echo "Not found"
-
+    [ -f ${PROJECT_DIR}/../../bin/ci/rel/push-container.sh ] && echo "Found" || echo "Not found"
      ls
-     
-    ${PROJECT_DIR}/bin/ci/rel/push-container.sh -a $DOCKER_HUB_ACCOUNT -t $TRAVIS_BRANCH -l;
+
+    ./bin/ci/rel/push-container.sh -a $DOCKER_HUB_ACCOUNT -t $TRAVIS_BRANCH -l;
 
     # Save some useful information
     REPO=`git config remote.origin.url`
