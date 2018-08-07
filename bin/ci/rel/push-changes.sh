@@ -24,8 +24,7 @@ if [[ "${TRAVIS_PULL_REQUEST}" == "false" ]]; then
   echo "Current branch: ${TRAVIS_BRANCH}"
   echo "Trunk branch: ${TRUNK_BRANCH}"
 
-  # todo: uncomment after test
-#  if [[ "${TRAVIS_BRANCH}" == "${TRUNK_BRANCH}" ]]; then
+  if [[ "${TRAVIS_BRANCH}" == "${TRUNK_BRANCH}" ]]; then
 
     ./bin/ci/rel/push-container.sh -a $DOCKER_HUB_ACCOUNT -t $TRAVIS_BRANCH -l;
 
@@ -51,6 +50,6 @@ if [[ "${TRAVIS_PULL_REQUEST}" == "false" ]]; then
   else
     echo "[I] This build is not in a trunk or maintenance branch, new version will not be created"
   fi;
-#else
-#  echo "[I] This build is a pull request, new version will not be created"
-#fi;
+else
+  echo "[I] This build is a pull request, new version will not be created"
+fi;
