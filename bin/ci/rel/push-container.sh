@@ -53,31 +53,33 @@ if [ ! $HUB_ACCOUNT  ]; then
   exit 1
 fi
 
+GIT_TAG="${RELEASE_VERSION}-${PROJECT_NAME}"
+
 # Create git tag that matches release version
-if [ `git tag --list ${RELEASE_VERSION}` ]; then
-  echo "[W] Git tag '${RELEASE_VERSION}' already exists. It won't be created during release."
+if [ `git tag --list ${GIT_TAG}` ]; then
+  echo "[W] Git tag '${GIT_TAG}' already exists. It won't be created during release."
 else
   if [ ! $PASS_GIT ]; then
     echo "[E] Working tree contains uncommitted changes. This may cause wrong relation between image tag and git tag."
     echo "    You can skip this check with '-f' option."
     exit 1
   else
-    echo "[I] Creating git tag '${RELEASE_VERSION}'.."
-    git tag -a ${RELEASE_VERSION} -m "${CHANGELOG}"$'\n'$'\n'"Container URL: https://hub.docker.com/r/${DOCKER_HUB_ACCOUNT}/${PROJECT_NAME}/tags/${RELEASE_VERSION}/"
+    echo "[I] Creating git tag '${GIT_TAG}'.."
+    git tag -a ${GIT_TAG} -m "${CHANGELOG}"$'\n'$'\n'"Container URL: https://hub.docker.com/r/${DOCKER_HUB_ACCOUNT}/${PROJECT_NAME}/tags/${CONTAINER_VERSION}/"
   fi
 fi
 
-echo "[I] Tagging image '${PROJECT_NAME}:${RELEASE_VERSION}' into a Docker Hub repository '${HUB_ACCOUNT}/${PROJECT_NAME}:${CONTAINER_VERSION}'.."
-docker tag "${PROJECT_NAME}:${RELEASE_VERSION}" "${HUB_ACCOUNT}/${PROJECT_NAME}:${CONTAINER_VERSION}"
+echo "[I] Tagging image '${PROJECT_NAME}:${CONTAINER_VERSION}' into a Docker Hub repository '${HUB_ACCOUNT}/${PROJECT_NAME}:${CONTAINER_VERSION}'.."
+docker tag "${PROJECT_NAME}:${CONTAINER_VERSION}" "${HUB_ACCOUNT}/${PROJECT_NAME}"
 
 if [ $IS_LATEST == 1 ]; then
   echo "[I] Assigning additional tag '${HUB_ACCOUNT}/${PROJECT_NAME}:latest'.."
-  docker tag "${PROJECT_NAME}:${RELEASE_VERSION}" "${HUB_ACCOUNT}/${PROJECT_NAME}:latest"
+  docker tag "${PROJECT_NAME}:${CONTAINER_VERSION}" "${HUB_ACCOUNT}/${PROJECT_NAME}:latest"
 fi
 
 if [ $IS_STABLE == 1 ]; then
   echo "[I] Assigning additional tag '${HUB_ACCOUNT}/${PROJECT_NAME}:stable'.."
-  docker tag "${PROJECT_NAME}:${RELEASE_VERSION}" "${HUB_ACCOUNT}/${PROJECT_NAME}:stable"
+  docker tag "${PROJECT_NAME}:${CONTAINER_VERSION}" "${HUB_ACCOUNT}/${PROJECT_NAME}:stable"
 fi
 
 echo "[I] Pushing changes to Docker Hub.."
