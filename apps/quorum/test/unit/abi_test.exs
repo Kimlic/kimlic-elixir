@@ -26,6 +26,17 @@ defmodule Quorum.Unit.ABITest do
     assert [{"email", email}] == decoded
   end
 
+  test "decode uint256" do
+    time = 1_533_645_780_738_957_010
+
+    decoded =
+      "00000000000000000000000000000000000000000000000015489ab64438ded2"
+      |> Base.decode16!(case: :lower)
+      |> TypeDecoder.decode_raw([{:tuple, [{:uint, 256}]}])
+
+    assert [{time}] == decoded
+  end
+
   test "encode and decode string" do
     long_string = String.duplicate("1234567890", 20) <> "@example.com"
     input = [{"awesome", 99, long_string, true}]
@@ -35,5 +46,9 @@ defmodule Quorum.Unit.ABITest do
     assert is_binary(encoded)
 
     assert input == TypeDecoder.decode_raw(encoded, types)
+  end
+
+  test "hash method without input params" do
+    assert "0x009aa2aa" == Contract.hash_data(:base_verification, "tokensUnlockAt", [])
   end
 end
