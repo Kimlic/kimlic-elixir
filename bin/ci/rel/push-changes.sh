@@ -18,17 +18,14 @@ REPO_URL="https://github.com/${TRAVIS_REPO_SLUG}.git";
 git remote add upstream ${REPO_URL} &> /dev/null
 
 if [[ "${TRAVIS_PULL_REQUEST}" == "false" ]]; then
-  # ToDo: Hardcoded build application
-  git add apps/mobile_api/mix.exs;
+  git add "${APPLICATION_PATH}/mix.exs";
   git commit -m "Increment version [ci skip]";
 
   echo "Current branch: ${TRAVIS_BRANCH}"
   echo "Trunk branch: ${TRUNK_BRANCH}"
-  echo "Build requires maintenance?: ${BUILD_REQUIRES_MAINTENANCE}"
-  echo "Maintenance branch: ${MAINTENANCE_BRANCH}"
 
   # todo: uncomment after test
-#  if [[ "${TRAVIS_BRANCH}" == "${TRUNK_BRANCH}" && "${BUILD_REQUIRES_MAINTENANCE}" == "0" || "${TRAVIS_BRANCH}" == "${MAINTENANCE_BRANCH}" ]]; then
+#  if [[ "${TRAVIS_BRANCH}" == "${TRUNK_BRANCH}" ]]; then
     ./push-container.sh -a $DOCKER_HUB_ACCOUNT -t $TRAVIS_BRANCH -l;
 
     # Save some useful information
