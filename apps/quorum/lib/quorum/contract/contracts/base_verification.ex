@@ -9,6 +9,7 @@ defmodule Quorum.Contract.Generated.BaseVerification do
 
   call_function("withdraw", [])
 
+  @spec tokens_unlock_at(map) :: {:ok, integer} | {:error, term}
   def tokens_unlock_at(options) do
     case @contract_client.eth_call(@contract, "tokensUnlockAt", [], options) do
       {:ok, "0x" <> time} ->
