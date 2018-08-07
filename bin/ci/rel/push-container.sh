@@ -52,10 +52,6 @@ if [ ! $HUB_ACCOUNT  ]; then
   exit 1
 fi
 
-CONTAINER_VERSION="${RELEASE_VERSION}-${TRAVIS_JOB_NUMBER}"
-
-echo "CONTAINER_VERSION: ${CONTAINER_VERSION}"
-
 # Create git tag that matches release version
 if [ `git tag --list ${RELEASE_VERSION}` ]; then
   echo "[W] Git tag '${RELEASE_VERSION}' already exists. It won't be created during release."
