@@ -13,6 +13,7 @@
 set -e
 
 REPO_TAG=${NEXT_VERSION}
+CONTAINER_VERSION="${PROJECT_VERSION}-${TRAVIS_JOB_NUMBER}"
 
 # A POSIX variable
 OPTIND=1 # Reset in case getopts has been used previously in the shell.
