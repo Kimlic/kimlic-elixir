@@ -72,3 +72,11 @@ jobs:
         - sudo ./bin/ci/rel/start-container.sh
         - sudo ./bin/ci/rel/check-container.sh || travis_terminate 1
         - ./bin/ci/rel/push-changes.sh || travis_terminate 1
+
+        - ./bin/ci/release/check-version-error.sh || travis_terminate 1
+        - ./bin/ci/release/put-source-version.sh || travis_terminate 1
+        - ./bin/mix_tests.sh || travis_terminate 1
+        - ./bin/ci/rel/build-container.sh || travis_terminate 1
+        - sudo ./bin/ci/rel/start-container.sh
+        - sudo ./bin/ci/release/check-container.sh || travis_terminate 1
+        - ./bin/ci/rel/push-changes.sh || travis_terminate 1
