@@ -1,4 +1,4 @@
-defmodule Quorum.Contract.Generated.KimlicContractsContext do
+defmodule Quorum.Contract.KimlicContractsContext do
   @moduledoc false
 
   use Quorum.Contract, :kimlic_contracts_context

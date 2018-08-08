@@ -4,9 +4,9 @@ defmodule Quorum do
   """
 
   alias Quorum.Contract.Context
-  alias Quorum.Contract.Generated.AccountStorageAdapter
-  alias Quorum.Contract.Generated.BaseVerification
-  alias Quorum.Contract.Generated.VerificationContractFactory
+  alias Quorum.Contract.AccountStorageAdapter
+  alias Quorum.Contract.BaseVerification
+  alias Quorum.Contract.VerificationContractFactory
   alias Quorum.Jobs.TransactionCreate
 
   @type callback :: nil | {module :: module, function :: atom, args :: list}

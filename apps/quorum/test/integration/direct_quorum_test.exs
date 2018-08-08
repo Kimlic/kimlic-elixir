@@ -3,8 +3,8 @@ defmodule Quorum.Integration.DirectQuorumTest do
 
   alias Quorum.Contract
   alias Quorum.Contract.Context
-  alias Quorum.Contract.Generated.AccountStorageAdapter
-  alias Quorum.Contract.Generated.BaseVerification
+  alias Quorum.Contract.AccountStorageAdapter
+  alias Quorum.Contract.BaseVerification
   alias Ethereumex.HttpClient, as: QuorumHttpClient
 
   @hashed_true "0x0000000000000000000000000000000000000000000000000000000000000001"

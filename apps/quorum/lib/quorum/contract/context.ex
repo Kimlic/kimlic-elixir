@@ -3,8 +3,7 @@ defmodule Quorum.Contract.Context do
   Module that fetch contract adresses from KimlicContractContext contract
   """
 
-  alias Quorum.Contract.Generated.KimlicContextStorage
-  alias Quorum.Contract.Generated.KimlicContractsContext
+  alias Quorum.Contract.{KimlicContextStorage, KimlicContractsContext}
 
   @spec get_kimlic_attestation_party_address :: binary
   def get_kimlic_attestation_party_address do

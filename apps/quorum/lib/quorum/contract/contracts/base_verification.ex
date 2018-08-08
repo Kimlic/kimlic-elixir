@@ -1,4 +1,4 @@
-defmodule Quorum.Contract.Generated.BaseVerification do
+defmodule Quorum.Contract.BaseVerification do
   @moduledoc false
 
   @contract :base_verification

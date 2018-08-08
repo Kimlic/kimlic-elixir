@@ -1,4 +1,4 @@
-defmodule Quorum.Contract.Generated.VerificationContractFactory do
+defmodule Quorum.Contract.VerificationContractFactory do
   @moduledoc false
 
   use Quorum.Contract, :verification_contract_factory
