@@ -72,9 +72,3 @@ jobs:
       - sudo ./bin/ci/release/check-container.sh || travis_terminate 1
       - ./bin/ci/release/push-container.sh || travis_terminate 1
       - ./bin/ci/release/push-version.sh || travis_terminate 1
-
-    - stage: "Push repository"
-      name: "Push repository"
-      script:
-        - ./bin/ci/rel/connect-to-services.sh || travis_terminate 1
-        - ./bin/ci/rel/push-repository.sh || travis_terminate 1
