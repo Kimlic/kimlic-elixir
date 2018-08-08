@@ -12,8 +12,8 @@ git config --global push.default upstream;
 git remote add upstream ${REPO_URL} &> /dev/null
 
 # DockerHub
-if [ ! $HUB_ACCOUNT  ]; then
-  echo "[E] You need to specify Docker Hub account with '-a' option."
+if [ ! $DOCKER_HUB_ACCOUNT  ]; then
+  echo "[E] You need to specify Docker Hub account as DOCKER_HUB_ACCOUNT env variable."
   exit 1
 fi
 
