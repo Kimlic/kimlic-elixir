@@ -3,9 +3,15 @@
 PREVIOUS_VERSION=$PROJECT_VERSION
 
 # Fetch changes from branch name
-MAJOR_CHANGES=$(grep -io '^release/' <<< "${TRAVIS_BRANCH}" | wc -l)
-MINOR_CHANGES=$(grep -io '^feature/' <<< "${TRAVIS_BRANCH}" | wc -l)
-PATCH_CHANGES=$(grep -io '^hotfix/' <<< "${TRAVIS_BRANCH}" | wc -l)
+if [[ "${TRAVIS_PULL_REQUEST}" == "false" ]]; then
+  GIT_BRANCH=${TRAVIS_BRANCH}
+else
+  GIT_BRANCH=${TRAVIS_PULL_REQUEST_BRANCH}
+fi;
+
+MAJOR_CHANGES=$(grep -io '^release/' <<< "${GIT_BRANCH}" | wc -l)
+MINOR_CHANGES=$(grep -io '^feature/' <<< "${GIT_BRANCH}" | wc -l)
+PATCH_CHANGES=$(grep -io '^hotfix/' <<< "${GIT_BRANCH}" | wc -l)
 
 # Convert values to numbers (trims leading spaces)
 MAJOR_CHANGES=$(expr $MAJOR_CHANGES + 0)
