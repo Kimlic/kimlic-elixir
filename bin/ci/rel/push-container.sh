@@ -12,16 +12,10 @@
 #   '-f' - force tag creating when git working tree is not empty.
 set -e
 
-REPO_TAG=${NEXT_VERSION}
-CONTAINER_VERSION="${PROJECT_VERSION}-${TRAVIS_JOB_NUMBER}"
-
 # A POSIX variable
 OPTIND=1 # Reset in case getopts has been used previously in the shell.
 
 # Default settings
-IS_LATEST=0
-IS_STABLE=0
-RELEASE_VERSION=$NEXT_VERSION
 
 if git diff-index --quiet HEAD --; then
   PASS_GIT=1
@@ -30,29 +24,11 @@ else
   PASS_GIT=0
 fi
 
-# Parse ARGS
-while getopts "v:la:ft:s" opt; do
-  case "$opt" in
-    a)  HUB_ACCOUNT=$OPTARG
-        ;;
-    v)  RELEASE_VERSION=$OPTARG
-        ;;
-    t)  REPO_TAG=$OPTARG
-        ;;
-    l)  IS_LATEST=1
-        ;;
-    s)  IS_STABLE=1
-        ;;
-    f)  PASS_GIT=1
-        ;;
-  esac
-done
-
-if [ ! $HUB_ACCOUNT  ]; then
-  echo "[E] You need to specify Docker Hub account with '-a' option."
-  exit 1
-fi
-
+CONTAINER_VERSION="${PROJECT_VERSION}-${TRAVIS_JOB_NUMBER}"
+IS_STABLE=0
+RELEASE_VERSION=$NEXT_VERSION
+HUB_ACCOUNT=$DOCKER_HUB_ACCOUNT
+IS_LATEST=1
 GIT_TAG="${RELEASE_VERSION}-${PROJECT_NAME}"
 
 # Create git tag that matches release version
@@ -64,23 +40,31 @@ else
     echo "    You can skip this check with '-f' option."
     exit 1
   else
-    echo "[I] Creating git tag '${GIT_TAG}'.."
-    git tag -a ${GIT_TAG} -m "${CHANGELOG}"$'\n'$'\n'"Container URL: https://hub.docker.com/r/${DOCKER_HUB_ACCOUNT}/${PROJECT_NAME}/tags/${CONTAINER_VERSION}/"
+    if [[ "${TRAVIS_PULL_REQUEST}" == "false" && "${TRAVIS_BRANCH}" == "${TRUNK_BRANCH}" ]]; then
+        echo "[I] Creating git tag '${GIT_TAG}'.."
+        REPO=`git config remote.origin.url`
+        SSH_REPO=${REPO/https:\/\/github.com\//git@github.com:}
+        git tag -a ${GIT_TAG} -m "${CHANGELOG}"$'\n'$'\n'"Container URL: https://hub.docker.com/r/${DOCKER_HUB_ACCOUNT}/${PROJECT_NAME}/tags/${CONTAINER_VERSION}/"
+        git push $SSH_REPO HEAD:$TRUNK_BRANCH --tags
+    fi
   fi
 fi
 
-echo "[I] Tagging image '${PROJECT_NAME}:${CONTAINER_VERSION}' into a Docker Hub repository '${HUB_ACCOUNT}/${PROJECT_NAME}:${CONTAINER_VERSION}'.."
-docker tag "${PROJECT_NAME}:${CONTAINER_VERSION}" "${HUB_ACCOUNT}/${PROJECT_NAME}:${CONTAINER_VERSION}"
+if [[ "${TRAVIS_PULL_REQUEST}" == "false" && "${TRAVIS_BRANCH}" == "${TRUNK_BRANCH}" ]]; then
 
-if [ $IS_LATEST == 1 ]; then
-  echo "[I] Assigning additional tag '${HUB_ACCOUNT}/${PROJECT_NAME}:latest'.."
-  docker tag "${PROJECT_NAME}:${CONTAINER_VERSION}" "${HUB_ACCOUNT}/${PROJECT_NAME}:latest"
+  echo "[I] Tagging image '${PROJECT_NAME}:${CONTAINER_VERSION}' into a Docker Hub repository '${HUB_ACCOUNT}/${PROJECT_NAME}:${CONTAINER_VERSION}'.."
+  docker tag "${PROJECT_NAME}:${CONTAINER_VERSION}" "${HUB_ACCOUNT}/${PROJECT_NAME}:${CONTAINER_VERSION}"
+
+  if [ $IS_LATEST == 1 ]; then
+    echo "[I] Assigning additional tag '${HUB_ACCOUNT}/${PROJECT_NAME}:latest'.."
+    docker tag "${PROJECT_NAME}:${CONTAINER_VERSION}" "${HUB_ACCOUNT}/${PROJECT_NAME}:latest"
+  fi
+
+  if [ $IS_STABLE == 1 ]; then
+    echo "[I] Assigning additional tag '${HUB_ACCOUNT}/${PROJECT_NAME}:stable'.."
+    docker tag "${PROJECT_NAME}:${CONTAINER_VERSION}" "${HUB_ACCOUNT}/${PROJECT_NAME}:stable"
+  fi
+
+  echo "[I] Pushing changes to Docker Hub.."
+  docker push "${HUB_ACCOUNT}/${PROJECT_NAME}"
 fi
-
-if [ $IS_STABLE == 1 ]; then
-  echo "[I] Assigning additional tag '${HUB_ACCOUNT}/${PROJECT_NAME}:stable'.."
-  docker tag "${PROJECT_NAME}:${CONTAINER_VERSION}" "${HUB_ACCOUNT}/${PROJECT_NAME}:stable"
-fi
-
-echo "[I] Pushing changes to Docker Hub.."
-docker push "${HUB_ACCOUNT}/${PROJECT_NAME}"
