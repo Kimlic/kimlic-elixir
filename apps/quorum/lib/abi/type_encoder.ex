@@ -100,7 +100,7 @@ defmodule Quorum.ABI.TypeEncoder do
       "000000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000110000000000000000000000000000000000000000000000000000000000000001"
   """
   @spec encode(list, FunctionSelector.t()) :: binary
-  def encode(data, %FunctionSelector{types: []} = function_selector) do
+  def encode(_data, %FunctionSelector{types: []} = function_selector) do
     encode_method_id(function_selector)
   end
 

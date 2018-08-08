@@ -4,7 +4,7 @@ defmodule Quorum.Proxy do
   alias HTTPoison.Response
 
   @spec proxy(map) :: {:ok, map} | {:error, map}
-  def proxy(%{"_json" => batch_methods} = payload) when is_list(batch_methods) do
+  def proxy(%{"_json" => batch_methods}) when is_list(batch_methods) do
     with :ok <- validate_rpc_method(batch_methods) do
       @quorum_proxy_client.call_rpc(batch_methods)
     end

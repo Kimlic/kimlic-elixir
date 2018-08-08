@@ -137,7 +137,7 @@ defmodule Quorum.Integration.DirectQuorumTest do
     data = Contract.hash_data(:base_verification, "tokensUnlockAt", [])
     params = %{data: data, from: user_address, to: contract_address}
 
-    assert {:ok, hashed_time} = QuorumHttpClient.eth_call(params)
+    assert {:ok, _hashed_time} = QuorumHttpClient.eth_call(params)
 
     assert {:ok, time} = BaseVerification.tokens_unlock_at(%{from: user_address, to: contract_address})
     assert is_integer(time)
