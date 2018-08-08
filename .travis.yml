@@ -42,9 +42,6 @@ before_install:
 # Expose Postgres
 - sudo ./bin/ci/init-db.sh
 before_script:
-# Create test user for rabbitMQ
-#  - rabbitmqctl add_user test test
-#  - rabbitmqctl set_permissions -p / test ".*" ".*" ".*"
 # Extract project name and version from mix.exs
 - source ./bin/ci/deploy/fetch-project-environment.sh
 # Load information about new version
