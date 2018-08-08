@@ -45,18 +45,18 @@ else
   fi
 fi
 
-echo "[I] Tagging image '${PROJECT_NAME}:${CONTAINER_VERSION}' into a Docker Hub repository '${HUB_ACCOUNT}/${PROJECT_NAME}:${CONTAINER_VERSION}'.."
-docker tag "${PROJECT_NAME}:${CONTAINER_VERSION}" "${HUB_ACCOUNT}/${PROJECT_NAME}:${CONTAINER_VERSION}"
-
-if [ $IS_LATEST == 1 ]; then
-  echo "[I] Assigning additional tag '${HUB_ACCOUNT}/${PROJECT_NAME}:latest'.."
-  docker tag "${PROJECT_NAME}:${CONTAINER_VERSION}" "${HUB_ACCOUNT}/${PROJECT_NAME}:latest"
-fi
-
-if [ $IS_STABLE == 1 ]; then
-  echo "[I] Assigning additional tag '${HUB_ACCOUNT}/${PROJECT_NAME}:stable'.."
-  docker tag "${PROJECT_NAME}:${CONTAINER_VERSION}" "${HUB_ACCOUNT}/${PROJECT_NAME}:stable"
-fi
-
-echo "[I] Pushing changes to Docker Hub.."
-docker push "${HUB_ACCOUNT}/${PROJECT_NAME}"
+#echo "[I] Tagging image '${PROJECT_NAME}:${CONTAINER_VERSION}' into a Docker Hub repository '${HUB_ACCOUNT}/${PROJECT_NAME}:${CONTAINER_VERSION}'.."
+#docker tag "${PROJECT_NAME}:${CONTAINER_VERSION}" "${HUB_ACCOUNT}/${PROJECT_NAME}:${CONTAINER_VERSION}"
+#
+#if [ $IS_LATEST == 1 ]; then
+#  echo "[I] Assigning additional tag '${HUB_ACCOUNT}/${PROJECT_NAME}:latest'.."
+#  docker tag "${PROJECT_NAME}:${CONTAINER_VERSION}" "${HUB_ACCOUNT}/${PROJECT_NAME}:latest"
+#fi
+#
+#if [ $IS_STABLE == 1 ]; then
+#  echo "[I] Assigning additional tag '${HUB_ACCOUNT}/${PROJECT_NAME}:stable'.."
+#  docker tag "${PROJECT_NAME}:${CONTAINER_VERSION}" "${HUB_ACCOUNT}/${PROJECT_NAME}:stable"
+#fi
+#
+#echo "[I] Pushing changes to Docker Hub.."
+#docker push "${HUB_ACCOUNT}/${PROJECT_NAME}"

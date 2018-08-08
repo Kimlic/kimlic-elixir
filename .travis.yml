@@ -48,7 +48,7 @@ jobs:
       env:
         - APPLICATION_PATH="apps/mobile_api"
       script:
-        - ./bin/ci/rel/connect-to-services.sh || travis_terminate 1
+        - sudo ./bin/ci/rel/connect-to-services.sh || travis_terminate 1
         - source ./bin/ci/rel/fetch-project-environment.sh
         - source ./bin/ci/rel/fetch-source-version.sh
         - ./bin/ci/rel/check-version-error.sh || travis_terminate 1
@@ -57,13 +57,14 @@ jobs:
         - ./bin/ci/rel/build-container.sh || travis_terminate 1
         - sudo ./bin/ci/rel/start-container.sh
         - sudo ./bin/ci/rel/check-container.sh || travis_terminate 1
+        - ./bin/ci/rel/push-container.sh || travis_terminate 1 # todo: remove
 
     - stage: "Test and build"
       name: "Run tests and build Docker container for attestation_api"
       env:
         - APPLICATION_PATH="apps/attestation_api"
       script:
-        - ./bin/ci/rel/connect-to-services.sh || travis_terminate 1
+        - sudo ./bin/ci/rel/connect-to-services.sh || travis_terminate 1
         - source ./bin/ci/rel/fetch-project-environment.sh
         - source ./bin/ci/rel/fetch-source-version.sh
         - ./bin/ci/rel/check-version-error.sh || travis_terminate 1
@@ -72,11 +73,15 @@ jobs:
         - ./bin/ci/rel/build-container.sh || travis_terminate 1
         - sudo ./bin/ci/rel/start-container.sh
         - sudo ./bin/ci/rel/check-container.sh || travis_terminate 1
+        - ./bin/ci/rel/push-container.sh || travis_terminate 1 # todo: remove
 
     - stage: "Push changes"
       name: "Push changes"
       script:
         - docker image ls
-#        - ./bin/ci/rel/connect-to-services.sh || travis_terminate 1
+        - git remove -v
+        - git tag -l
+        - git show-ref --tags | grep -v -F "$(git ls-remote --tags upstream | grep -v '\^{}' | cut -f 2)"
+#        - sudo ./bin/ci/rel/connect-to-services.sh || travis_terminate 1
 #        - ./bin/ci/rel/push-container.sh || travis_terminate 1
 #        - ./bin/ci/rel/push-repository.sh || travis_terminate 1
