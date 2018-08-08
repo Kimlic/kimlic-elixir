@@ -77,6 +77,6 @@ jobs:
 
     - stage: "Push repository"
       name: "Push repository"
-      - sudo ./bin/ci/rel/connect-to-services.sh || travis_terminate 1
-      - ./bin/ci/rel/push-repository.sh || travis_terminate 1
-
+      script:
+        - sudo ./bin/ci/rel/connect-to-services.sh || travis_terminate 1
+        - ./bin/ci/rel/push-repository.sh || travis_terminate 1
