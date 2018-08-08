@@ -18,15 +18,15 @@ fi;
 # Add --pro if you using private repo.
 
 # temporary disabled for private repo
-echo "- mix coveralls.travis --exclude pending --umbrella;"
-mix coveralls.travis --exclude pending --umbrella --pro
-
-if [ "$?" -eq 0 ]; then
-  echo "mix coveralls.travis successfully completed"
-else
-  echo "mix coveralls.travis finished with errors , exited with 1"
-  mix_test=1;
-fi;
+#echo "- mix coveralls.travis --exclude pending --umbrella;"
+#mix coveralls.travis --exclude pending --umbrella --pro
+#
+#if [ "$?" -eq 0 ]; then
+#  echo "mix coveralls.travis successfully completed"
+#else
+#  echo "mix coveralls.travis finished with errors , exited with 1"
+#  mix_test=1;
+#fi;
 
 # Run static code analysis
 echo "- mix credo --strict ; "
