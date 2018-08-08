@@ -1,3 +1,4 @@
+#!/bin/bash
 # Get latest version
 PREVIOUS_VERSION=$(git describe HEAD --abbrev=0 --tags)
 if [[ "$?" != "0" ]]; then
