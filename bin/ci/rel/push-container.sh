@@ -42,8 +42,10 @@ else
   else
     if [[ "${TRAVIS_PULL_REQUEST}" == "false" && "${TRAVIS_BRANCH}" == "${TRUNK_BRANCH}" ]]; then
         echo "[I] Creating git tag '${GIT_TAG}'.."
+        REPO=`git config remote.origin.url`
+        SSH_REPO=${REPO/https:\/\/github.com\//git@github.com:}
         git tag -a ${GIT_TAG} -m "${CHANGELOG}"$'\n'$'\n'"Container URL: https://hub.docker.com/r/${DOCKER_HUB_ACCOUNT}/${PROJECT_NAME}/tags/${CONTAINER_VERSION}/"
-        git push --tags
+        git push $SSH_REPO HEAD:$TRUNK_BRANCH --tags
     fi
   fi
 fi
