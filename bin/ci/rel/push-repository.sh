@@ -33,7 +33,6 @@ if [[ "${TRAVIS_PULL_REQUEST}" == "false" ]]; then
 
     echo "Pushing changes back to origin repo.";
     git push $SSH_REPO HEAD:$TRUNK_BRANCH;
-    git push $SSH_REPO HEAD:$TRUNK_BRANCH --tags
     echo "Done.";
   else
     echo "[I] This build is not in a trunk or maintenance branch, new version will not be created"

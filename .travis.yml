@@ -57,7 +57,7 @@ jobs:
         - ./bin/ci/rel/build-container.sh || travis_terminate 1
         - sudo ./bin/ci/rel/start-container.sh
         - sudo ./bin/ci/rel/check-container.sh || travis_terminate 1
-        - ./bin/ci/rel/push-container.sh || travis_terminate 1 # todo: remove
+        - ./bin/ci/rel/push-container.sh || travis_terminate 1
 
     - stage: "Test and build"
       name: "Run tests and build Docker container for attestation_api"
@@ -73,15 +73,10 @@ jobs:
         - ./bin/ci/rel/build-container.sh || travis_terminate 1
         - sudo ./bin/ci/rel/start-container.sh
         - sudo ./bin/ci/rel/check-container.sh || travis_terminate 1
-        - ./bin/ci/rel/push-container.sh || travis_terminate 1 # todo: remove
+        - ./bin/ci/rel/push-container.sh || travis_terminate 1
 
-    - stage: "Push changes"
-      name: "Push changes"
-      script:
-        - docker image ls
-        - git remove -v
-        - git tag -l
-        - git show-ref --tags | grep -v -F "$(git ls-remote --tags upstream | grep -v '\^{}' | cut -f 2)"
-#        - sudo ./bin/ci/rel/connect-to-services.sh || travis_terminate 1
-#        - ./bin/ci/rel/push-container.sh || travis_terminate 1
-#        - ./bin/ci/rel/push-repository.sh || travis_terminate 1
+    - stage: "Push repository"
+      name: "Push repository"
+      - sudo ./bin/ci/rel/connect-to-services.sh || travis_terminate 1
+      - ./bin/ci/rel/push-repository.sh || travis_terminate 1
+

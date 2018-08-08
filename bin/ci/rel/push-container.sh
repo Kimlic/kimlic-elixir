@@ -40,23 +40,29 @@ else
     echo "    You can skip this check with '-f' option."
     exit 1
   else
-    echo "[I] Creating git tag '${GIT_TAG}'.."
-    git tag -a ${GIT_TAG} -m "${CHANGELOG}"$'\n'$'\n'"Container URL: https://hub.docker.com/r/${DOCKER_HUB_ACCOUNT}/${PROJECT_NAME}/tags/${CONTAINER_VERSION}/"
+    if [[ "${TRAVIS_PULL_REQUEST}" == "false" && "${TRAVIS_BRANCH}" == "${TRUNK_BRANCH}" ]]; then
+        echo "[I] Creating git tag '${GIT_TAG}'.."
+        git tag -a ${GIT_TAG} -m "${CHANGELOG}"$'\n'$'\n'"Container URL: https://hub.docker.com/r/${DOCKER_HUB_ACCOUNT}/${PROJECT_NAME}/tags/${CONTAINER_VERSION}/"
+        git push --tags
+    fi
   fi
 fi
 
-#echo "[I] Tagging image '${PROJECT_NAME}:${CONTAINER_VERSION}' into a Docker Hub repository '${HUB_ACCOUNT}/${PROJECT_NAME}:${CONTAINER_VERSION}'.."
-#docker tag "${PROJECT_NAME}:${CONTAINER_VERSION}" "${HUB_ACCOUNT}/${PROJECT_NAME}:${CONTAINER_VERSION}"
-#
-#if [ $IS_LATEST == 1 ]; then
-#  echo "[I] Assigning additional tag '${HUB_ACCOUNT}/${PROJECT_NAME}:latest'.."
-#  docker tag "${PROJECT_NAME}:${CONTAINER_VERSION}" "${HUB_ACCOUNT}/${PROJECT_NAME}:latest"
-#fi
-#
-#if [ $IS_STABLE == 1 ]; then
-#  echo "[I] Assigning additional tag '${HUB_ACCOUNT}/${PROJECT_NAME}:stable'.."
-#  docker tag "${PROJECT_NAME}:${CONTAINER_VERSION}" "${HUB_ACCOUNT}/${PROJECT_NAME}:stable"
-#fi
-#
-#echo "[I] Pushing changes to Docker Hub.."
-#docker push "${HUB_ACCOUNT}/${PROJECT_NAME}"
+if [[ "${TRAVIS_PULL_REQUEST}" == "false" && "${TRAVIS_BRANCH}" == "${TRUNK_BRANCH}" ]]; then
+
+  echo "[I] Tagging image '${PROJECT_NAME}:${CONTAINER_VERSION}' into a Docker Hub repository '${HUB_ACCOUNT}/${PROJECT_NAME}:${CONTAINER_VERSION}'.."
+  docker tag "${PROJECT_NAME}:${CONTAINER_VERSION}" "${HUB_ACCOUNT}/${PROJECT_NAME}:${CONTAINER_VERSION}"
+
+  if [ $IS_LATEST == 1 ]; then
+    echo "[I] Assigning additional tag '${HUB_ACCOUNT}/${PROJECT_NAME}:latest'.."
+    docker tag "${PROJECT_NAME}:${CONTAINER_VERSION}" "${HUB_ACCOUNT}/${PROJECT_NAME}:latest"
+  fi
+
+  if [ $IS_STABLE == 1 ]; then
+    echo "[I] Assigning additional tag '${HUB_ACCOUNT}/${PROJECT_NAME}:stable'.."
+    docker tag "${PROJECT_NAME}:${CONTAINER_VERSION}" "${HUB_ACCOUNT}/${PROJECT_NAME}:stable"
+  fi
+
+  echo "[I] Pushing changes to Docker Hub.."
+  docker push "${HUB_ACCOUNT}/${PROJECT_NAME}"
+fi
