@@ -4,6 +4,17 @@
 For Docker environment configuration read
 [ENVIRONMENT.md](https://github.com/Kimlic/kimlic-elixir/blob/develop/docs/ENVIRONMENT.md)
 
+## Travis CI
+
+For CI and automatic semantic versioning repository requires git workflow branch naming.
+
+Use next branch name convention:
+ - `hotfix/*` - increment PATCH version (0.1.0 -> 0.1.1)
+ - `feature/*` - increment MINOR version (0.1.0 -> 0.2.0)
+ - `release/*` - increment MAJOR version (0.1.0 -> 1.0.0)
+ 
+In case of invalid branch name Travis CI fails
+
 ## Quorum
 
 Local configuration:
