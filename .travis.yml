@@ -53,6 +53,7 @@ jobs:
         - source ./bin/ci/rel/fetch-source-version.sh
         - ./bin/ci/rel/check-version-error.sh || travis_terminate 1
         - ./bin/mix_tests.sh || travis_terminate 1
+        - ./bin/ci/rel/put-source-version.sh || travis_terminate 1
         - ./bin/ci/rel/build-container.sh || travis_terminate 1
         - sudo ./bin/ci/rel/start-container.sh
         - sudo ./bin/ci/rel/check-container.sh || travis_terminate 1
@@ -68,6 +69,7 @@ jobs:
         - source ./bin/ci/rel/fetch-source-version.sh
         - ./bin/ci/rel/check-version-error.sh || travis_terminate 1
         - ./bin/mix_tests.sh || travis_terminate 1
+        - ./bin/ci/rel/put-source-version.sh || travis_terminate 1
         - ./bin/ci/rel/build-container.sh || travis_terminate 1
         - sudo ./bin/ci/rel/start-container.sh
         - sudo ./bin/ci/rel/check-container.sh || travis_terminate 1
@@ -77,6 +79,4 @@ jobs:
       name: "Push repository"
       script:
         - ./bin/ci/rel/connect-to-services.sh || travis_terminate 1
-        - source ./bin/ci/rel/fetch-source-version.sh
-        - ./bin/ci/rel/put-source-version.sh || travis_terminate 1
         - ./bin/ci/rel/push-repository.sh || travis_terminate 1
