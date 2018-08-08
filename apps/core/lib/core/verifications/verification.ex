@@ -14,17 +14,18 @@ defmodule Core.Verifications.Verification do
   @status_expired "EXPIRED"
 
   @required_fields ~w(account_address entity_type token status)a
-  @optional_fileds ~w(contract_address)
+  @optional_fileds ~w(contract_address)a
 
+  @spec entity_type(atom) :: binary
   def entity_type(:phone), do: @entity_type_phone
   def entity_type(:email), do: @entity_type_email
 
+  @spec status(atom) :: binary
   def status(:new), do: @status_new
   def status(:passed), do: @status_passed
   def status(:expired), do: @status_expired
 
   defguard allowed_type_atom(type) when type in ~w(phone email)a
-  defguard allowed_type_string(type) when type in [@entity_type_phone, @entity_type_email]
 
   @primary_key false
   embedded_schema do
@@ -36,7 +37,7 @@ defmodule Core.Verifications.Verification do
     field(:contract_address, :string)
   end
 
-  @spec changeset(%{}) :: Ecto.Changeset.t()
+  @spec changeset(map) :: Ecto.Changeset.t()
   def changeset(params) do
     %__MODULE__{}
     |> cast(params, @required_fields ++ @optional_fileds)
@@ -55,6 +56,14 @@ defmodule Core.Verifications.Verification do
   def put_redis_key(changeset), do: changeset
 
   @spec redis_key(binary, binary) :: binary
-  def redis_key(type, account_address) when allowed_type_string(type),
-    do: "verification:#{String.downcase(type)}:#{account_address}"
+  def redis_key(type, account_address) when is_binary(type) do
+    type
+    |> String.downcase()
+    |> String.to_atom()
+    |> redis_key(account_address)
+  end
+
+  @spec redis_key(atom, binary) :: binary
+  def redis_key(type, account_address) when allowed_type_atom(type),
+    do: "verification:#{Atom.to_string(type)}:#{account_address}"
 end

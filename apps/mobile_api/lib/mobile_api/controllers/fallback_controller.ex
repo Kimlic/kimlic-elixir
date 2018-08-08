@@ -5,39 +5,63 @@ defmodule MobileApi.FallbackController do
 
   use MobileApi, :controller
 
-  alias MobileApi.ErrorView
+  alias EView.Views.Error
+  alias EView.Views.ValidationError
 
-  def call(conn, nil) do
+  @typep fallback_param_t :: nil | tuple | Ecto.Changeset.t()
+
+  @spec call(Plug.Conn.t(), fallback_param_t) :: Plug.Conn.t()
+  def call(conn, nil), do: call(conn, {:error, :not_found})
+
+  def call(conn, {:error, :access_denied}) do
     conn
-    |> put_status(:not_found)
-    |> render(ErrorView, :"404")
+    |> put_status(:unauthorized)
+    |> render(Error, :"401")
   end
 
   def call(conn, {:error, :not_found}) do
     conn
     |> put_status(:not_found)
-    |> render(ErrorView, :"404")
+    |> render(Error, :"404")
   end
 
-  def call(conn, {:error, {:"422", error}}) do
+  def call(conn, {:error, {:not_found, reason}}) do
+    conn
+    |> put_status(:not_found)
+    |> render(Error, :"404", %{message: reason})
+  end
+
+  def call(conn, {:error, {:conflict, reason}}) do
+    conn
+    |> put_status(:conflict)
+    |> render(Error, :"409", %{message: reason})
+  end
+
+  def call(conn, {:error, {:unprocessable_entity, error}}) when is_binary(error) do
     conn
     |> put_status(422)
-    |> render(ErrorView, :"422", %{message: error})
+    |> render(Error, :"400", %{message: error})
   end
 
-  def call(conn, %Ecto.Changeset{valid?: false} = changeset) do
-    call(conn, {:error, changeset})
-  end
+  def call(conn, %Ecto.Changeset{valid?: false} = changeset), do: call(conn, {:error, changeset})
 
   def call(conn, {:error, %Ecto.Changeset{valid?: false} = changeset}) do
     conn
     |> put_status(:unprocessable_entity)
-    |> render(ErrorView, :"422", changeset)
+    |> render(ValidationError, :"422", changeset)
   end
 
   def call(conn, {:error, {:internal_error, message}}) do
     conn
     |> put_status(:internal_server_error)
-    |> render(ErrorView, :"500", %{message: message})
+    |> render(Error, :"500", %{message: message})
   end
+
+  def call(conn, {:error, {:getaway_timeout, message}}) do
+    conn
+    |> put_status(504)
+    |> render(Error, :"500", %{message: message})
+  end
+
+  def call(conn, _), do: call(conn, {:error, :not_found})
 end

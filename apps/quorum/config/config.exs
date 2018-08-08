@@ -3,10 +3,29 @@ use Mix.Config
 alias Quorum.Jobs.{TransactionCreate, TransactionStatus}
 
 config :quorum,
-  authorization_salt: {:system, "AUTHORIZATION_SALT"},
   client: Ethereumex.HttpClient,
   proxy_client: Quorum.Proxy.Client,
-  allowed_rpc_methods: {:system, :list, "QUORUM_ALLOWED_RPC_METHODS", ["web3_clientVersion", "eth_sendTransaction"]}
+  contract_client: Quorum.Contract,
+  context_storage_address: {:system, "CONTEXT_STORAGE_ADDRESS"},
+  kimlic_ap_address: {:system, "KIMLIC_AP_ADDRESS"},
+  kimlic_ap_password: {:system, "KIMLIC_AP_PASSWORD"},
+  veriff_ap_address: {:system, "VERIFF_AP_ADDRESS"},
+  veriff_ap_password: {:system, "VERIFF_AP_PASSWORD"},
+  profile_sync_user_address: {:system, "PROFILE_SYNC_USER_ADDRESS"},
+  profile_sync_user_password: {:system, "PROFILE_SYNC_USER_PASSWORD"},
+  gas: {:system, "QUORUM_GAS"},
+  allowed_rpc_methods:
+    {:system, :list, "QUORUM_ALLOWED_RPC_METHODS",
+     [
+       "web3_clientVersion",
+       "eth_call",
+       "eth_sendTransaction",
+       "eth_sendRawTransaction",
+       "eth_getTransactionCount",
+       "getTransactionReceipt",
+       "personal_newAccount",
+       "personal_unlockAccount"
+     ]}
 
 config :ethereumex, url: "http://localhost:22000"
 
@@ -16,13 +35,14 @@ config :task_bunny,
       connect_options: "amqp://localhost?heartbeat=30"
     ]
   ],
-  queue: [
+  quorum_queue: [
     namespace: "kimlic-core.",
     queues: [
-      [name: "transaction", jobs: [TransactionCreate]],
-      [name: "transaction-status", jobs: [TransactionStatus]]
+      [name: "transaction", jobs: [TransactionCreate], worker: [concurrency: 1]],
+      [name: "transaction-status", jobs: [TransactionStatus], worker: [concurrency: 1]]
     ]
-  ]
+  ],
+  failure_backend: [Quorum.Loggers.TaskBunny]
 
 config :logger, :console,
   format: "$message\n",

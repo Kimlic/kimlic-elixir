@@ -18,17 +18,15 @@ REPO_URL="https://github.com/${TRAVIS_REPO_SLUG}.git";
 git remote add upstream ${REPO_URL} &> /dev/null
 
 if [[ "${TRAVIS_PULL_REQUEST}" == "false" ]]; then
-  # ToDo: Hardcoded build application
-  git add apps/mobile_api/mix.exs;
+  git add "${APPLICATION_PATH}/mix.exs";
   git commit -m "Increment version [ci skip]";
 
   echo "Current branch: ${TRAVIS_BRANCH}"
   echo "Trunk branch: ${TRUNK_BRANCH}"
-  echo "Build requires maintenance?: ${BUILD_REQUIRES_MAINTENANCE}"
-  echo "Maintenance branch: ${MAINTENANCE_BRANCH}"
 
-  if [[ "${TRAVIS_BRANCH}" == "${TRUNK_BRANCH}" && "${BUILD_REQUIRES_MAINTENANCE}" == "0" || "${TRAVIS_BRANCH}" == "${MAINTENANCE_BRANCH}" ]]; then
-    ${DIR}/../release/push-container.sh -a $DOCKER_HUB_ACCOUNT -t $TRAVIS_BRANCH -l;
+  if [[ "${TRAVIS_BRANCH}" == "${TRUNK_BRANCH}" ]]; then
+
+    ./bin/ci/rel/push-container.sh -a $DOCKER_HUB_ACCOUNT -t $TRAVIS_BRANCH -l;
 
     # Save some useful information
     REPO=`git config remote.origin.url`
@@ -46,8 +44,9 @@ if [[ "${TRAVIS_PULL_REQUEST}" == "false" ]]; then
     ssh-add github_deploy_key
 
     echo "Pushing changes back to origin repo.";
-    git push $SSH_REPO HEAD:$TRAVIS_BRANCH;
-    git push $SSH_REPO HEAD:$TRAVIS_BRANCH --tags
+    git pull $SSH_REPO HEAD:$TRUNK_BRANCH;
+    git push $SSH_REPO HEAD:$TRUNK_BRANCH;
+    git push $SSH_REPO HEAD:$TRUNK_BRANCH --tags
     echo "Done.";
   else
     echo "[I] This build is not in a trunk or maintenance branch, new version will not be created"

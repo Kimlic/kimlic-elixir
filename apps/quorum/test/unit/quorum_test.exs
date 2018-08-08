@@ -1,4 +1,6 @@
 defmodule Quorum.Unit.QuorumTest do
+  @moduledoc false
+
   use ExUnit.Case
 
   import Mox
@@ -7,13 +9,13 @@ defmodule Quorum.Unit.QuorumTest do
   alias TaskBunny.Queue
   alias Quorum.Jobs.{TransactionCreate, TransactionStatus}
 
-  doctest Quorum
-
   setup :verify_on_exit!
   setup :set_mox_global
 
   @queue_transaction_create "kimlic-core-test.transaction"
   @queue_transaction_status "kimlic-core-test.transaction-status"
+  @hashed_true "0x" <> String.duplicate("0", 63) <> "1"
+  @hashed_false "0x" <> String.duplicate("0", 64)
 
   setup do
     clean(Queue.queue_with_subqueues(@queue_transaction_create))
@@ -24,30 +26,56 @@ defmodule Quorum.Unit.QuorumTest do
   end
 
   describe "create verification_contract" do
+    # todo: refactor to integration test (mock of Quorum.Contract.Behaviour wouldn't run queue)
+    @tag :pending
     test "success" do
+      # Quorum.getContext()
+      # Quorum.getVerificationContractFactory()
+      expect(QuorumClientMock, :eth_call, 2, fn params, _block, _opts ->
+        assert Map.has_key?(params, :data)
+        assert Map.has_key?(params, :to)
+        {:ok, "0x111f4029f7e13575d5f4eab2c65ccc43b21aa67f4cfa200"}
+      end)
+
+      expect(QuorumClientMock, :request, 2, fn method, _params, _opts ->
+        assert "personal_unlockAccount" == method
+        {:ok, true}
+      end)
+
       expect(QuorumClientMock, :eth_send_transaction, fn _params, _opts ->
         {:ok, "0x9b4f4029f7e13575d5f4eab2c65ccc43b21aa67f4cf0746c4500b6c80a23fc23"}
       end)
 
       expect(QuorumClientMock, :eth_get_transaction_receipt, fn _params, _opts ->
-        {:ok, %{"transactionHash" => "0x9b4f4029f7e13575d5f4eab2c65ccc43b21aa67f4cf0746"}}
+        {:ok, %{"status" => "0x1"}}
       end)
 
-      expect(QuorumClientMock, :request, fn method, _params, _opts ->
-        assert "debug_traceTransaction" == method
-        {:ok, %{"returnValue" => "0x9b4f4029f7e13575d5f4eab2c65ccc43b21aa67f4cf0555"}}
+      expect(QuorumContractMock, :eth_call, fn :account_storage_adapter, function, _args, _opts ->
+        assert "getFieldHistoryLength" == function
+        {:ok, @hashed_true}
+      end)
+
+      expect(QuorumContractMock, :eth_call, fn :account_storage_adapter, function, _args, _opts ->
+        assert "getLastFieldVerificationContractAddress" == function
+        {:ok, @hashed_false}
+      end)
+
+      # get
+      expect(QuorumClientMock, :eth_call, 3, fn params, _block, _opts ->
+        assert Map.has_key?(params, :data)
+        assert Map.has_key?(params, :to)
+        {:ok, "0x9b4f4029f7e13575d5f4eab2c65ccc43b21aa67f4cfa200"}
       end)
 
       expect(QuorumClientMock, :eth_get_logs, fn status, return_value ->
-        assert %{"transactionHash" => _} = status
-        assert {:ok, "0x9b4f4029f7e13575d5f4eab2c65ccc43b21aa67f4cf0555"} = return_value
+        assert %{"status" => _} = status
+        assert {:ok, "0x9b4f4029f7e13575d5f4eab2c65ccc43b21aa67f4cfa200"} = return_value
       end)
 
-      # ToDo: too short address, ABI compile raise error: Data overflow encoding uint, data cannot fit in 160 bits
       account_address = "0x6cc3a44428c1722ee2fd2eb6d72387f4bc62449c"
 
       callback = {QuorumClientMock, :eth_get_logs, []}
-      assert :ok = Quorum.create_verification_contract(account_address, :email, callback)
+      assert :ok = Quorum.create_verification_contract(:email, account_address, callback)
 
       # Ensure that queue contain message for create transaction job
       assert {transaction_payload, _queue_metadata} = pop(@queue_transaction_create)
@@ -97,7 +125,7 @@ defmodule Quorum.Unit.QuorumTest do
       callback = {QuorumClientMock, :eth_get_logs, ["callback"]}
 
       # Start Create transaction job
-      assert :ok = Quorum.create_transaction(transaction_data, callback, false)
+      assert :ok = Quorum.create_transaction(transaction_data, %{callback: callback})
 
       # Ensure that queue contain message for create transaction job
       assert {transaction_payload, _queue_metadata} = pop(@queue_transaction_create)
@@ -129,7 +157,7 @@ defmodule Quorum.Unit.QuorumTest do
     transaction_data = %{from: "0xaf438474fda68a51c5f3b04eb08d6b27a879ba14"}
 
     # Start Create transaction job
-    assert :ok = Quorum.create_transaction(transaction_data, nil, false)
+    assert :ok = Quorum.create_transaction(transaction_data)
 
     # Ensure that queue contain message for create transaction job
     assert {transaction_payload, _queue_metadata} = pop(@queue_transaction_create)

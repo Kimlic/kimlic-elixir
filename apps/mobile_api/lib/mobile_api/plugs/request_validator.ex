@@ -9,8 +9,10 @@ defmodule MobileApi.Plugs.RequestValidator do
   alias MobileApi.FallbackController
   alias Plug.Conn
 
+  @spec init(Plug.opts()) :: Plug.opts()
   def init(opts), do: opts
 
+  @spec call(Conn.t(), Plug.opts()) :: Conn.t()
   def call(%Conn{params: params} = conn, opts) do
     validator = fetch_validator!(opts)
 
@@ -30,9 +32,13 @@ defmodule MobileApi.Plugs.RequestValidator do
     end
   end
 
+  @spec fetch_validator!(Plug.opts()) :: module
   defp fetch_validator!(opts), do: fetch!(opts, :validator)
+
+  @spec fetch_error_handler(Plug.opts()) :: module
   defp fetch_error_handler(opts), do: opts[:error_handler] || FallbackController
 
+  @spec fetch!(Plug.opts(), atom) :: module
   defp fetch!(opts, key) do
     case Keyword.get(opts, key) do
       nil -> raise_error(key)
@@ -40,5 +46,6 @@ defmodule MobileApi.Plugs.RequestValidator do
     end
   end
 
+  @spec raise_error(atom) :: no_return
   defp raise_error(key), do: raise("Config `#{key}` is missing for #{__MODULE__}")
 end

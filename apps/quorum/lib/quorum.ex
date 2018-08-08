@@ -3,43 +3,162 @@ defmodule Quorum do
   Quorum client
   """
 
-  import Quorum.Contract
+  alias Quorum.Contract.Context
+  alias Quorum.Contract.Generated.AccountStorageAdapter
+  alias Quorum.Contract.Generated.BaseVerification
+  alias Quorum.Contract.Generated.VerificationContractFactory
   alias Quorum.Jobs.TransactionCreate
 
-  @type callback :: nil | {module :: atom, function :: atom, args :: list}
+  @type callback :: nil | {module :: module, function :: atom, args :: list}
+  @type quorum_client_response_t :: {:ok, term} | {:error, map | binary | atom}
+
+  @quorum_client Application.get_env(:quorum, :client)
+
+  @gas_price "0x0"
+  @hashed_false "0x0000000000000000000000000000000000000000000000000000000000000000"
 
   defguardp is_callback(mfa)
             when is_tuple(mfa) and tuple_size(mfa) == 3 and
                    (is_atom(elem(mfa, 0)) and is_atom(elem(mfa, 1)) and is_list(elem(mfa, 2)))
 
-  @spec create_verification_transaction(binary, atom, callback) :: :ok
-  def create_verification_contract(account_address, :email, callback),
-    do: create_verification_transaction(account_address, "createEmailVerification", callback)
+  @spec create_verification_contract(atom, binary, callback) :: :ok | {:error, map}
+  def create_verification_contract(type, account_address, callback) do
+    verification_field = Atom.to_string(type)
+    account_storage_adapter_address = Context.get_account_storage_adapter_address()
 
-  @spec create_verification_transaction(binary, atom, callback) :: :ok
-  def create_verification_contract(account_address, :phone, callback),
-    do: create_verification_transaction(account_address, "createPhoneVerification", callback)
+    Log.info(
+      "[#{__MODULE__}]#create_verification_contract data: " <>
+        "account_address: #{account_address}, verification_field: #{verification_field}"
+    )
 
-  @spec create_verification_transaction(binary, binary, callback) :: :ok
-  defp create_verification_transaction(account_address, contract_function, callback) do
-    account_address_hex = parse_hex(account_address)
-
-    data =
-      :verification_factory
-      |> contract()
-      |> hash_data(contract_function, [account_address_hex])
-
-    create_transaction(%{from: account_address_hex, data: data}, callback, true)
+    with :ok <-
+           validate_account_field_exists_and_set(account_address, verification_field, account_storage_adapter_address),
+         :ok <-
+           validate_account_field_has_no_verification(
+             account_address,
+             verification_field,
+             account_storage_adapter_address
+           ) do
+      create_verification_transaction(account_address, verification_field, callback)
+    end
   end
 
-  @spec set_verification_result_transaction(binary, binary) :: :ok
-  def set_verification_result_transaction(account_address, contract_address) do
-    data =
-      :base_verification
-      |> contract()
-      |> hash_data("setVerificationResult", [true])
+  @spec validate_account_field_exists_and_set(binary, binary, binary) :: :ok | {:error, atom}
+  def validate_account_field_exists_and_set(account_address, field, to) do
+    result = AccountStorageAdapter.get_field_history_length(account_address, field, %{to: to})
 
-    create_transaction(%{from: parse_hex(account_address), to: parse_hex(contract_address), data: data})
+    Log.info("[#{__MODULE__}] validate_account_field_exists_and_set: #{inspect(result)}")
+
+    case result do
+      {:ok, @hashed_false} ->
+        {:error, :account_field_not_set}
+
+      # byte_size 66 = hex prefix `0x` + 32 bytes
+      {:ok, resp} when byte_size(resp) != 66 ->
+        {:error, :account_field_not_set}
+
+      {:ok, _} ->
+        :ok
+
+      err ->
+        err
+    end
+  end
+
+  @spec validate_account_field_has_no_verification(binary, binary, binary) :: :ok | {:error, atom}
+  def validate_account_field_has_no_verification(account_address, field, to) do
+    {:ok, profile_sync_user_address} = unlock_profile_sync_user()
+
+    result =
+      AccountStorageAdapter.get_last_field_verification_contract_address(account_address, field, %{
+        to: to,
+        from: profile_sync_user_address
+      })
+
+    Log.info("[#{__MODULE__}] validate_account_field_has_no_verification: #{inspect(result)}")
+
+    case result do
+      {:ok, @hashed_false} ->
+        :ok
+
+      {:ok, contract_address} ->
+        validate_verification_contract_expired(contract_address, profile_sync_user_address)
+
+      err ->
+        Log.error("[#{__MODULE__}] Fail to call get_last_field_verification_contract_address #{inspect(err)}")
+        err
+    end
+  end
+
+  @spec validate_verification_contract_expired(binary, binary) :: :ok | {:error, atom}
+  defp validate_verification_contract_expired(contract_address, profile_sync_user_address) do
+    {:ok, time} = BaseVerification.tokens_unlock_at(%{from: profile_sync_user_address, to: contract_address})
+
+    case :os.system_time(:second) > time do
+      true ->
+        BaseVerification.withdraw(%{from: profile_sync_user_address, to: contract_address})
+        :ok
+
+      false ->
+        {:error, :account_field_has_verification}
+    end
+  end
+
+  @spec unlock_profile_sync_user :: {:ok, binary}
+  defp unlock_profile_sync_user do
+    address = Confex.fetch_env!(:quorum, :profile_sync_user_address)
+    password = Confex.fetch_env!(:quorum, :profile_sync_user_password)
+
+    {:ok, _} = @quorum_client.request("personal_unlockAccount", [address, password], [])
+    {:ok, address}
+  end
+
+  @spec create_verification_transaction(binary, binary, callback) :: :ok
+  defp create_verification_transaction(account_address, verification_field, callback) when is_callback(callback) do
+    return_key = UUID.uuid4()
+    kimlic_ap_address = Context.get_kimlic_attestation_party_address()
+    kimlic_ap_password = Confex.fetch_env!(:quorum, :kimlic_ap_password)
+    verification_contract_factory_address = Context.get_verification_contract_factory_address()
+
+    meta = %{
+      callback: callback,
+      verification_contract_return_key: return_key,
+      verification_contract_factory_address: verification_contract_factory_address
+    }
+
+    @quorum_client.request("personal_unlockAccount", [kimlic_ap_address, kimlic_ap_password], [])
+
+    VerificationContractFactory.create_base_verification_contract(
+      account_address,
+      kimlic_ap_address,
+      return_key,
+      verification_field,
+      %{
+        from: kimlic_ap_address,
+        to: verification_contract_factory_address,
+        meta: meta
+      }
+    )
+  end
+
+  @spec set_verification_result_transaction(binary) :: :ok
+  def set_verification_result_transaction(contract_address) do
+    kimlic_ap_address = Context.get_kimlic_attestation_party_address()
+    kimlic_ap_password = Confex.fetch_env!(:quorum, :kimlic_ap_password)
+
+    @quorum_client.request("personal_unlockAccount", [kimlic_ap_address, kimlic_ap_password], [])
+
+    BaseVerification.finalize_verification(true, %{from: kimlic_ap_address, to: contract_address})
+  end
+
+  @spec set_digital_verification_result_transaction(binary, boolean) :: :ok
+  def set_digital_verification_result_transaction(contract_address, status) when is_boolean(status) do
+    veriff_ap_address = Confex.fetch_env!(:quorum, :veriff_ap_address)
+    veriff_ap_password = Confex.fetch_env!(:quorum, :veriff_ap_password)
+
+    @quorum_client.request("personal_unlockAccount", [veriff_ap_address, veriff_ap_password], [])
+
+    BaseVerification.finalize_verification(true, %{from: veriff_ap_address, to: contract_address})
   end
 
   @doc """
@@ -58,8 +177,8 @@ defmodule Quorum do
       2. Try 5 times, until success responce. On failed response - mark job as failed
       3. If argument `provide_return_value` set as true: fetch `return_value` from Quorum using `debug_traceTransaction` call
       4. Call callback if it provided. Transaction status and return value will be added as last arguments.
-         Transaction status argument - @spec map
-         Retrun value argument - @spec {:ok, binary} | {:error, binary}
+         Transaction status argument - @type :: map
+         Retrun value argument - @type :: {:ok, binary} | {:error, binary}
 
     ## Examples
 
@@ -73,29 +192,26 @@ defmodule Quorum do
       end
 
   """
-  @spec create_transaction(map, callback, boolean) :: :ok
-  def create_transaction(transaction_data, callback \\ nil, provide_return_value \\ false)
-      when is_nil(callback) or is_tuple(callback) do
-    %{transaction_data: transaction_data}
-    |> put_callback(callback)
-    |> put_provide_return_value(provide_return_value)
-    |> TransactionCreate.enqueue!()
+  @spec create_transaction(map, map) :: :ok
+  def create_transaction(transaction_data, meta \\ %{}) do
+    TransactionCreate.enqueue!(%{
+      meta: prepare_callback(meta),
+      transaction_data: put_gas(transaction_data)
+    })
   end
 
-  @spec put_provide_return_value(map, boolean) :: map
-  defp put_provide_return_value(message, true), do: Map.put(message, :provide_return_value, true)
-  defp put_provide_return_value(message, _), do: message
+  @spec put_gas(map) :: map
+  defp put_gas(transaction_data), do: Map.merge(%{gasPrice: @gas_price, gas: gas()}, transaction_data)
 
-  @spec put_provide_return_value(map, callback) :: map
-  defp put_callback(message, {module, function, args} = callback) when is_callback(callback),
-    do: Map.put(message, :callback, %{m: module, f: function, a: args})
+  defp prepare_callback(%{callback: {module, function, args}} = meta),
+    do: Map.put(meta, :callback, %{m: module, f: function, a: args})
 
-  @spec put_provide_return_value(map, nil) :: map
-  defp put_callback(message, nil), do: Map.put(message, :callback, nil)
-
-  @spec parse_hex(binary) :: integer
-  defp parse_hex("0x" <> address) do
-    {address_hex, _} = Integer.parse(address, 16)
-    address_hex
+  defp prepare_callback(%{callback: callback}) do
+    raise "Invalid callback format. Requires: {module, function, args} tuple, get: #{inspect(callback)}}"
   end
+
+  defp prepare_callback(meta), do: meta
+
+  @spec gas :: binary
+  def gas, do: Confex.fetch_env!(:quorum, :gas)
 end

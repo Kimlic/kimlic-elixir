@@ -21,7 +21,8 @@ bench/snapshots
 
 # Don't commit editor configs
 .idea
-.elixir_ls/*
+.elixir_ls
+.vscode
 *.iws
 /out/
 atlassian-ide-plugin.xml

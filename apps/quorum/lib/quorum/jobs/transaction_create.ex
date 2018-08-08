@@ -6,15 +6,12 @@ defmodule Quorum.Jobs.TransactionCreate do
   @quorum_client Application.get_env(:quorum, :client)
 
   @spec perform(map) :: :ok | {:error, term}
-  def perform(%{"transaction_data" => transaction_data, "callback" => callback} = message) do
+  def perform(%{"transaction_data" => transaction_data, "meta" => meta}) do
+    Log.info("Quorum.eth_send_transaction data #{inspect(transaction_data)}}")
+
     case @quorum_client.eth_send_transaction(transaction_data, []) do
       {:ok, transaction_hash} ->
-        %{
-          transaction_hash: transaction_hash,
-          callback: callback
-        }
-        |> put_provide_return_value(message)
-        |> TransactionStatus.enqueue!()
+        TransactionStatus.enqueue!(%{meta: meta, transaction_hash: transaction_hash}, delay: 200)
 
       err ->
         Log.error("Quorum.sendTransaction failed: #{inspect(err)}")
@@ -31,10 +28,4 @@ defmodule Quorum.Jobs.TransactionCreate do
     |> Enum.map(&(&1 * 1000))
     |> Enum.at(failed_count - 1, 1000)
   end
-
-  @spec put_provide_return_value(map, map) :: map
-  defp put_provide_return_value(message, %{"provide_return_value" => _}),
-    do: Map.put(message, :provide_return_value, true)
-
-  defp put_provide_return_value(message, _), do: message
 end

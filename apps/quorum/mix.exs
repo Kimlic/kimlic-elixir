@@ -13,7 +13,7 @@ defmodule Quorum.MixProject do
       lockfile: "../../mix.lock",
       elixir: "~> 1.6",
       elixirc_paths: elixirc_paths(Mix.env()),
-      compilers: [:phoenix] ++ Mix.compilers(),
+      compilers: Mix.compilers(),
       build_embedded: Mix.env() == :prod,
       start_permanent: Mix.env() == :prod,
       test_coverage: [tool: ExCoveralls],
@@ -24,6 +24,7 @@ defmodule Quorum.MixProject do
 
   def application do
     [
+      mod: {Quorum.Application, []},
       extra_applications: [:logger]
     ]
   end
@@ -33,11 +34,13 @@ defmodule Quorum.MixProject do
 
   defp deps do
     [
-      {:keccakf1600, "~> 2.0.0"},
-      {:jason, "~> 1.0"},
       {:confex, "~> 3.3.1"},
-      {:task_bunny, "~> 0.3.2"},
       {:ethereumex, "~> 0.3.2"},
+      {:httpoison, "~> 1.2", override: true},
+      {:jason, "~> 1.0"},
+      {:keccakf1600, "~> 2.0.0", hex: :keccakf1600_orig},
+      {:task_bunny, "~> 0.3.2"},
+      {:uuid, "~> 1.1"},
       {:mox, "~> 0.3", only: :test}
     ]
   end

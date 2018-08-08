@@ -9,15 +9,17 @@ services:
 - docker
 - redis-server
 - rabbitmq
+- postgresql
 addons:
+  postgresql: "9.6"
   apt:
     update: true
     packages:
     - docker-ce
 elixir:
-- 1.6.5
+- 1.6.6
 otp_release:
-- 20.3.6
+- 21.0.3
 notifications:
   slack: kimlic:1fQoIvvw0ckjFF5Bgftxggmf
 env:
@@ -37,29 +39,36 @@ branches:
 before_install:
 # Expose RabbitMQ to Docker container
 - sudo ./bin/ci/init-rabbitmq.sh
-before_script:
-# Create test user for rabbitMQ
-#  - rabbitmqctl add_user test test
-#  - rabbitmqctl set_permissions -p / test ".*" ".*" ".*"
-# Extract project name and version from mix.exs
-- source ./bin/ci/rel/fetch-project-environment.sh
-# Load information about new version
-- source ./bin/ci/release/fetch-source-version.sh
-script:
-# Check for versioning error
-- ./bin/ci/release/check-version-error.sh || travis_terminate 1
-# Increment version in mix.exs
-- ./bin/ci/release/put-source-version.sh || travis_terminate 1
-# Run all tests except pending ones
-- ./bin/mix_tests.sh || travis_terminate 1
-# Build Docker container
-- ./bin/ci/rel/build-container.sh || travis_terminate 1
-# Run Docker container
-- sudo ./bin/ci/rel/start-container.sh
-# Check that Docker container started
-- sudo ./bin/ci/release/check-container.sh || travis_terminate 1
-# Submit Docker container to Docker Hub and create GitHub Release by pushing tag with changelog
-- ./bin/ci/rel/push-changes.sh || travis_terminate 1
-#  - echo "Decrypting deploy key..."
-#  - openssl aes-256-cbc -K $encrypted_c996ec964e08_key -iv $encrypted_c996ec964e08_iv -in eHealth-8110bd102a69.json.enc -out eHealth-8110bd102a69.json -d
-#  - sudo ./bin/deploy.sh || travis_terminate 1
+# Expose Postgres
+- sudo ./bin/ci/init-db.sh
+jobs:
+  include:
+    - stage: "Test and build"
+      name: "Run tests and build Docker container for mobile_api"
+      env:
+        - APPLICATION_PATH="apps/mobile_api"
+      script:
+        - source ./bin/ci/rel/fetch-project-environment.sh
+        - source ./bin/ci/rel/fetch-source-version.sh
+        - ./bin/ci/rel/check-version-error.sh || travis_terminate 1
+        - ./bin/mix_tests.sh || travis_terminate 1
+        - ./bin/ci/rel/put-source-version.sh || travis_terminate 1
+        - ./bin/ci/rel/build-container.sh || travis_terminate 1
+        - sudo ./bin/ci/rel/start-container.sh
+        - sudo ./bin/ci/rel/check-container.sh || travis_terminate 1
+        - ./bin/ci/rel/push-changes.sh || travis_terminate 1
+
+    - stage: "Test and build"
+      name: "Run tests and build Docker container for attestation_api"
+      env:
+        - APPLICATION_PATH="apps/attestation_api"
+      script:
+        - source ./bin/ci/rel/fetch-project-environment.sh
+        - source ./bin/ci/rel/fetch-source-version.sh
+        - ./bin/ci/rel/check-version-error.sh || travis_terminate 1
+        - ./bin/mix_tests.sh || travis_terminate 1
+        - ./bin/ci/rel/put-source-version.sh || travis_terminate 1
+        - ./bin/ci/rel/build-container.sh || travis_terminate 1
+        - sudo ./bin/ci/rel/start-container.sh
+        - sudo ./bin/ci/rel/check-container.sh || travis_terminate 1
+        - ./bin/ci/rel/push-changes.sh || travis_terminate 1

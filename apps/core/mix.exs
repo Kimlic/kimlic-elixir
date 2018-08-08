@@ -13,7 +13,7 @@ defmodule Core.MixProject do
       lockfile: "../../mix.lock",
       elixir: "~> 1.6",
       elixirc_paths: elixirc_paths(Mix.env()),
-      compilers: [:phoenix] ++ Mix.compilers(),
+      compilers: Mix.compilers(),
       build_embedded: Mix.env() == :prod,
       start_permanent: Mix.env() == :prod,
       test_coverage: [tool: ExCoveralls],
@@ -41,6 +41,10 @@ defmodule Core.MixProject do
       {:swoosh, "~> 0.14"},
       {:gen_smtp, "~> 0.12.0"},
       {:ex_twilio, "~> 0.6.0"},
+      {:task_bunny, "~> 0.3.2"},
+      {:httpoison, "~> 1.2", override: true},
+      {:pigeon, "~> 1.2.0"},
+      {:kadabra, "~> 0.4.2"},
       {:mox, "~> 0.3", only: :test}
     ]
   end

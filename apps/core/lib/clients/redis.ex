@@ -2,7 +2,9 @@ defmodule Core.Clients.Redis do
   @moduledoc false
 
   import Ecto.Changeset
+
   alias Ecto.Changeset
+  alias Log
 
   @spec get(binary) :: {:ok, term} | {:error, binary}
   def get(key) when is_binary(key) do
@@ -10,13 +12,22 @@ defmodule Core.Clients.Redis do
       if encoded_value == nil do
         {:error, :not_found}
       else
-        {:ok, decode(encoded_value)}
+        entity =
+          encoded_value
+          |> decode()
+          |> Map.put(:redis_key, key)
+
+        {:ok, entity}
       end
+    else
+      {:error, reason} = err ->
+        Log.error("[#{__MODULE__}] Fail to get value by key (#{key}) with error #{inspect(reason)}")
+        err
     end
   end
 
-  @spec insert(Changeset.t()) :: {:ok, term} | {:error, binary}
-  def insert(%Changeset{} = changeset, ttl_seconds \\ nil) do
+  @spec upsert(Changeset.t(), pos_integer | nil) :: {:ok, term} | {:error, binary}
+  def upsert(%Changeset{} = changeset, ttl_seconds \\ nil) do
     {_, key} = fetch_field(changeset, :redis_key)
     entity = Changeset.apply_changes(changeset)
 
@@ -24,6 +35,15 @@ defmodule Core.Clients.Redis do
       :ok -> {:ok, entity}
       err -> err
     end
+  end
+
+  @spec update(struct, map | %{}, pos_integer | nil) :: {:ok, term} | {:error, binary}
+  def update(entity, params \\ %{}, ttl_seconds \\ nil) when is_map(entity) and is_map(params) do
+    entity
+    |> Map.from_struct()
+    |> Map.merge(params)
+    |> entity.__struct__.changeset()
+    |> upsert(ttl_seconds)
   end
 
   @spec set(binary, term, pos_integer | nil) :: :ok | {:error, atom}
@@ -38,8 +58,12 @@ defmodule Core.Clients.Redis do
   @spec do_set(list) :: :ok | {:error, binary}
   defp do_set(params) do
     case Redix.command(:redix, params) do
-      {:ok, _} -> :ok
-      err -> err
+      {:ok, _} ->
+        :ok
+
+      {:error, reason} = err ->
+        Log.error("[#{__MODULE__}] Fail to set with params #{inspect(params)} with error #{inspect(reason)}")
+        err
     end
   end
 

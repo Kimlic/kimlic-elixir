@@ -1,14 +1,18 @@
-defmodule Core.Email.Views.CreateProfileEmail do
+defmodule Core.Email.Views.EmailVerification do
   @moduledoc false
 
   import Swoosh.Email
 
   require EEx
 
-  @spec mail(binary, binary) :: Swoosh.Email.t()
-  def mail(email, code) do
+  @template __DIR__ <> "/../templates/email_verification.html.eex"
+
+  EEx.function_from_file(:def, :create_profile_email, @template, [:code])
+
+  @spec render(binary, binary) :: Swoosh.Email.t()
+  def render(email, code) do
     email_data = Confex.fetch_env!(:core, :emails)[:create_profile_email]
-    mail_html = EEx.eval_file(mail_path(), code: code)
+    mail_html = __MODULE__.create_profile_email(code)
 
     new()
     |> to(email)
@@ -16,7 +20,4 @@ defmodule Core.Email.Views.CreateProfileEmail do
     |> subject(email_data.subject)
     |> html_body(mail_html)
   end
-
-  @spec mail_path :: binary
-  defp mail_path, do: __DIR__ <> "/../templates/create_profile_email.html.eex"
 end

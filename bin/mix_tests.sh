@@ -3,6 +3,8 @@ cd $TRAVIS_BUILD_DIR
 
 # Run all tests except pending ones
 echo "- mix test --exclude pending --trace "
+mix ecto.create --quiet
+mix ecto.migrate
 mix test --exclude pending --trace
 
 if [ "$?" -eq 0 ]; then

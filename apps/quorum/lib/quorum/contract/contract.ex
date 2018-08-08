@@ -2,41 +2,87 @@ defmodule Quorum.Contract do
   @moduledoc false
 
   alias Quorum.ABI
+  alias Quorum.Contract.Store, as: ContractStore
+  alias Ethereumex.HttpClient, as: QuorumClient
 
-  @abi_dir __DIR__ <> "/abi"
-  @contract_account_storage :account_storage
-  @contract_base_verification :base_verification
-  @contract_verification_factory :verification_factory
+  @behaviour Quorum.Contract.Behaviour
 
-  @spec contract(atom) :: atom
-  def contract(:account_storage), do: @contract_account_storage
-  def contract(:verification_factory), do: @contract_verification_factory
-  def contract(:base_verification), do: @contract_base_verification
+  defmacro __using__(contract_name) do
+    quote do
+      import Quorum.Contract
+      @contract unquote(contract_name)
+      @contract_client Application.get_env(:quorum, :contract_client)
+    end
+  end
+
+  @spec call_function(binary, list) :: :ok
+  defmacro call_function(name, args) do
+    contract_args = Macro.escape(args)
+
+    function_name = name |> Macro.underscore() |> String.to_atom()
+    contract_function = Macro.escape(name)
+
+    quote bind_quoted: [
+            generated_function_name: function_name,
+            contract_function: contract_function,
+            contract_args: contract_args
+          ] do
+      def unquote(generated_function_name)(unquote_splicing(contract_args), options) do
+        @contract_client.call_function(
+          @contract,
+          unquote(contract_function),
+          [{unquote_splicing(contract_args)}],
+          options
+        )
+      end
+    end
+  end
+
+  @spec eth_call(binary, list) :: :ok
+  defmacro eth_call(name, args) do
+    contract_args = Macro.escape(args)
+
+    function_name = name |> Macro.underscore() |> String.to_atom()
+    contract_function = Macro.escape(name)
+
+    quote bind_quoted: [
+            generated_function_name: function_name,
+            contract_function: contract_function,
+            contract_args: contract_args
+          ] do
+      def unquote(generated_function_name)(unquote_splicing(contract_args), options) do
+        @contract_client.eth_call(@contract, unquote(contract_function), [{unquote_splicing(contract_args)}], options)
+      end
+    end
+  end
+
+  @spec call_function(atom, binary, list, map) :: :ok
+  def call_function(contract, function, args, options \\ %{}) do
+    meta = Map.get(options, :meta, %{})
+
+    options
+    |> Map.delete(:meta)
+    |> Map.put(:data, hash_data(contract, function, args))
+    |> Quorum.create_transaction(meta)
+  end
+
+  @spec eth_call(atom, binary, list, map) :: {:ok, binary}
+  def eth_call(contract, function, args, options \\ %{}) do
+    options
+    |> Map.put(:data, hash_data(contract, function, args))
+    |> QuorumClient.eth_call("latest", [])
+  end
 
   @spec hash_data(atom, binary, list) :: binary
-  def hash_data(contract, function, params) do
+  def hash_data(contract, function, params) when is_atom(contract) do
     contract
-    |> load_abi()
+    |> ContractStore.get()
     |> ABI.parse_specification()
     |> Enum.find(&(&1.function == function))
     |> ABI.encode(params)
     |> Base.encode16(case: :lower)
     |> add_prefix("0x")
   end
-
-  @spec load_abi(atom) :: [map]
-  defp load_abi(contract) do
-    # ToDo: store data in ets
-    contract
-    |> contract_path()
-    |> File.read!()
-    |> Jason.decode!()
-  end
-
-  @spec contract_path(atom) :: binary
-  defp contract_path(@contract_account_storage), do: @abi_dir <> "/account_storage.json"
-  defp contract_path(@contract_verification_factory), do: @abi_dir <> "/verification_contract_factory.json"
-  defp contract_path(@contract_base_verification), do: @abi_dir <> "/base_verification.json"
 
   @spec add_prefix(binary, binary) :: binary
   defp add_prefix(string, prefix), do: prefix <> string

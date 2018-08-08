@@ -4,40 +4,63 @@ defmodule MobileApi.Router do
   use MobileApi, :router
   use Plug.ErrorHandler
 
-  alias MobileApi.Plugs.CheckAuthorization
-  alias MobileApi.Plugs.CreatePhoneVerificationLimiter
+  alias MobileApi.Plugs.AccountAddress
+  alias MobileApi.Plugs.NodeId
+  alias MobileApi.Plugs.PhoneVerificationLimiter
   alias Plug.LoggerJSON
 
   require Logger
 
+  ### Pipelines
+
   pipeline :api do
+    plug(:accepts, ["json"])
+    plug(EView)
+    plug(AccountAddress)
+  end
+
+  pipeline :node_id do
+    plug(NodeId)
+  end
+
+  pipeline :quorum_proxy do
     plug(:accepts, ["json"])
   end
 
-  pipeline :authorized do
-    plug(CheckAuthorization)
+  pipeline :create_phone_verification_limiter do
+    plug(PhoneVerificationLimiter)
   end
 
-  pipeline :create_phone_verification_limiter do
-    plug(CreatePhoneVerificationLimiter)
-  end
+  ### Endpoints
 
   scope "/api", MobileApi do
-    pipe_through([:api, :authorized])
+    pipe_through(:api)
 
-    post("/quorum", QuorumController, :proxy)
-
-    scope "/auth" do
-      post("/email/send-verification", AuthController, :create_email_verification)
-      post("/email/verify", AuthController, :verify_email)
+    scope "/verifications" do
+      post("/email", VerificationController, :create_email_verification)
+      post("/email/approve", VerificationController, :verify_email)
 
       scope "/" do
         pipe_through(:create_phone_verification_limiter)
-        post("/phone/send-verification", AuthController, :create_phone_verification)
+        post("/phone", VerificationController, :create_phone_verification)
       end
 
-      post("/phone/verify", AuthController, :verify_phone)
+      post("/phone/approve", VerificationController, :verify_phone)
     end
+
+    scope "/" do
+      pipe_through(:node_id)
+      post("/push", PushController, :send_push)
+    end
+
+    get("/sync", SyncController, :sync_profile)
+    get("/config", ConfigController, :get_config)
+  end
+
+  scope "/api", MobileApi do
+    pipe_through(:quorum_proxy)
+
+    post("/quorum", QuorumController, :proxy)
   end
 
   @spec handle_errors(Plug.Conn.t(), map) :: Plug.Conn.t()
@@ -52,7 +75,9 @@ defmodule MobileApi.Router do
       })
     end)
 
-    send_resp(conn, 500, Jason.encode!(%{errors: %{detail: "Internal server error"}}))
+    conn
+    |> put_resp_header("content-type", "application/json; charset=utf-8")
+    |> send_resp(500, Jason.encode!(%{message: "Internal server error", detail: inspect(reason)}))
   end
 
   defp handle_errors(_, _), do: nil
