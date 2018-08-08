@@ -5,6 +5,11 @@
 
     "lib/abi/*",
     "lib/application.ex",
+    "lib/quorum/loggers/*",
+    "lib/quorum/proxy/client.ex",
+    "lib/quorum/contract/contracts/*",
+    "lib/quorum/contract/context.ex",
+    "lib/quorum/contract/behaviour.ex",
     "lib/quorum/proxy/client_behaviour.ex"
   ],
   "treat_no_relevant_lines_as_covered": true
