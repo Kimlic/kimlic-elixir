@@ -35,8 +35,6 @@ defmodule MobileApi.QuorumControllerTest do
 
     test "batch success", %{conn: conn} do
       expect(QuorumClientProxyMock, :call_rpc, fn params ->
-        assert Map.has_key?(params, "_json")
-
         {:ok, %HTTPoison.Response{status_code: 200, body: Jason.encode!(params)}}
       end)
 

@@ -32,6 +32,41 @@ defmodule Quorum.Unit.QuorumProxyTest do
       end)
     end
 
+    test "success batch request" do
+      expect(QuorumClientProxyMock, :call_rpc, fn params ->
+        assert is_list(params)
+
+        body = [
+          %{
+            jsonrpc: "2.0",
+            result: "Geth/v1.7.2-stable-52f137c8/linux-amd64/go1.10.2",
+            id: 1
+          }
+        ]
+
+        {:ok, %HTTPoison.Response{status_code: 200, body: Jason.encode!(body)}}
+      end)
+
+      params = %{
+        "_json" => [
+          %{
+            "jsonrpc" => "2.0",
+            "method" => "web3_clientVersion",
+            "params" => [],
+            "id" => 1
+          }
+        ]
+      }
+
+      assert {:ok, %HTTPoison.Response{status_code: 200, body: body}} = Proxy.proxy(params)
+      resp = Jason.decode!(body)
+      assert is_list(resp)
+
+      Enum.each(~w(jsonrpc result id), fn key ->
+        assert Map.has_key?(hd(resp), key), "RPC call response must contain `#{key}`"
+      end)
+    end
+
     test "failed validation on quorum" do
       expect(QuorumClientProxyMock, :call_rpc, fn _params ->
         body = %{
