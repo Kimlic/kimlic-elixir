@@ -12,16 +12,10 @@
 #   '-f' - force tag creating when git working tree is not empty.
 set -e
 
-REPO_TAG=${NEXT_VERSION}
-CONTAINER_VERSION="${PROJECT_VERSION}-${TRAVIS_JOB_NUMBER}"
-
 # A POSIX variable
 OPTIND=1 # Reset in case getopts has been used previously in the shell.
 
 # Default settings
-IS_LATEST=0
-IS_STABLE=0
-RELEASE_VERSION=$NEXT_VERSION
 
 if git diff-index --quiet HEAD --; then
   PASS_GIT=1
@@ -30,29 +24,11 @@ else
   PASS_GIT=0
 fi
 
-# Parse ARGS
-while getopts "v:la:ft:s" opt; do
-  case "$opt" in
-    a)  HUB_ACCOUNT=$OPTARG
-        ;;
-    v)  RELEASE_VERSION=$OPTARG
-        ;;
-    t)  REPO_TAG=$OPTARG
-        ;;
-    l)  IS_LATEST=1
-        ;;
-    s)  IS_STABLE=1
-        ;;
-    f)  PASS_GIT=1
-        ;;
-  esac
-done
-
-if [ ! $HUB_ACCOUNT  ]; then
-  echo "[E] You need to specify Docker Hub account with '-a' option."
-  exit 1
-fi
-
+CONTAINER_VERSION="${PROJECT_VERSION}-${TRAVIS_JOB_NUMBER}"
+IS_STABLE=0
+RELEASE_VERSION=$NEXT_VERSION
+HUB_ACCOUNT=$DOCKER_HUB_ACCOUNT
+IS_LATEST=1
 GIT_TAG="${RELEASE_VERSION}-${PROJECT_NAME}"
 
 # Create git tag that matches release version
