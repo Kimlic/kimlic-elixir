@@ -16,8 +16,7 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 REPO_URL="https://github.com/${TRAVIS_REPO_SLUG}.git";
 
 if [[ "${TRAVIS_PULL_REQUEST}" == "false" ]]; then
-  git add "apps/attestation_api/mix.exs";
-  git add "apps/mobile_api/mix.exs";
+  git add "${PROJECT_DIR}/mix.exs";
   git commit -m "Increment version [ci skip]";
 
   echo "Current branch: ${TRAVIS_BRANCH}"
@@ -41,6 +40,7 @@ if [[ "${TRAVIS_PULL_REQUEST}" == "false" ]]; then
     ssh-add github_deploy_key
 
     echo "Pushing changes back to origin repo.";
+    git pull $SSH_REPO HEAD:$TRUNK_BRANCH;
     git push $SSH_REPO HEAD:$TRUNK_BRANCH;
     echo "Done.";
   else

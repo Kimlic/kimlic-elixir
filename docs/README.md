@@ -6,12 +6,12 @@ For Docker environment configuration read
 
 ## Travis CI
 
-For CI and automatic semantic versioning repository requires git workflow branch naming.
+For CI and automatic semantic versioning repository requires proper commit message.
 
-Use next branch name convention:
- - `hotfix/*` - increment PATCH version (0.1.0 -> 0.1.1)
- - `feature/*` - increment MINOR version (0.1.0 -> 0.2.0)
- - `release/*` - increment MAJOR version (0.1.0 -> 1.0.0)
+Use next prefix in commit message:
+ - `[patch]` - increment PATCH version (0.1.0 -> 0.1.1)
+ - `[minor]` - increment MINOR version (0.1.0 -> 0.2.0)
+ - `[major]` - increment MAJOR version (0.1.0 -> 1.0.0)
  
 In case of invalid branch name Travis CI fails
 
