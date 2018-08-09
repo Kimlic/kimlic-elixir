@@ -28,7 +28,7 @@ defmodule Core.Factory do
 
   ### Factories
 
-  @spec verification(map) :: %Verification{}
+  @spec verification(map) :: map
   def verification(params \\ %{}) do
     %{
       entity_type: Verification.entity_type(:email),

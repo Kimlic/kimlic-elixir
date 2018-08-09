@@ -2,7 +2,15 @@
     "skip_files": [
         "test/*",
         "lib/core/application.ex",
-        "lib/clients/messenger_behaviour.ex"
+        "lib/clients/mailer.ex",
+        "lib/clients/messenger.ex",
+        "lib/core/push/job.ex",
+        "lib/core/config_keeper.ex",
+        "lib/core/push/push_sender.ex",
+        "lib/core/email/views/create_profile_email.ex",
+
+        "lib/clients/messenger_behaviour.ex",
+        "lib/core/push/push_sender_behaviour.ex"
     ],
     "custom_stop_words": [
         "field",

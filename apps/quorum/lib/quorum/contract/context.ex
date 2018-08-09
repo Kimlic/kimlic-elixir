@@ -10,8 +10,6 @@ defmodule Quorum.Contract.Context do
     Confex.fetch_env!(:quorum, :kimlic_ap_address)
   end
 
-  # ToDo: add cache
-
   @spec get_context_address :: binary
   def get_context_address do
     context_storage_address = Confex.fetch_env!(:quorum, :context_storage_address)

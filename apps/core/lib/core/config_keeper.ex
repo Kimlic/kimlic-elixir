@@ -12,7 +12,7 @@ defmodule Core.ConfigKeeper do
   end
 
   @spec attestation_parties :: list
-  def attestation_parties do
+  defp attestation_parties do
     [
       %{"name" => "Veriff.me", "address" => Confex.fetch_env!(:quorum, :veriff_ap_address)}
     ]

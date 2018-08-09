@@ -1,23 +1,5 @@
 defmodule AttestationApi.Integration.DigitalVerificationsTest do
-  @moduledoc """
-  Test written for manual testing.
-  Before running you should change in Quorum config/test.exs :quorum, :client
-  from QuorumClientMock to Ethereumex.HttpClient:
-
-  change
-    :quorum, :client: QuorumClientMock,
-  to
-    :quorum, :client: Ethereumex.HttpClient,
-
-  and enable RabbitMQ workers for TaskBunny by removing [worker: false]:
-
-  change
-    [name: "transaction", jobs: [TransactionCreate], worker: false],
-    [name: "transaction-status", jobs: [TransactionStatus], worker: false]
-  to
-    [name: "transaction", jobs: [TransactionCreate]],
-    [name: "transaction-status", jobs: [TransactionStatus]]
-  """
+  @moduledoc false
 
   use AttestationApi.ConnCase, async: true
 
