@@ -6,14 +6,19 @@ For Docker environment configuration read
 
 ## Travis CI
 
-For CI and automatic semantic versioning repository requires proper commit message.
+Kimlic-elixir repository integrated with [Travis CI](https://travis-ci.com/Kimlic/kimlic-elixir/builds)
+For automatic semantic versioning CI requires proper commit message for each commit in pull requests.
 
 Use next prefix in commit message:
  - `[patch]` - increment PATCH version (0.1.0 -> 0.1.1)
  - `[minor]` - increment MINOR version (0.1.0 -> 0.2.0)
  - `[major]` - increment MAJOR version (0.1.0 -> 1.0.0)
- 
-In case of invalid branch name Travis CI fails
+
+In case of invalid commit message Travis CI fails
+
+Every successful build in Travis CI for `develop` branch will create Docker container for [mobile_api](https://hub.docker.com/r/kimlictr/mobile_api/tags/) and [attestation_api](https://hub.docker.com/r/kimlictr/attestation_api/tags/) applications. 
+
+Documentation for containers deployment located in [Helm charts](https://github.com/kimlic/kimlic.charts) 
 
 ## Quorum
 
