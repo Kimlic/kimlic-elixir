@@ -6,7 +6,7 @@ For Docker environment configuration read
 
 ## Travis CI
 
-Kimlic-elixir repository integrated with [Travis CI](https://travis-ci.com/Kimlic/kimlic-elixir/builds)
+Kimlic-elixir repository integrated with [Travis CI](https://travis-ci.com/Kimlic/kimlic-elixir/builds).
 For automatic semantic versioning CI requires proper commit message for each commit in pull requests.
 
 Use next prefix in commit message:
