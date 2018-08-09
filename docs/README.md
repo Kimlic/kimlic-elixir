@@ -18,7 +18,7 @@ In case of invalid commit message Travis CI fails
 
 Every successful build in Travis CI for `develop` branch will create Docker container for [mobile_api](https://hub.docker.com/r/kimlictr/mobile_api/tags/) and [attestation_api](https://hub.docker.com/r/kimlictr/attestation_api/tags/) applications. 
 
-Documentation for containers deployment located in [Helm charts](https://github.com/kimlic/kimlic.charts) 
+Documentation for containers deployment located in [Helm charts](https://github.com/Kimlic/kimlic.charts/tree/azure) 
 
 ## Quorum
 
