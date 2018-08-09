@@ -1,5 +1,7 @@
 defmodule Core.Sync do
-  @moduledoc false
+  @moduledoc """
+  Returns verification fields that were previously set with their data
+  """
 
   alias Quorum.ABI.TypeDecoder
   alias Quorum.Contract.AccountStorageAdapter

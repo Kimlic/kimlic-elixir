@@ -1,5 +1,7 @@
 defmodule Core.Push.PushSender do
-  @moduledoc false
+  @moduledoc """
+  Sends push notifications for IOs and Android devices
+  """
 
   alias Core.Push.PushSenderBehaviour
   alias Pigeon.APNS, as: IOSPush

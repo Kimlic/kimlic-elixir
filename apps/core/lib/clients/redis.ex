@@ -1,5 +1,8 @@
 defmodule Core.Clients.Redis do
-  @moduledoc false
+  @moduledoc """
+  Provides convenient access to Redis using Redix under the hood
+  Serializes and stores data using Erlang `term_to_binary`
+  """
 
   import Ecto.Changeset
 

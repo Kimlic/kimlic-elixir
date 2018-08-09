@@ -1,5 +1,7 @@
 defmodule Core.ConfigKeeper do
-  @moduledoc false
+  @moduledoc """
+  Provides data for config endpoint
+  """
 
   alias Quorum.Contract.Context
 
