@@ -3,9 +3,10 @@ defmodule Quorum.Contract do
 
   alias Quorum.ABI
   alias Quorum.Contract.Store, as: ContractStore
-  alias Ethereumex.HttpClient, as: QuorumClient
 
   @behaviour Quorum.Contract.Behaviour
+
+  @quorum_client Application.get_env(:quorum, :client)
 
   defmacro __using__(contract_name) do
     quote do
@@ -70,7 +71,7 @@ defmodule Quorum.Contract do
   def eth_call(contract, function, args, options \\ %{}) do
     options
     |> Map.put(:data, hash_data(contract, function, args))
-    |> QuorumClient.eth_call("latest", [])
+    |> @quorum_client.eth_call("latest", [])
   end
 
   @spec hash_data(atom, binary, list) :: binary

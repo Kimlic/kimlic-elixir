@@ -18,6 +18,14 @@ config :core,
     "documents.residence_permit_card"
   ]
 
+config :pigeon, :apns,
+  apns_default: %{
+    cert: {:core, "cert.pem"},
+    key: {:core, "key_unencrypted.pem"},
+    mode: :dev,
+    apns_2197: true
+  }
+
 config :task_bunny,
   core_queue: [
     namespace: "core-test.",

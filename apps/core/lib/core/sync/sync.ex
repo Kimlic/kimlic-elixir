@@ -2,8 +2,8 @@ defmodule Core.Sync do
   @moduledoc false
 
   alias Quorum.ABI.TypeDecoder
+  alias Quorum.Contract.AccountStorageAdapter
   alias Quorum.Contract.Context
-  alias Quorum.Contract.Generated.AccountStorageAdapter
 
   @quorum_client Application.get_env(:quorum, :client)
 

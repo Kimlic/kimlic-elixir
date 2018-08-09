@@ -44,5 +44,9 @@ defmodule MobileApi.Plugs.NodeIdTest do
                |> put_req_header("node-id", generate(:node_id))
                |> NodeId.call([])
     end
+
+    test "plug init" do
+      assert [] == NodeId.init([])
+    end
   end
 end

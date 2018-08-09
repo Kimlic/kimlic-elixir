@@ -3,15 +3,12 @@ defmodule Quorum.Contract.Context do
   Module that fetch contract adresses from KimlicContractContext contract
   """
 
-  alias Quorum.Contract.Generated.KimlicContextStorage
-  alias Quorum.Contract.Generated.KimlicContractsContext
+  alias Quorum.Contract.{KimlicContextStorage, KimlicContractsContext}
 
   @spec get_kimlic_attestation_party_address :: binary
   def get_kimlic_attestation_party_address do
     Confex.fetch_env!(:quorum, :kimlic_ap_address)
   end
-
-  # ToDo: add cache
 
   @spec get_context_address :: binary
   def get_context_address do

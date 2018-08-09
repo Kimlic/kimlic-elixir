@@ -1,4 +1,4 @@
-defmodule Quorum.Contract.Generated.AccountStorageAdapter do
+defmodule Quorum.Contract.AccountStorageAdapter do
   @moduledoc false
 
   use Quorum.Contract, :account_storage_adapter

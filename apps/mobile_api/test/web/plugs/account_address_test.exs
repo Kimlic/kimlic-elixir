@@ -39,5 +39,9 @@ defmodule MobileApi.Plugs.AccountAddressTest do
           |> AccountAddress.call([])
       end
     end
+
+    test "plug init" do
+      assert [] == AccountAddress.init([])
+    end
   end
 end
