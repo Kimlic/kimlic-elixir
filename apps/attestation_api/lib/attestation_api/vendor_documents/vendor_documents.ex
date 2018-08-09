@@ -1,6 +1,6 @@
 defmodule AttestationApi.VendorDocuments do
   @moduledoc """
-  Manages digital verification vendors
+  Manages digital verification documents
   """
 
   alias AttestationApi.DigitalVerifications.DigitalVerification

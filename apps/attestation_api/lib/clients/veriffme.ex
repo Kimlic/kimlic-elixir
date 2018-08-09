@@ -1,5 +1,7 @@
 defmodule AttestationApi.Clients.Veriffme do
-  @moduledoc false
+  @moduledoc """
+  Interacts with Veriff.me API
+  """
 
   alias __MODULE__
 
@@ -75,6 +77,7 @@ defmodule AttestationApi.Clients.Veriffme do
   end
 
   @doc """
+  Update Veriff.me status
   API Response example:
   {
     "status": "success",
