@@ -1,17 +1,12 @@
 #!/bin/bash
-
 PREVIOUS_VERSION=$PROJECT_VERSION
 
-# Fetch changes from branch name
-if [[ "${TRAVIS_PULL_REQUEST}" == "false" ]]; then
-  GIT_BRANCH=${TRAVIS_BRANCH}
-else
-  GIT_BRANCH=${TRAVIS_PULL_REQUEST_BRANCH}
-fi;
+LAST_COMMIT=$(git log --pretty=format:"%h" -2)
+LAST_COMMITS_MESSAGE=$(git show --quiet --pretty=format:%B $LAST_COMMIT)
 
-MAJOR_CHANGES=$(grep -io '^release/' <<< "${GIT_BRANCH}" | wc -l)
-MINOR_CHANGES=$(grep -io '^feature/' <<< "${GIT_BRANCH}" | wc -l)
-PATCH_CHANGES=$(grep -io '^hotfix/' <<< "${GIT_BRANCH}" | wc -l)
+MAJOR_CHANGES=$(grep -io '^\[major\]' <<< "${LAST_COMMITS_MESSAGE}" | wc -l)
+MINOR_CHANGES=$(grep -io '^\[minor\]' <<< "${LAST_COMMITS_MESSAGE}" | wc -l)
+PATCH_CHANGES=$(grep -io '^\[patch\]' <<< "${LAST_COMMITS_MESSAGE}" | wc -l)
 
 # Convert values to numbers (trims leading spaces)
 MAJOR_CHANGES=$(expr $MAJOR_CHANGES + 0)
@@ -39,14 +34,15 @@ fi;
 NEXT_VERSION="${NEXT_MAJOR_VERSION}.${NEXT_MINOR_VERSION}.${NEXT_PATCH_VERSION}"
 
 if [[ "${MAJOR_CHANGES}" == "0" && "${MINOR_CHANGES}" == "0" && "${PATCH_CHANGES}" == "0" ]]; then
-  echo "[ERROR] No version changes was detected. Branch name should start with release/*, feature/* or hotfix/* prefix."
-  exit 1
+  echo "[ERROR] No version changes was detected (no patch, minor or major changes)."
+  export VERSION_ERROR="[ERROR] No version changes was detected (no patch, minor or major changes)."
 fi;
 
 # Show version info
 echo
 echo "Version information: "
 echo " - Previous version was ${PREVIOUS_VERSION}"
+echo " - There was ${MAJOR_CHANGES} major, ${MINOR_CHANGES} minor and ${PATCH_CHANGES} patch changes since then"
 echo " - Next version will be ${NEXT_VERSION}"
 
 export PREVIOUS_VERSION=$PREVIOUS_VERSION
