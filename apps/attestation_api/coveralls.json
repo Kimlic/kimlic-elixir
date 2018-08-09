@@ -6,9 +6,9 @@
         "lib/web/attestation_api.ex",
         "lib/web/router.ex",
         "lib/web/endpoint.ex",
-
-        "lib/clients/veriffme_behaviour.ex",
-        "lib/clients/push_behaviour.ex"
+        "lib/web/controllers/fallback_controller",
+        "lib/clients/push.ex",
+        "lib/clients/veriffme.ex"
     ],
     "custom_stop_words": [
         "field",
@@ -17,7 +17,8 @@
         "embeds_one",
         "embeds_many",
         "schema",
-        "send"
+        "send",
+        "Log."
     ],
     "treat_no_relevant_lines_as_covered": true
 }
