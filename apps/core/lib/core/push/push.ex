@@ -1,5 +1,7 @@
 defmodule Core.Push do
-  @moduledoc false
+  @moduledoc """
+  Registres push notifications in queue via PushJob
+  """
 
   alias Core.Push.Job, as: PushJob
 

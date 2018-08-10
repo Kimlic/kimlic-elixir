@@ -1,5 +1,7 @@
 defmodule Core.Clients.Messenger do
-  @moduledoc false
+  @moduledoc """
+  Sends sms using Twillio library
+  """
 
   alias Core.Clients.MessengerBehaviour
   alias ExTwilio.Message

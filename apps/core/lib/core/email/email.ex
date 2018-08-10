@@ -1,5 +1,7 @@
 defmodule Core.Email do
-  @moduledoc false
+  @moduledoc """
+  Defines functions for email sending
+  """
 
   alias Core.Clients.Mailer
   alias Core.Email.Views.EmailVerification
