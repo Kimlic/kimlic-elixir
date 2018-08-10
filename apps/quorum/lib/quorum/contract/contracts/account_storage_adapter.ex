@@ -1,5 +1,7 @@
 defmodule Quorum.Contract.AccountStorageAdapter do
-  @moduledoc false
+  @moduledoc """
+  AccountStorageAdapter with generated functions via macros
+  """
 
   use Quorum.Contract, :account_storage_adapter
 

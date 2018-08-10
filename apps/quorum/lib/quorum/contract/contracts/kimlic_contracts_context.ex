@@ -1,5 +1,7 @@
 defmodule Quorum.Contract.KimlicContractsContext do
-  @moduledoc false
+  @moduledoc """
+  KimlicContractsContext with generated functions via macros
+  """
 
   use Quorum.Contract, :kimlic_contracts_context
 

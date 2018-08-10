@@ -1,5 +1,12 @@
 defmodule Quorum.Contract do
-  @moduledoc false
+  @moduledoc """
+  Defines a contracts. Hash contract data
+
+  Macros generates two basic functions for Quorum calls:
+   - `eth_call` - direct call to Quorum
+   - `call_function` - create transaction via TaskBunny jobs (RabbitMQ queues)
+
+  """
 
   alias Quorum.ABI
   alias Quorum.Contract.Store, as: ContractStore

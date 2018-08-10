@@ -1,10 +1,19 @@
 defmodule Quorum.Jobs.TransactionCreate do
+  @moduledoc """
+  TaskBunny Job for transaction creation in Quorum.
+  Data stored in RabbitMQ queue
+  Read more https://github.com/shinyscorpion/task_bunny#workers
+  """
+
   use TaskBunny.Job
   alias Log
   alias Quorum.Jobs.TransactionStatus
 
   @quorum_client Application.get_env(:quorum, :client)
 
+  @doc """
+  Takes data from queue and create quorum transaction
+  """
   @spec perform(map) :: :ok | {:error, term}
   def perform(%{"transaction_data" => transaction_data, "meta" => meta}) do
     Log.info("Quorum.eth_send_transaction data #{inspect(transaction_data)}}")

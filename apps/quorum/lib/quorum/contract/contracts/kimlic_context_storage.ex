@@ -1,5 +1,7 @@
 defmodule Quorum.Contract.KimlicContextStorage do
-  @moduledoc false
+  @moduledoc """
+  KimlicContextStorage with generated functions via macros
+  """
 
   use Quorum.Contract, :kimlic_context_storage
 

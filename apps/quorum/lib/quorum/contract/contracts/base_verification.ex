@@ -1,5 +1,7 @@
 defmodule Quorum.Contract.BaseVerification do
-  @moduledoc false
+  @moduledoc """
+  BaseVerification with generated functions via macros
+  """
 
   @contract :base_verification
   @contract_client Application.get_env(:quorum, :contract_client)
@@ -12,6 +14,9 @@ defmodule Quorum.Contract.BaseVerification do
 
   call_function("withdraw", [])
 
+  @doc """
+  Returns BaseVerification.tokens_unlock_at in unix timestamp format
+  """
   @spec tokens_unlock_at(map) :: {:ok, integer} | {:error, term}
   def tokens_unlock_at(options) do
     case @contract_client.eth_call(@contract, "tokensUnlockAt", [], options) do
