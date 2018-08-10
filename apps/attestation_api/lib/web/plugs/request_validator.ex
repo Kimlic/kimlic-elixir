@@ -13,6 +13,9 @@ defmodule AttestationApi.Plugs.RequestValidator do
   alias Ecto.Changeset
   alias Plug.Conn
 
+  @doc """
+  Runs plug
+  """
   @spec call(Conn.t(), Plug.opts()) :: Conn.t()
   def call(%Conn{params: params} = conn, [{:validator, validator} | _] = opts) do
     case validator.changeset(params) do

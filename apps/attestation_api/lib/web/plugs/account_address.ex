@@ -15,6 +15,9 @@ defmodule AttestationApi.Plugs.AccountAddress do
   @spec init(Plug.opts()) :: Plug.opts()
   def init(opts), do: opts
 
+  @doc """
+  Runs plug
+  """
   @spec call(Conn.t(), Plug.opts()) :: Conn.t()
   def call(%Conn{} = conn, _opts) do
     with {:ok, header} <- validate_required_header(conn),

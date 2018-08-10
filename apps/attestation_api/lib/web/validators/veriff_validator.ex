@@ -22,6 +22,9 @@ defmodule AttestationApi.Validators.VeriffValidator do
     end)
   end
 
+  @doc """
+  Validate Veriff.me session_id exists in database
+  """
   @spec validate_session_id_exists(Ecto.Changeset.t(), atom) :: Ecto.Changeset.t()
   def validate_session_id_exists(changeset, field) do
     validate_change(changeset, field, fn _, session_id ->
@@ -32,7 +35,9 @@ defmodule AttestationApi.Validators.VeriffValidator do
     end)
   end
 
-  # actual image size should be less than 3.7 mb
+  @doc """
+  Validate image size provided as base64. Actual image size should be less than 3.7 mb
+  """
   @spec validate_base64_size(Ecto.Changeset.t(), atom) :: Ecto.Changeset.t()
   def validate_base64_size(changeset, field) do
     validate_change(changeset, field, fn _, image_base64 ->

@@ -13,18 +13,21 @@ defmodule AttestationApi.Clients.Veriffme do
   @request_options [ssl: [{:versions, [:"tlsv1.2"]}]]
 
   @doc """
+  Creates session.
   API Response example:
-  {
-    "status": "success",
-    "verification": {
-      "id": "53c072c9-73f0-41d9-bc7c-763bea81d904",
-      "url": "https://magic.veriff.me/v/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzZXNzaW9uX2lkIjoiNTNjMDcyYzktNzNmMC00MWQ5LWJjN2MtNzYzYmVhODFkOTA0IiwiaWF0IjoxNTI4OTYyMTU3LCJleHAiOjE1Mjk1NjY5NTd9.c2bFWGCVJrXHnSW4owCsvkXP7a5JcNuRWCGHZVSliyc",
-      "host": "https://magic.veriff.me",
-      "status": "created",
-      "sessionToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzZXNzaW9uX2lkIjoiNTNjMDcyYzktNzNmMC00MWQ5LWJjN2MtNzYzYmVhODFkOTA0IiwiaWF0IjoxNTI4OTYyMTU3LCJleHAiOjE1Mjk1NjY5NTd9.c2bFWGCVJrXHnSW4owCsvkXP7a5JcNuRWCGHZVSliyc"
-    }
-  }
-  Success status_code: 201
+
+      {
+        "status": "success",
+        "verification": {
+          "id": "53c072c9-73f0-41d9-bc7c-763bea81d904",
+          "url": "https://magic.veriff.me/v/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzZXNzaW9uX2lkIjoiNTNjMDcyYzktNzNmMC00MWQ5LWJjN2MtNzYzYmVhODFkOTA0IiwiaWF0IjoxNTI4OTYyMTU3LCJleHAiOjE1Mjk1NjY5NTd9.c2bFWGCVJrXHnSW4owCsvkXP7a5JcNuRWCGHZVSliyc",
+          "host": "https://magic.veriff.me",
+          "status": "created",
+          "sessionToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzZXNzaW9uX2lkIjoiNTNjMDcyYzktNzNmMC00MWQ5LWJjN2MtNzYzYmVhODFkOTA0IiwiaWF0IjoxNTI4OTYyMTU3LCJleHAiOjE1Mjk1NjY5NTd9.c2bFWGCVJrXHnSW4owCsvkXP7a5JcNuRWCGHZVSliyc"
+        }
+      }
+
+  Success status code: 201
   """
   @spec create_session(binary, binary, binary, binary, binary) :: api_response
   def create_session(first_name, last_name, lang, document_type, unix_timestamp) do
@@ -47,21 +50,24 @@ defmodule AttestationApi.Clients.Veriffme do
   end
 
   @doc """
+  Uploads media.
   API Response example:
-  {
-    "status": "success",
-    "image": {
-      "id": "14380b99-e8df-4c1b-b33e-5d4994790148",
-      "name": "face",
-      "timestamp": {
-        "url": "https://api.veriff.me/v1/timestamps/undefined"
-      },
-      "size": 70,
-      "mimetype": "image/png",
-      "url": "https://api.veriff.me/v1/media/14380b99-e8df-4c1b-b33e-5d4994790148"
-    }
-  }
-  Success status_code: 200
+
+      {
+        "status": "success",
+        "image": {
+          "id": "14380b99-e8df-4c1b-b33e-5d4994790148",
+          "name": "face",
+          "timestamp": {
+            "url": "https://api.veriff.me/v1/timestamps/undefined"
+          },
+          "size": 70,
+          "mimetype": "image/png",
+          "url": "https://api.veriff.me/v1/media/14380b99-e8df-4c1b-b33e-5d4994790148"
+        }
+      }
+
+  Success status code: 200
   """
   @spec upload_media(binary, binary, binary, binary) :: api_response
   def upload_media(session_id, context, image_base64, unix_timestamp) when context in @contexts do
@@ -77,19 +83,21 @@ defmodule AttestationApi.Clients.Veriffme do
   end
 
   @doc """
-  Update Veriff.me status
+  Updates session status.
   API Response example:
-  {
-    "status": "success",
-    "verification": {
-      "id": "53c072c9-73f0-41d9-bc7c-763bea81d904",
-      "url": "https://magic.veriff.me/v/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzZXNzaW9uX2lkIjoiNTNjMDcyYzktNzNmMC00MWQ5LWJjN2MtNzYzYmVhODFkOTA0IiwiaWF0IjoxNTI4OTYyMTU3LCJleHAiOjE1Mjk1NjY5NTd9.c2bFWGCVJrXHnSW4owCsvkXP7a5JcNuRWCGHZVSliyc",
-      "host": "https://magic.veriff.me",
-      "status": "submitted",
-      "sessionToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzZXNzaW9uX2lkIjoiNTNjMDcyYzktNzNmMC00MWQ5LWJjN2MtNzYzYmVhODFkOTA0IiwiaWF0IjoxNTI4OTYyMTU3LCJleHAiOjE1Mjk1NjY5NTd9.c2bFWGCVJrXHnSW4owCsvkXP7a5JcNuRWCGHZVSliyc"
-    }
-  }
-  Success status_code: 200
+
+      {
+        "status": "success",
+        "verification": {
+          "id": "53c072c9-73f0-41d9-bc7c-763bea81d904",
+          "url": "https://magic.veriff.me/v/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzZXNzaW9uX2lkIjoiNTNjMDcyYzktNzNmMC00MWQ5LWJjN2MtNzYzYmVhODFkOTA0IiwiaWF0IjoxNTI4OTYyMTU3LCJleHAiOjE1Mjk1NjY5NTd9.c2bFWGCVJrXHnSW4owCsvkXP7a5JcNuRWCGHZVSliyc",
+          "host": "https://magic.veriff.me",
+          "status": "submitted",
+          "sessionToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzZXNzaW9uX2lkIjoiNTNjMDcyYzktNzNmMC00MWQ5LWJjN2MtNzYzYmVhODFkOTA0IiwiaWF0IjoxNTI4OTYyMTU3LCJleHAiOjE1Mjk1NjY5NTd9.c2bFWGCVJrXHnSW4owCsvkXP7a5JcNuRWCGHZVSliyc"
+        }
+      }
+
+  Success status code: 200
   """
   @spec close_session(binary) :: api_response
   def close_session(session_id) do
@@ -109,6 +117,9 @@ defmodule AttestationApi.Clients.Veriffme do
     HTTPoison.request(method, base_url() <> url, Jason.encode!(request_data), headers(request_data), @request_options)
   end
 
+  @doc """
+  Returns available contexts
+  """
   @spec contexts :: list
   def contexts, do: @contexts
 

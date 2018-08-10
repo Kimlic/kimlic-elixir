@@ -1,5 +1,7 @@
 defmodule AttestationApi.DigitalVerificationController do
-  @moduledoc false
+  @moduledoc """
+  Defines endpoints related to digital verification
+  """
 
   use AttestationApi, :controller
 
