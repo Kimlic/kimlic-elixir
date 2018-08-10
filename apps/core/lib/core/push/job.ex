@@ -10,6 +10,9 @@ defmodule Core.Push.Job do
 
   @push_sender Application.get_env(:core, :dependencies)[:push_sender]
 
+  @doc """
+  Handles run job event from queue
+  """
   @spec perform(map) :: :ok
   def perform(%{"message" => message, "device_os" => device_os, "device_token" => device_token}) do
     message
@@ -21,6 +24,9 @@ defmodule Core.Push.Job do
     end
   end
 
+  @doc """
+  Handles reject event from queue
+  """
   @spec on_reject(binary) :: :ok
   def on_reject(body) do
     Log.error(%{
@@ -31,9 +37,11 @@ defmodule Core.Push.Job do
     :ok
   end
 
+  @doc false
   @spec max_retry :: integer
   def max_retry, do: 5
 
+  @doc false
   @spec retry_interval(integer) :: integer
   def retry_interval(failed_count) do
     retry_interval_minutes = [1, 2, 5, 10, 15]

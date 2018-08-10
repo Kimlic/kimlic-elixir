@@ -13,6 +13,9 @@ defmodule Core.Push.PushSender do
 
   @type notification_t :: PushSenderBehaviour.notification_t()
 
+  @doc """
+  Sends push notification for IOs and Android devices
+  """
   @spec send(binary, binary, binary) :: notification_t
   def send(message, device_os, device_token) do
     device_os

@@ -9,6 +9,12 @@ defmodule Core.Sync do
 
   @quorum_client Application.get_env(:quorum, :client)
 
+  @doc """
+  Run sync proccess:
+  - Validates account fields exist and set
+  - Receives field details
+  - Formats response data
+  """
   @spec handle(binary) :: [map]
   def handle(account_address) do
     unlock_profile_sync_user()
