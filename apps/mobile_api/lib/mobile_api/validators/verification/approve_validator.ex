@@ -1,4 +1,8 @@
 defmodule MobileApi.Validators.Verification.ApproveValidator do
+  @moduledoc """
+  Changeset for code
+  """
+
   use Ecto.Schema
 
   import Ecto.Changeset
@@ -10,6 +14,9 @@ defmodule MobileApi.Validators.Verification.ApproveValidator do
     field(:code, :string)
   end
 
+  @doc """
+  Validate code schema
+  """
   @spec changeset(map) :: Changeset.t()
   def changeset(attrs) do
     %__MODULE__{}

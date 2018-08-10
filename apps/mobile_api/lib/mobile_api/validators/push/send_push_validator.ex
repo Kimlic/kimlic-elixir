@@ -1,5 +1,7 @@
 defmodule MobileApi.Validators.Push.SendPushValidator do
-  @moduledoc false
+  @moduledoc """
+  Changeset for send push request
+  """
 
   use Ecto.Schema
   import Ecto.Changeset
@@ -11,6 +13,9 @@ defmodule MobileApi.Validators.Push.SendPushValidator do
     field(:device_token, :string)
   end
 
+  @doc """
+  Validate push schema
+  """
   @spec changeset(map) :: Ecto.Changeset.t()
   def changeset(params) do
     fields = __MODULE__.__schema__(:fields)

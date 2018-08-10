@@ -7,6 +7,9 @@ defmodule MobileApi.SyncController do
 
   action_fallback(MobileApi.FallbackController)
 
+  @doc """
+  Renders data_fields with result of Core.Sync.handle
+  """
   @spec sync_profile(Conn.t(), map) :: Conn.t()
   def sync_profile(conn, _params) do
     Log.info(%{"message" => "#{__MODULE__} Request sync_profile", "log_tag" => "profile_sync"})

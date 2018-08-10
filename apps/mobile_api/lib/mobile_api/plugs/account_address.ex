@@ -1,5 +1,7 @@
 defmodule MobileApi.Plugs.AccountAddress do
-  @moduledoc false
+  @moduledoc """
+  Validates request with required header `account-address`
+  """
 
   import Plug.Conn
   import Phoenix.Controller, only: [render: 4]
@@ -13,6 +15,9 @@ defmodule MobileApi.Plugs.AccountAddress do
   @spec init(Plug.opts()) :: Plug.opts()
   def init(opts), do: opts
 
+  @doc """
+  Validate request header
+  """
   @spec call(Conn.t(), Plug.opts()) :: Conn.t()
   def call(%Conn{} = conn, _opts) do
     with {:ok, header} <- validate_required_header(conn),

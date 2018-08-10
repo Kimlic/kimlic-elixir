@@ -1,5 +1,8 @@
 defmodule MobileApi.Plugs.PhoneVerificationLimiter do
-  @moduledoc false
+  @moduledoc """
+  Rate limit for phone verification via Hummer
+  Read more https://github.com/ExHammer/hammer
+  """
 
   import Plug.Conn
   alias Plug.Conn
@@ -9,6 +12,9 @@ defmodule MobileApi.Plugs.PhoneVerificationLimiter do
   @spec init(Plug.opts()) :: Plug.opts()
   def init(opts), do: opts
 
+  @doc """
+  Check rate limit
+  """
   @spec call(Conn.t(), Plug.opts()) :: Conn.t()
   def call(%Conn{params: params, assigns: assigns} = conn, _opts) do
     user_rate_limit_key = "create_phone_verification_limiter:#{assigns.account_address}:#{params["phone"]}"

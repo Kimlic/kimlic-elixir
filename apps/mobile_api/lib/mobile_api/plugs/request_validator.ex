@@ -1,5 +1,7 @@
 defmodule MobileApi.Plugs.RequestValidator do
-  @moduledoc false
+  @moduledoc """
+  Plug that validates request by passed Changeset
+  """
 
   use Phoenix.Controller
 
@@ -9,6 +11,9 @@ defmodule MobileApi.Plugs.RequestValidator do
   alias MobileApi.FallbackController
   alias Plug.Conn
 
+  @doc """
+  Validate request
+  """
   @spec call(Conn.t(), Plug.opts()) :: Conn.t()
   def call(%Conn{params: params} = conn, [{:validator, validator} | _] = opts) do
     case validator.changeset(params) do

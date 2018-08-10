@@ -1,4 +1,8 @@
 defmodule MobileApi.Validators.Verification.PhoneValidator do
+  @moduledoc """
+  Changeset for phone
+  """
+
   use Ecto.Schema
 
   import Ecto.Changeset
@@ -12,6 +16,9 @@ defmodule MobileApi.Validators.Verification.PhoneValidator do
     field(:phone, :string)
   end
 
+  @doc """
+  Validate phone schema
+  """
   @spec changeset(map) :: Changeset.t()
   def changeset(attrs) do
     %__MODULE__{}
