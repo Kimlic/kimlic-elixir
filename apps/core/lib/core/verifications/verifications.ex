@@ -1,5 +1,7 @@
 defmodule Core.Verifications do
-  @moduledoc false
+  @moduledoc """
+  Defines business logic and DB operations with Verification entity
+  """
 
   import Core.Verifications.Verification, only: [allowed_type_atom: 1]
 

@@ -1,5 +1,7 @@
 defmodule Core.Push.Job do
-  @moduledoc false
+  @moduledoc """
+  Sends push notification from queue job
+  """
 
   use TaskBunny.Job
 
