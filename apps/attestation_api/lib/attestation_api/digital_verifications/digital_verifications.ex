@@ -1,5 +1,7 @@
 defmodule AttestationApi.DigitalVerifications do
-  @moduledoc false
+  @moduledoc """
+  Defines business logic and DB operations with DigitalVerification entity
+  """
 
   import Ecto.Query, except: [update: 2]
 
@@ -14,7 +16,6 @@ defmodule AttestationApi.DigitalVerifications do
   @verification_status_passed DigitalVerification.status(:passed)
   @verification_status_pending DigitalVerification.status(:pending)
 
-  # todo: remove magic number accross code
   @verification_code_success 9001
   @verification_code_resubmission 9103
 

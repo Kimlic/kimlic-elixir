@@ -1,5 +1,7 @@
 defmodule AttestationApi.VendorDocuments.Store do
-  @moduledoc false
+  @moduledoc """
+  Stores vendor documents in memory
+  """
 
   use Agent
 

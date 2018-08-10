@@ -15,6 +15,7 @@ defmodule Kimlic.MixProject do
 
   defp deps do
     [
+      {:ex_doc, "~> 0.18.0", only: :dev, runtime: false},
       {:distillery, "~> 1.5", runtime: false},
       {:excoveralls, "~> 0.9", only: [:dev, :test]},
       {:credo, "~> 0.10", only: [:dev, :test], runtime: false},

@@ -1,5 +1,7 @@
 defmodule AttestationApi.DigitalVerifications.Operations.UploadMedia do
-  @moduledoc false
+  @moduledoc """
+  Uploads media to Veriff, closes Veriff session
+  """
 
   import Ecto.Query, except: [update: 2]
 

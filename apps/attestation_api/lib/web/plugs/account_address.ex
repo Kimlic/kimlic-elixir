@@ -1,5 +1,7 @@
 defmodule AttestationApi.Plugs.AccountAddress do
-  @moduledoc false
+  @moduledoc """
+  Parses account-address header and assings it to phoenix `conn` struct
+  """
 
   import Plug.Conn
   import Phoenix.Controller, only: [render: 4]

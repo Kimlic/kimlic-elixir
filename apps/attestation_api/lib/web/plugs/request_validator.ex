@@ -1,5 +1,9 @@
 defmodule AttestationApi.Plugs.RequestValidator do
-  @moduledoc false
+  @moduledoc """
+  Validates request data using Ecto.Changeset
+  Requires particular validator (module that uses Ecto.Schema) and optinal fallback handler
+  Returns 422 error in case of invalid data
+  """
 
   use Phoenix.Controller
 

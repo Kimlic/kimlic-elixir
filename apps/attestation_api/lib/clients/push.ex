@@ -1,5 +1,7 @@
 defmodule AttestationApi.Clients.Push do
-  @moduledoc false
+  @moduledoc """
+  Sends push notifications
+  """
 
   @behaviour AttestationApi.Clients.PushBehaviour
 
@@ -8,6 +10,9 @@ defmodule AttestationApi.Clients.Push do
   @available_device_os ["ios", "android"]
   @request_options [ssl: [{:versions, [:"tlsv1.2"]}]]
 
+  @doc """
+  Sends push notifications via HTTP call to Mobile API push endpoint with Quorum node_id info
+  """
   @spec send(binary, binary, binary) :: :ok
   def send(message, device_os, device_token) when device_os in @available_device_os do
     with {:ok, node_id} <- get_node_id(),

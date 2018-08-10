@@ -1,9 +1,14 @@
 defmodule AttestationApi.Validators.VeriffValidator do
-  @moduledoc false
+  @moduledoc """
+  Defines functions to validate data during Verriff verification proccess
+  """
 
   import Ecto.Changeset
   alias AttestationApi.DigitalVerifications
 
+  @doc """
+  Validates timestamp not to be older than hour
+  """
   @spec validate_timestamp(Ecto.Changeset.t(), atom) :: Ecto.Changeset.t()
   def validate_timestamp(changeset, field) do
     hour = 60 * 60
