@@ -8,7 +8,7 @@
     <title>Quorum – Kimlic v1.0.0</title>
     <link rel="stylesheet" href="dist/app-480ffdc169.css" />
     
-    <script src="dist/sidebar_items-284709b765.js"></script>
+    <script src="dist/sidebar_items-01e6fad8b1.js"></script>
     
     
     
@@ -81,7 +81,9 @@
 
       
         <section id="moduledoc">
-          <p>Quorum client</p>
+          <p>Quorum client.
+Creates transaction and check transaction status.
+Works in 2 RabbitMQ queues: transaction_create and transaction_status.</p>
 
         </section>
       
@@ -162,12 +164,6 @@
   </div>
   
 </div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="#validate_account_field_has_no_verification/3">validate_account_field_has_no_verification(account_address, field, to)</a>
-  </div>
-  
-</div>
 
   </div>
 
@@ -197,7 +193,7 @@
     </a>
     <span class="signature">callback()</span>
     
-      <a href="https://github.com/Kimlic/kimlic-elixir/blob/master/apps/quorum/lib/quorum.ex#L12" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/Kimlic/kimlic-elixir/blob/master/apps/quorum/lib/quorum.ex#L14" class="view-source" rel="help" title="View Source">
        <span class="icon-code" aria-hidden="true"></span>
        <span class="sr-only">View Source</span>
      </a>
@@ -225,7 +221,7 @@
     </a>
     <span class="signature">quorum_client_response_t()</span>
     
-      <a href="https://github.com/Kimlic/kimlic-elixir/blob/master/apps/quorum/lib/quorum.ex#L13" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/Kimlic/kimlic-elixir/blob/master/apps/quorum/lib/quorum.ex#L15" class="view-source" rel="help" title="View Source">
        <span class="icon-code" aria-hidden="true"></span>
        <span class="sr-only">View Source</span>
      </a>
@@ -270,7 +266,7 @@
     </a>
     <span class="signature">create_transaction(transaction_data, meta \\ %{})</span>
     
-      <a href="https://github.com/Kimlic/kimlic-elixir/blob/master/apps/quorum/lib/quorum.ex#L196" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/Kimlic/kimlic-elixir/blob/master/apps/quorum/lib/quorum.ex#L198" class="view-source" rel="help" title="View Source">
        <span class="icon-code" aria-hidden="true"></span>
        <span class="sr-only">View Source</span>
      </a>
@@ -322,7 +318,7 @@ end</code></pre>
     </a>
     <span class="signature">create_verification_contract(type, account_address, callback)</span>
     
-      <a href="https://github.com/Kimlic/kimlic-elixir/blob/master/apps/quorum/lib/quorum.ex#L25" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/Kimlic/kimlic-elixir/blob/master/apps/quorum/lib/quorum.ex#L27" class="view-source" rel="help" title="View Source">
        <span class="icon-code" aria-hidden="true"></span>
        <span class="sr-only">View Source</span>
      </a>
@@ -351,7 +347,7 @@ end</code></pre>
     </a>
     <span class="signature">gas()</span>
     
-      <a href="https://github.com/Kimlic/kimlic-elixir/blob/master/apps/quorum/lib/quorum.ex#L216" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/Kimlic/kimlic-elixir/blob/master/apps/quorum/lib/quorum.ex#L218" class="view-source" rel="help" title="View Source">
        <span class="icon-code" aria-hidden="true"></span>
        <span class="sr-only">View Source</span>
      </a>
@@ -379,7 +375,7 @@ end</code></pre>
     </a>
     <span class="signature">set_digital_verification_result_transaction(contract_address, status)</span>
     
-      <a href="https://github.com/Kimlic/kimlic-elixir/blob/master/apps/quorum/lib/quorum.ex#L155" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/Kimlic/kimlic-elixir/blob/master/apps/quorum/lib/quorum.ex#L157" class="view-source" rel="help" title="View Source">
        <span class="icon-code" aria-hidden="true"></span>
        <span class="sr-only">View Source</span>
      </a>
@@ -407,7 +403,7 @@ end</code></pre>
     </a>
     <span class="signature">set_verification_result_transaction(contract_address)</span>
     
-      <a href="https://github.com/Kimlic/kimlic-elixir/blob/master/apps/quorum/lib/quorum.ex#L145" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/Kimlic/kimlic-elixir/blob/master/apps/quorum/lib/quorum.ex#L147" class="view-source" rel="help" title="View Source">
        <span class="icon-code" aria-hidden="true"></span>
        <span class="sr-only">View Source</span>
      </a>
@@ -435,7 +431,7 @@ end</code></pre>
     </a>
     <span class="signature">validate_account_field_exists_and_set(account_address, field, to)</span>
     
-      <a href="https://github.com/Kimlic/kimlic-elixir/blob/master/apps/quorum/lib/quorum.ex#L47" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/Kimlic/kimlic-elixir/blob/master/apps/quorum/lib/quorum.ex#L49" class="view-source" rel="help" title="View Source">
        <span class="icon-code" aria-hidden="true"></span>
        <span class="sr-only">View Source</span>
      </a>
@@ -445,35 +441,6 @@ end</code></pre>
       <div class="specs">
         
           <pre>validate_account_field_exists_and_set(<a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">binary</a>(), <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">binary</a>(), <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">binary</a>()) ::
-  :ok | {:error, <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">atom</a>()}</pre>
-        
-      </div>
-    
-  </div>
-  <section class="docstring">
-    
-  </section>
-</div>
-<div class="detail" id="validate_account_field_has_no_verification/3">
-  
-  
-  <div class="detail-header">
-    <a href="#validate_account_field_has_no_verification/3" class="detail-link" title="Link to this function">
-      <span class="icon-link" aria-hidden="true"></span>
-      <span class="sr-only">Link to this function</span>
-    </a>
-    <span class="signature">validate_account_field_has_no_verification(account_address, field, to)</span>
-    
-      <a href="https://github.com/Kimlic/kimlic-elixir/blob/master/apps/quorum/lib/quorum.ex#L69" class="view-source" rel="help" title="View Source">
-       <span class="icon-code" aria-hidden="true"></span>
-       <span class="sr-only">View Source</span>
-     </a>
-    
-    
-    
-      <div class="specs">
-        
-          <pre>validate_account_field_has_no_verification(<a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">binary</a>(), <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">binary</a>(), <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">binary</a>()) ::
   :ok | {:error, <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">atom</a>()}</pre>
         
       </div>

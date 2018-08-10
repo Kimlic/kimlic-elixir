@@ -8,7 +8,7 @@
     <title>Core.Push.Job – Kimlic v1.0.0</title>
     <link rel="stylesheet" href="dist/app-480ffdc169.css" />
     
-    <script src="dist/sidebar_items-284709b765.js"></script>
+    <script src="dist/sidebar_items-01e6fad8b1.js"></script>
     
     
     
@@ -104,10 +104,19 @@
     </h2>
     <div class="summary-row">
   <div class="summary-signature">
+    <a href="#on_reject/1">on_reject(body)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Handles reject event from queue</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
     <a href="#perform/1">perform(map)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Callback to process a job</p>
+    <div class="summary-synopsis"><p>Handles run job event from queue</p>
 </div>
   
 </div>
@@ -131,7 +140,38 @@
             </a>
             Functions
           </h1>
-          <div class="detail" id="perform/1">
+          <div class="detail" id="on_reject/1">
+  
+  
+  <div class="detail-header">
+    <a href="#on_reject/1" class="detail-link" title="Link to this function">
+      <span class="icon-link" aria-hidden="true"></span>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <span class="signature">on_reject(body)</span>
+    
+      <a href="https://github.com/Kimlic/kimlic-elixir/blob/master/apps/core/lib/core/push/job.ex#L31" class="view-source" rel="help" title="View Source">
+       <span class="icon-code" aria-hidden="true"></span>
+       <span class="sr-only">View Source</span>
+     </a>
+    
+    
+    
+      <div class="specs">
+        
+          <pre>on_reject(<a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()) :: :ok</pre>
+        
+          <pre>on_reject(<a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">binary</a>()) :: :ok</pre>
+        
+      </div>
+    
+  </div>
+  <section class="docstring">
+    <p>Handles reject event from queue</p>
+
+  </section>
+</div>
+<div class="detail" id="perform/1">
   
   
   <div class="detail-header">
@@ -141,7 +181,7 @@
     </a>
     <span class="signature">perform(map)</span>
     
-      <a href="https://github.com/Kimlic/kimlic-elixir/blob/master/apps/core/lib/core/push/job.ex#L14" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/Kimlic/kimlic-elixir/blob/master/apps/core/lib/core/push/job.ex#L17" class="view-source" rel="help" title="View Source">
        <span class="icon-code" aria-hidden="true"></span>
        <span class="sr-only">View Source</span>
      </a>
@@ -156,17 +196,7 @@
     
   </div>
   <section class="docstring">
-    <p>Callback to process a job.</p>
-<p>It can take any type of argument as long as it can be serialized with Poison,
-but we recommend you to use map with string keys for a consistency.</p>
-<pre><code class="elixir">def perform(name) do
-  IO.puts name &lt;&gt; &quot;, it&#39;s not a preferred way&quot;
-end
-
-def perform(%{&quot;name&quot; =&gt; name}) do
-  IO.puts name &lt;&gt; &quot;, it&#39;s a preferred way :)&quot;
-end</code></pre>
-<p>Callback implementation for <a href="https://hexdocs.pm/task_bunny/0.3.3/TaskBunny.Job.html#c:perform/1"><code class="inline">TaskBunny.Job.perform/1</code></a>.</p>
+    <p>Handles run job event from queue</p>
 
   </section>
 </div>

@@ -8,7 +8,7 @@
     <title>AttestationApi.Clients.Veriffme – Kimlic v1.0.0</title>
     <link rel="stylesheet" href="dist/app-480ffdc169.css" />
     
-    <script src="dist/sidebar_items-284709b765.js"></script>
+    <script src="dist/sidebar_items-01e6fad8b1.js"></script>
     
     
     
@@ -107,19 +107,8 @@
     <a href="#close_session/1">close_session(session_id)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Update Veriff.me status
-API Response example:
-{
-  “status”: “success”,
-  “verification”: {</p>
-<pre><code class="elixir">&quot;id&quot;: &quot;53c072c9-73f0-41d9-bc7c-763bea81d904&quot;,
-&quot;url&quot;: &quot;https://magic.veriff.me/v/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzZXNzaW9uX2lkIjoiNTNjMDcyYzktNzNmMC00MWQ5LWJjN2MtNzYzYmVhODFkOTA0IiwiaWF0IjoxNTI4OTYyMTU3LCJleHAiOjE1Mjk1NjY5NTd9.c2bFWGCVJrXHnSW4owCsvkXP7a5JcNuRWCGHZVSliyc&quot;,
-&quot;host&quot;: &quot;https://magic.veriff.me&quot;,
-&quot;status&quot;: &quot;submitted&quot;,
-&quot;sessionToken&quot;: &quot;eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzZXNzaW9uX2lkIjoiNTNjMDcyYzktNzNmMC00MWQ5LWJjN2MtNzYzYmVhODFkOTA0IiwiaWF0IjoxNTI4OTYyMTU3LCJleHAiOjE1Mjk1NjY5NTd9.c2bFWGCVJrXHnSW4owCsvkXP7a5JcNuRWCGHZVSliyc&quot;</code></pre>
-<p>  }
-}
-Success status_code: 200</p>
+    <div class="summary-synopsis"><p>Updates session status.
+API Response example</p>
 </div>
   
 </div>
@@ -128,24 +117,17 @@ Success status_code: 200</p>
     <a href="#contexts/0">contexts()</a>
   </div>
   
+    <div class="summary-synopsis"><p>Returns available contexts</p>
+</div>
+  
 </div>
 <div class="summary-row">
   <div class="summary-signature">
     <a href="#create_session/5">create_session(first_name, last_name, lang, document_type, unix_timestamp)</a>
   </div>
   
-    <div class="summary-synopsis"><p>API Response example:
-{
-  “status”: “success”,
-  “verification”: {</p>
-<pre><code class="elixir">&quot;id&quot;: &quot;53c072c9-73f0-41d9-bc7c-763bea81d904&quot;,
-&quot;url&quot;: &quot;https://magic.veriff.me/v/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzZXNzaW9uX2lkIjoiNTNjMDcyYzktNzNmMC00MWQ5LWJjN2MtNzYzYmVhODFkOTA0IiwiaWF0IjoxNTI4OTYyMTU3LCJleHAiOjE1Mjk1NjY5NTd9.c2bFWGCVJrXHnSW4owCsvkXP7a5JcNuRWCGHZVSliyc&quot;,
-&quot;host&quot;: &quot;https://magic.veriff.me&quot;,
-&quot;status&quot;: &quot;created&quot;,
-&quot;sessionToken&quot;: &quot;eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzZXNzaW9uX2lkIjoiNTNjMDcyYzktNzNmMC00MWQ5LWJjN2MtNzYzYmVhODFkOTA0IiwiaWF0IjoxNTI4OTYyMTU3LCJleHAiOjE1Mjk1NjY5NTd9.c2bFWGCVJrXHnSW4owCsvkXP7a5JcNuRWCGHZVSliyc&quot;</code></pre>
-<p>  }
-}
-Success status_code: 201</p>
+    <div class="summary-synopsis"><p>Creates session.
+API Response example</p>
 </div>
   
 </div>
@@ -154,21 +136,8 @@ Success status_code: 201</p>
     <a href="#upload_media/4">upload_media(session_id, context, image_base64, unix_timestamp)</a>
   </div>
   
-    <div class="summary-synopsis"><p>API Response example:
-{
-  “status”: “success”,
-  “image”: {</p>
-<pre><code class="elixir">&quot;id&quot;: &quot;14380b99-e8df-4c1b-b33e-5d4994790148&quot;,
-&quot;name&quot;: &quot;face&quot;,
-&quot;timestamp&quot;: {
-  &quot;url&quot;: &quot;https://api.veriff.me/v1/timestamps/undefined&quot;
-},
-&quot;size&quot;: 70,
-&quot;mimetype&quot;: &quot;image/png&quot;,
-&quot;url&quot;: &quot;https://api.veriff.me/v1/media/14380b99-e8df-4c1b-b33e-5d4994790148&quot;</code></pre>
-<p>  }
-}
-Success status_code: 200</p>
+    <div class="summary-synopsis"><p>Uploads media.
+API Response example</p>
 </div>
   
 </div>
@@ -202,7 +171,7 @@ Success status_code: 200</p>
     </a>
     <span class="signature">close_session(session_id)</span>
     
-      <a href="https://github.com/Kimlic/kimlic-elixir/blob/master/apps/attestation_api/lib/clients/veriffme.ex#L95" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/Kimlic/kimlic-elixir/blob/master/apps/attestation_api/lib/clients/veriffme.ex#L103" class="view-source" rel="help" title="View Source">
        <span class="icon-code" aria-hidden="true"></span>
        <span class="sr-only">View Source</span>
      </a>
@@ -217,19 +186,19 @@ Success status_code: 200</p>
     
   </div>
   <section class="docstring">
-    <p>Update Veriff.me status
-API Response example:
-{
-  “status”: “success”,
-  “verification”: {</p>
-<pre><code class="elixir">&quot;id&quot;: &quot;53c072c9-73f0-41d9-bc7c-763bea81d904&quot;,
-&quot;url&quot;: &quot;https://magic.veriff.me/v/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzZXNzaW9uX2lkIjoiNTNjMDcyYzktNzNmMC00MWQ5LWJjN2MtNzYzYmVhODFkOTA0IiwiaWF0IjoxNTI4OTYyMTU3LCJleHAiOjE1Mjk1NjY5NTd9.c2bFWGCVJrXHnSW4owCsvkXP7a5JcNuRWCGHZVSliyc&quot;,
-&quot;host&quot;: &quot;https://magic.veriff.me&quot;,
-&quot;status&quot;: &quot;submitted&quot;,
-&quot;sessionToken&quot;: &quot;eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzZXNzaW9uX2lkIjoiNTNjMDcyYzktNzNmMC00MWQ5LWJjN2MtNzYzYmVhODFkOTA0IiwiaWF0IjoxNTI4OTYyMTU3LCJleHAiOjE1Mjk1NjY5NTd9.c2bFWGCVJrXHnSW4owCsvkXP7a5JcNuRWCGHZVSliyc&quot;</code></pre>
-<p>  }
-}
-Success status_code: 200</p>
+    <p>Updates session status.
+API Response example:</p>
+<pre><code class="elixir">{
+  &quot;status&quot;: &quot;success&quot;,
+  &quot;verification&quot;: {
+    &quot;id&quot;: &quot;53c072c9-73f0-41d9-bc7c-763bea81d904&quot;,
+    &quot;url&quot;: &quot;https://magic.veriff.me/v/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzZXNzaW9uX2lkIjoiNTNjMDcyYzktNzNmMC00MWQ5LWJjN2MtNzYzYmVhODFkOTA0IiwiaWF0IjoxNTI4OTYyMTU3LCJleHAiOjE1Mjk1NjY5NTd9.c2bFWGCVJrXHnSW4owCsvkXP7a5JcNuRWCGHZVSliyc&quot;,
+    &quot;host&quot;: &quot;https://magic.veriff.me&quot;,
+    &quot;status&quot;: &quot;submitted&quot;,
+    &quot;sessionToken&quot;: &quot;eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzZXNzaW9uX2lkIjoiNTNjMDcyYzktNzNmMC00MWQ5LWJjN2MtNzYzYmVhODFkOTA0IiwiaWF0IjoxNTI4OTYyMTU3LCJleHAiOjE1Mjk1NjY5NTd9.c2bFWGCVJrXHnSW4owCsvkXP7a5JcNuRWCGHZVSliyc&quot;
+  }
+}</code></pre>
+<p>Success status code: 200</p>
 
   </section>
 </div>
@@ -243,7 +212,7 @@ Success status_code: 200</p>
     </a>
     <span class="signature">contexts()</span>
     
-      <a href="https://github.com/Kimlic/kimlic-elixir/blob/master/apps/attestation_api/lib/clients/veriffme.ex#L113" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/Kimlic/kimlic-elixir/blob/master/apps/attestation_api/lib/clients/veriffme.ex#L124" class="view-source" rel="help" title="View Source">
        <span class="icon-code" aria-hidden="true"></span>
        <span class="sr-only">View Source</span>
      </a>
@@ -258,7 +227,8 @@ Success status_code: 200</p>
     
   </div>
   <section class="docstring">
-    
+    <p>Returns available contexts</p>
+
   </section>
 </div>
 <div class="detail" id="create_session/5">
@@ -271,7 +241,7 @@ Success status_code: 200</p>
     </a>
     <span class="signature">create_session(first_name, last_name, lang, document_type, unix_timestamp)</span>
     
-      <a href="https://github.com/Kimlic/kimlic-elixir/blob/master/apps/attestation_api/lib/clients/veriffme.ex#L30" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/Kimlic/kimlic-elixir/blob/master/apps/attestation_api/lib/clients/veriffme.ex#L33" class="view-source" rel="help" title="View Source">
        <span class="icon-code" aria-hidden="true"></span>
        <span class="sr-only">View Source</span>
      </a>
@@ -287,18 +257,19 @@ Success status_code: 200</p>
     
   </div>
   <section class="docstring">
-    <p>API Response example:
-{
-  “status”: “success”,
-  “verification”: {</p>
-<pre><code class="elixir">&quot;id&quot;: &quot;53c072c9-73f0-41d9-bc7c-763bea81d904&quot;,
-&quot;url&quot;: &quot;https://magic.veriff.me/v/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzZXNzaW9uX2lkIjoiNTNjMDcyYzktNzNmMC00MWQ5LWJjN2MtNzYzYmVhODFkOTA0IiwiaWF0IjoxNTI4OTYyMTU3LCJleHAiOjE1Mjk1NjY5NTd9.c2bFWGCVJrXHnSW4owCsvkXP7a5JcNuRWCGHZVSliyc&quot;,
-&quot;host&quot;: &quot;https://magic.veriff.me&quot;,
-&quot;status&quot;: &quot;created&quot;,
-&quot;sessionToken&quot;: &quot;eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzZXNzaW9uX2lkIjoiNTNjMDcyYzktNzNmMC00MWQ5LWJjN2MtNzYzYmVhODFkOTA0IiwiaWF0IjoxNTI4OTYyMTU3LCJleHAiOjE1Mjk1NjY5NTd9.c2bFWGCVJrXHnSW4owCsvkXP7a5JcNuRWCGHZVSliyc&quot;</code></pre>
-<p>  }
-}
-Success status_code: 201</p>
+    <p>Creates session.
+API Response example:</p>
+<pre><code class="elixir">{
+  &quot;status&quot;: &quot;success&quot;,
+  &quot;verification&quot;: {
+    &quot;id&quot;: &quot;53c072c9-73f0-41d9-bc7c-763bea81d904&quot;,
+    &quot;url&quot;: &quot;https://magic.veriff.me/v/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzZXNzaW9uX2lkIjoiNTNjMDcyYzktNzNmMC00MWQ5LWJjN2MtNzYzYmVhODFkOTA0IiwiaWF0IjoxNTI4OTYyMTU3LCJleHAiOjE1Mjk1NjY5NTd9.c2bFWGCVJrXHnSW4owCsvkXP7a5JcNuRWCGHZVSliyc&quot;,
+    &quot;host&quot;: &quot;https://magic.veriff.me&quot;,
+    &quot;status&quot;: &quot;created&quot;,
+    &quot;sessionToken&quot;: &quot;eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzZXNzaW9uX2lkIjoiNTNjMDcyYzktNzNmMC00MWQ5LWJjN2MtNzYzYmVhODFkOTA0IiwiaWF0IjoxNTI4OTYyMTU3LCJleHAiOjE1Mjk1NjY5NTd9.c2bFWGCVJrXHnSW4owCsvkXP7a5JcNuRWCGHZVSliyc&quot;
+  }
+}</code></pre>
+<p>Success status code: 201</p>
 
   </section>
 </div>
@@ -312,7 +283,7 @@ Success status_code: 201</p>
     </a>
     <span class="signature">upload_media(session_id, context, image_base64, unix_timestamp)</span>
     
-      <a href="https://github.com/Kimlic/kimlic-elixir/blob/master/apps/attestation_api/lib/clients/veriffme.ex#L67" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/Kimlic/kimlic-elixir/blob/master/apps/attestation_api/lib/clients/veriffme.ex#L73" class="view-source" rel="help" title="View Source">
        <span class="icon-code" aria-hidden="true"></span>
        <span class="sr-only">View Source</span>
      </a>
@@ -327,21 +298,22 @@ Success status_code: 201</p>
     
   </div>
   <section class="docstring">
-    <p>API Response example:
-{
-  “status”: “success”,
-  “image”: {</p>
-<pre><code class="elixir">&quot;id&quot;: &quot;14380b99-e8df-4c1b-b33e-5d4994790148&quot;,
-&quot;name&quot;: &quot;face&quot;,
-&quot;timestamp&quot;: {
-  &quot;url&quot;: &quot;https://api.veriff.me/v1/timestamps/undefined&quot;
-},
-&quot;size&quot;: 70,
-&quot;mimetype&quot;: &quot;image/png&quot;,
-&quot;url&quot;: &quot;https://api.veriff.me/v1/media/14380b99-e8df-4c1b-b33e-5d4994790148&quot;</code></pre>
-<p>  }
-}
-Success status_code: 200</p>
+    <p>Uploads media.
+API Response example:</p>
+<pre><code class="elixir">{
+  &quot;status&quot;: &quot;success&quot;,
+  &quot;image&quot;: {
+    &quot;id&quot;: &quot;14380b99-e8df-4c1b-b33e-5d4994790148&quot;,
+    &quot;name&quot;: &quot;face&quot;,
+    &quot;timestamp&quot;: {
+      &quot;url&quot;: &quot;https://api.veriff.me/v1/timestamps/undefined&quot;
+    },
+    &quot;size&quot;: 70,
+    &quot;mimetype&quot;: &quot;image/png&quot;,
+    &quot;url&quot;: &quot;https://api.veriff.me/v1/media/14380b99-e8df-4c1b-b33e-5d4994790148&quot;
+  }
+}</code></pre>
+<p>Success status code: 200</p>
 
   </section>
 </div>

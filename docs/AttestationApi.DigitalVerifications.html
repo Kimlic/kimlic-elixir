@@ -8,7 +8,7 @@
     <title>AttestationApi.DigitalVerifications – Kimlic v1.0.0</title>
     <link rel="stylesheet" href="dist/app-480ffdc169.css" />
     
-    <script src="dist/sidebar_items-284709b765.js"></script>
+    <script src="dist/sidebar_items-01e6fad8b1.js"></script>
     
     
     
@@ -107,11 +107,17 @@
     <a href="#create_session/2">create_session(account_address, params)</a>
   </div>
   
+    <div class="summary-synopsis"><p>Creates session on Veriff.me and stores verification entity in database</p>
+</div>
+  
 </div>
 <div class="summary-row">
   <div class="summary-signature">
     <a href="#get_by/1">get_by(params)</a>
   </div>
+  
+    <div class="summary-synopsis"><p>Finds single DigitalVerification entity by parameters</p>
+</div>
   
 </div>
 <div class="summary-row">
@@ -119,11 +125,18 @@
     <a href="#handle_verification_result/1">handle_verification_result(params)</a>
   </div>
   
+    <div class="summary-synopsis"><p>Handles webhook from Veriff.me with verification result
+Updates verification status, sends push notification, removes verification documents and set verification result in Quorum</p>
+</div>
+  
 </div>
 <div class="summary-row">
   <div class="summary-signature">
     <a href="#handle_verification_submission/1">handle_verification_submission(params)</a>
   </div>
+  
+    <div class="summary-synopsis"><p>Handles Veriff.me webhook that notifies about verification submittion, updates verification veriffme_code</p>
+</div>
   
 </div>
 <div class="summary-row">
@@ -131,11 +144,17 @@
     <a href="#insert/1">insert(params)</a>
   </div>
   
+    <div class="summary-synopsis"><p>Inserts DigitalVerification with parameters</p>
+</div>
+  
 </div>
 <div class="summary-row">
   <div class="summary-signature">
     <a href="#update/2">update(entity, params)</a>
   </div>
+  
+    <div class="summary-synopsis"><p>Updates DigitalVerification entity with parameters</p>
+</div>
   
 </div>
 
@@ -168,7 +187,7 @@
     </a>
     <span class="signature">create_session(account_address, params)</span>
     
-      <a href="https://github.com/Kimlic/kimlic-elixir/blob/master/apps/attestation_api/lib/attestation_api/digital_verifications/digital_verifications.ex#L23" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/Kimlic/kimlic-elixir/blob/master/apps/attestation_api/lib/attestation_api/digital_verifications/digital_verifications.ex#L26" class="view-source" rel="help" title="View Source">
        <span class="icon-code" aria-hidden="true"></span>
        <span class="sr-only">View Source</span>
      </a>
@@ -183,7 +202,8 @@
     
   </div>
   <section class="docstring">
-    
+    <p>Creates session on Veriff.me and stores verification entity in database</p>
+
   </section>
 </div>
 <div class="detail" id="get_by/1">
@@ -196,7 +216,7 @@
     </a>
     <span class="signature">get_by(params)</span>
     
-      <a href="https://github.com/Kimlic/kimlic-elixir/blob/master/apps/attestation_api/lib/attestation_api/digital_verifications/digital_verifications.ex#L153" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/Kimlic/kimlic-elixir/blob/master/apps/attestation_api/lib/attestation_api/digital_verifications/digital_verifications.ex#L166" class="view-source" rel="help" title="View Source">
        <span class="icon-code" aria-hidden="true"></span>
        <span class="sr-only">View Source</span>
      </a>
@@ -230,7 +250,8 @@
     
   </div>
   <section class="docstring">
-    
+    <p>Finds single DigitalVerification entity by parameters</p>
+
   </section>
 </div>
 <div class="detail" id="handle_verification_result/1">
@@ -243,7 +264,7 @@
     </a>
     <span class="signature">handle_verification_result(params)</span>
     
-      <a href="https://github.com/Kimlic/kimlic-elixir/blob/master/apps/attestation_api/lib/attestation_api/digital_verifications/digital_verifications.ex#L58" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/Kimlic/kimlic-elixir/blob/master/apps/attestation_api/lib/attestation_api/digital_verifications/digital_verifications.ex#L65" class="view-source" rel="help" title="View Source">
        <span class="icon-code" aria-hidden="true"></span>
        <span class="sr-only">View Source</span>
      </a>
@@ -258,7 +279,9 @@
     
   </div>
   <section class="docstring">
-    
+    <p>Handles webhook from Veriff.me with verification result
+Updates verification status, sends push notification, removes verification documents and set verification result in Quorum</p>
+
   </section>
 </div>
 <div class="detail" id="handle_verification_submission/1">
@@ -271,7 +294,7 @@
     </a>
     <span class="signature">handle_verification_submission(params)</span>
     
-      <a href="https://github.com/Kimlic/kimlic-elixir/blob/master/apps/attestation_api/lib/attestation_api/digital_verifications/digital_verifications.ex#L145" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/Kimlic/kimlic-elixir/blob/master/apps/attestation_api/lib/attestation_api/digital_verifications/digital_verifications.ex#L155" class="view-source" rel="help" title="View Source">
        <span class="icon-code" aria-hidden="true"></span>
        <span class="sr-only">View Source</span>
      </a>
@@ -286,7 +309,8 @@
     
   </div>
   <section class="docstring">
-    
+    <p>Handles Veriff.me webhook that notifies about verification submittion, updates verification veriffme_code</p>
+
   </section>
 </div>
 <div class="detail" id="insert/1">
@@ -299,7 +323,7 @@
     </a>
     <span class="signature">insert(params)</span>
     
-      <a href="https://github.com/Kimlic/kimlic-elixir/blob/master/apps/attestation_api/lib/attestation_api/digital_verifications/digital_verifications.ex#L156" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/Kimlic/kimlic-elixir/blob/master/apps/attestation_api/lib/attestation_api/digital_verifications/digital_verifications.ex#L172" class="view-source" rel="help" title="View Source">
        <span class="icon-code" aria-hidden="true"></span>
        <span class="sr-only">View Source</span>
      </a>
@@ -334,7 +358,8 @@
     
   </div>
   <section class="docstring">
-    
+    <p>Inserts DigitalVerification with parameters</p>
+
   </section>
 </div>
 <div class="detail" id="update/2">
@@ -347,7 +372,7 @@
     </a>
     <span class="signature">update(entity, params)</span>
     
-      <a href="https://github.com/Kimlic/kimlic-elixir/blob/master/apps/attestation_api/lib/attestation_api/digital_verifications/digital_verifications.ex#L163" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/Kimlic/kimlic-elixir/blob/master/apps/attestation_api/lib/attestation_api/digital_verifications/digital_verifications.ex#L182" class="view-source" rel="help" title="View Source">
        <span class="icon-code" aria-hidden="true"></span>
        <span class="sr-only">View Source</span>
      </a>
@@ -402,7 +427,8 @@
     
   </div>
   <section class="docstring">
-    
+    <p>Updates DigitalVerification entity with parameters</p>
+
   </section>
 </div>
 

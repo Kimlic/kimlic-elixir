@@ -8,7 +8,7 @@
     <title>Core.Verifications – Kimlic v1.0.0</title>
     <link rel="stylesheet" href="dist/app-480ffdc169.css" />
     
-    <script src="dist/sidebar_items-284709b765.js"></script>
+    <script src="dist/sidebar_items-01e6fad8b1.js"></script>
     
     
     
@@ -107,11 +107,17 @@
     <a href="#create_email_verification/2">create_email_verification(email, account_address)</a>
   </div>
   
+    <div class="summary-synopsis"><p>Creates email verification and verification contract</p>
+</div>
+  
 </div>
 <div class="summary-row">
   <div class="summary-signature">
     <a href="#create_phone_verification/2">create_phone_verification(phone, account_address)</a>
   </div>
+  
+    <div class="summary-synopsis"><p>Creates phone verification and verification contract</p>
+</div>
   
 </div>
 <div class="summary-row">
@@ -119,11 +125,17 @@
     <a href="#create_verification/2">create_verification(account_address, type)</a>
   </div>
   
+    <div class="summary-synopsis"><p>Creates and inserts verification to database</p>
+</div>
+  
 </div>
 <div class="summary-row">
   <div class="summary-signature">
     <a href="#delete/1">delete(verification)</a>
   </div>
+  
+    <div class="summary-synopsis"><p>Removes verification</p>
+</div>
   
 </div>
 <div class="summary-row">
@@ -131,11 +143,17 @@
     <a href="#generate_token/1">generate_token(atom)</a>
   </div>
   
+    <div class="summary-synopsis"><p>Generates token for verificaiton</p>
+</div>
+  
 </div>
 <div class="summary-row">
   <div class="summary-signature">
     <a href="#get/2">get(type, account_address)</a>
   </div>
+  
+    <div class="summary-synopsis"><p>Finds verification by entity_type and user account address</p>
+</div>
   
 </div>
 <div class="summary-row">
@@ -143,11 +161,27 @@
     <a href="#update_verification_contract_address/5">update_verification_contract_address(account_address, verification_type, destination, arg4, arg)</a>
   </div>
   
+    <div class="summary-synopsis"><p>Updates verification contract address, sends email or sms depending on verification</p>
+</div>
+  
 </div>
 <div class="summary-row">
   <div class="summary-signature">
     <a href="#verify/3">verify(verification_type, account_address, token)</a>
   </div>
+  
+    <div class="summary-synopsis"><p>Verifies verification with next steps:</p>
+<ul>
+<li>Receives it from database
+</li>
+<li>Checks access
+</li>
+<li>Sets verification result in Qourum
+</li>
+<li>Removes verification
+</li>
+</ul>
+</div>
   
 </div>
 
@@ -180,7 +214,7 @@
     </a>
     <span class="signature">create_email_verification(email, account_address)</span>
     
-      <a href="https://github.com/Kimlic/kimlic-elixir/blob/master/apps/core/lib/core/verifications/verifications.ex#L21" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/Kimlic/kimlic-elixir/blob/master/apps/core/lib/core/verifications/verifications.ex#L24" class="view-source" rel="help" title="View Source">
        <span class="icon-code" aria-hidden="true"></span>
        <span class="sr-only">View Source</span>
      </a>
@@ -195,7 +229,8 @@
     
   </div>
   <section class="docstring">
-    
+    <p>Creates email verification and verification contract</p>
+
   </section>
 </div>
 <div class="detail" id="create_phone_verification/2">
@@ -208,7 +243,7 @@
     </a>
     <span class="signature">create_phone_verification(phone, account_address)</span>
     
-      <a href="https://github.com/Kimlic/kimlic-elixir/blob/master/apps/core/lib/core/verifications/verifications.ex#L38" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/Kimlic/kimlic-elixir/blob/master/apps/core/lib/core/verifications/verifications.ex#L44" class="view-source" rel="help" title="View Source">
        <span class="icon-code" aria-hidden="true"></span>
        <span class="sr-only">View Source</span>
      </a>
@@ -223,7 +258,8 @@
     
   </div>
   <section class="docstring">
-    
+    <p>Creates phone verification and verification contract</p>
+
   </section>
 </div>
 <div class="detail" id="create_verification/2">
@@ -236,7 +272,7 @@
     </a>
     <span class="signature">create_verification(account_address, type)</span>
     
-      <a href="https://github.com/Kimlic/kimlic-elixir/blob/master/apps/core/lib/core/verifications/verifications.ex#L55" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/Kimlic/kimlic-elixir/blob/master/apps/core/lib/core/verifications/verifications.ex#L64" class="view-source" rel="help" title="View Source">
        <span class="icon-code" aria-hidden="true"></span>
        <span class="sr-only">View Source</span>
      </a>
@@ -251,7 +287,8 @@
     
   </div>
   <section class="docstring">
-    
+    <p>Creates and inserts verification to database</p>
+
   </section>
 </div>
 <div class="detail" id="delete/1">
@@ -264,7 +301,7 @@
     </a>
     <span class="signature">delete(verification)</span>
     
-      <a href="https://github.com/Kimlic/kimlic-elixir/blob/master/apps/core/lib/core/verifications/verifications.ex#L153" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/Kimlic/kimlic-elixir/blob/master/apps/core/lib/core/verifications/verifications.ex#L182" class="view-source" rel="help" title="View Source">
        <span class="icon-code" aria-hidden="true"></span>
        <span class="sr-only">View Source</span>
      </a>
@@ -289,7 +326,8 @@
     
   </div>
   <section class="docstring">
-    
+    <p>Removes verification</p>
+
   </section>
 </div>
 <div class="detail" id="generate_token/1">
@@ -302,7 +340,7 @@
     </a>
     <span class="signature">generate_token(atom)</span>
     
-      <a href="https://github.com/Kimlic/kimlic-elixir/blob/master/apps/core/lib/core/verifications/verifications.ex#L67" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/Kimlic/kimlic-elixir/blob/master/apps/core/lib/core/verifications/verifications.ex#L79" class="view-source" rel="help" title="View Source">
        <span class="icon-code" aria-hidden="true"></span>
        <span class="sr-only">View Source</span>
      </a>
@@ -317,7 +355,8 @@
     
   </div>
   <section class="docstring">
-    
+    <p>Generates token for verificaiton</p>
+
   </section>
 </div>
 <div class="detail" id="get/2">
@@ -330,7 +369,7 @@
     </a>
     <span class="signature">get(type, account_address)</span>
     
-      <a href="https://github.com/Kimlic/kimlic-elixir/blob/master/apps/core/lib/core/verifications/verifications.ex#L146" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/Kimlic/kimlic-elixir/blob/master/apps/core/lib/core/verifications/verifications.ex#L172" class="view-source" rel="help" title="View Source">
        <span class="icon-code" aria-hidden="true"></span>
        <span class="sr-only">View Source</span>
      </a>
@@ -355,7 +394,8 @@
     
   </div>
   <section class="docstring">
-    
+    <p>Finds verification by entity_type and user account address</p>
+
   </section>
 </div>
 <div class="detail" id="update_verification_contract_address/5">
@@ -368,7 +408,7 @@
     </a>
     <span class="signature">update_verification_contract_address(account_address, verification_type, destination, arg4, arg)</span>
     
-      <a href="https://github.com/Kimlic/kimlic-elixir/blob/master/apps/core/lib/core/verifications/verifications.ex#L132" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/Kimlic/kimlic-elixir/blob/master/apps/core/lib/core/verifications/verifications.ex#L155" class="view-source" rel="help" title="View Source">
        <span class="icon-code" aria-hidden="true"></span>
        <span class="sr-only">View Source</span>
      </a>
@@ -389,7 +429,8 @@
     
   </div>
   <section class="docstring">
-    
+    <p>Updates verification contract address, sends email or sms depending on verification</p>
+
   </section>
 </div>
 <div class="detail" id="verify/3">
@@ -402,7 +443,7 @@
     </a>
     <span class="signature">verify(verification_type, account_address, token)</span>
     
-      <a href="https://github.com/Kimlic/kimlic-elixir/blob/master/apps/core/lib/core/verifications/verifications.ex#L79" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/Kimlic/kimlic-elixir/blob/master/apps/core/lib/core/verifications/verifications.ex#L98" class="view-source" rel="help" title="View Source">
        <span class="icon-code" aria-hidden="true"></span>
        <span class="sr-only">View Source</span>
      </a>
@@ -417,7 +458,18 @@
     
   </div>
   <section class="docstring">
-    
+    <p>Verifies verification with next steps:</p>
+<ul>
+<li>Receives it from database
+</li>
+<li>Checks access
+</li>
+<li>Sets verification result in Qourum
+</li>
+<li>Removes verification
+</li>
+</ul>
+
   </section>
 </div>
 

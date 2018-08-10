@@ -8,7 +8,7 @@
     <title>Core.Clients.Redis – Kimlic v1.0.0</title>
     <link rel="stylesheet" href="dist/app-480ffdc169.css" />
     
-    <script src="dist/sidebar_items-284709b765.js"></script>
+    <script src="dist/sidebar_items-01e6fad8b1.js"></script>
     
     
     
@@ -108,11 +108,23 @@ Serializes and stores data using Erlang <code class="inline">term_to_binary</cod
     <a href="#delete/1">delete(key)</a>
   </div>
   
+    <div class="summary-synopsis"><p>Removes key-value pair by key as:</p>
+<ul>
+<li>map that contains redis_key
+</li>
+<li>string
+</li>
+</ul>
+</div>
+  
 </div>
 <div class="summary-row">
   <div class="summary-signature">
     <a href="#flush/0">flush()</a>
   </div>
+  
+    <div class="summary-synopsis"><p>Removes all data</p>
+</div>
   
 </div>
 <div class="summary-row">
@@ -120,11 +132,17 @@ Serializes and stores data using Erlang <code class="inline">term_to_binary</cod
     <a href="#get/1">get(key)</a>
   </div>
   
+    <div class="summary-synopsis"><p>Returns value by key</p>
+</div>
+  
 </div>
 <div class="summary-row">
   <div class="summary-signature">
     <a href="#set/3">set(key, value, ttl_seconds \\ nil)</a>
   </div>
+  
+    <div class="summary-synopsis"><p>Sets key-value pair</p>
+</div>
   
 </div>
 <div class="summary-row">
@@ -132,11 +150,17 @@ Serializes and stores data using Erlang <code class="inline">term_to_binary</cod
     <a href="#update/3">update(entity, params \\ %{}, ttl_seconds \\ nil)</a>
   </div>
   
+    <div class="summary-synopsis"><p>Updates entity as struct with params</p>
+</div>
+  
 </div>
 <div class="summary-row">
   <div class="summary-signature">
     <a href="#upsert/2">upsert(changeset, ttl_seconds \\ nil)</a>
   </div>
+  
+    <div class="summary-synopsis"><p>Updates or inserts changeset which contains redis_key</p>
+</div>
   
 </div>
 
@@ -169,7 +193,7 @@ Serializes and stores data using Erlang <code class="inline">term_to_binary</cod
     </a>
     <span class="signature">delete(key)</span>
     
-      <a href="https://github.com/Kimlic/kimlic-elixir/blob/master/apps/core/lib/clients/redis.ex#L77" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/Kimlic/kimlic-elixir/blob/master/apps/core/lib/clients/redis.ex#L94" class="view-source" rel="help" title="View Source">
        <span class="icon-code" aria-hidden="true"></span>
        <span class="sr-only">View Source</span>
      </a>
@@ -186,7 +210,14 @@ Serializes and stores data using Erlang <code class="inline">term_to_binary</cod
     
   </div>
   <section class="docstring">
-    
+    <p>Removes key-value pair by key as:</p>
+<ul>
+<li>map that contains redis_key
+</li>
+<li>string
+</li>
+</ul>
+
   </section>
 </div>
 <div class="detail" id="flush/0">
@@ -199,7 +230,7 @@ Serializes and stores data using Erlang <code class="inline">term_to_binary</cod
     </a>
     <span class="signature">flush()</span>
     
-      <a href="https://github.com/Kimlic/kimlic-elixir/blob/master/apps/core/lib/clients/redis.ex#L86" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/Kimlic/kimlic-elixir/blob/master/apps/core/lib/clients/redis.ex#L106" class="view-source" rel="help" title="View Source">
        <span class="icon-code" aria-hidden="true"></span>
        <span class="sr-only">View Source</span>
      </a>
@@ -214,7 +245,8 @@ Serializes and stores data using Erlang <code class="inline">term_to_binary</cod
     
   </div>
   <section class="docstring">
-    
+    <p>Removes all data</p>
+
   </section>
 </div>
 <div class="detail" id="get/1">
@@ -227,7 +259,7 @@ Serializes and stores data using Erlang <code class="inline">term_to_binary</cod
     </a>
     <span class="signature">get(key)</span>
     
-      <a href="https://github.com/Kimlic/kimlic-elixir/blob/master/apps/core/lib/clients/redis.ex#L13" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/Kimlic/kimlic-elixir/blob/master/apps/core/lib/clients/redis.ex#L16" class="view-source" rel="help" title="View Source">
        <span class="icon-code" aria-hidden="true"></span>
        <span class="sr-only">View Source</span>
      </a>
@@ -242,7 +274,8 @@ Serializes and stores data using Erlang <code class="inline">term_to_binary</cod
     
   </div>
   <section class="docstring">
-    
+    <p>Returns value by key</p>
+
   </section>
 </div>
 <div class="detail" id="set/3">
@@ -257,7 +290,7 @@ Serializes and stores data using Erlang <code class="inline">term_to_binary</cod
     </a>
     <span class="signature">set(key, value, ttl_seconds \\ nil)</span>
     
-      <a href="https://github.com/Kimlic/kimlic-elixir/blob/master/apps/core/lib/clients/redis.ex#L58" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/Kimlic/kimlic-elixir/blob/master/apps/core/lib/clients/redis.ex#L70" class="view-source" rel="help" title="View Source">
        <span class="icon-code" aria-hidden="true"></span>
        <span class="sr-only">View Source</span>
      </a>
@@ -272,7 +305,8 @@ Serializes and stores data using Erlang <code class="inline">term_to_binary</cod
     
   </div>
   <section class="docstring">
-    
+    <p>Sets key-value pair</p>
+
   </section>
 </div>
 <div class="detail" id="update/3">
@@ -289,7 +323,7 @@ Serializes and stores data using Erlang <code class="inline">term_to_binary</cod
     </a>
     <span class="signature">update(entity, params \\ %{}, ttl_seconds \\ nil)</span>
     
-      <a href="https://github.com/Kimlic/kimlic-elixir/blob/master/apps/core/lib/clients/redis.ex#L44" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/Kimlic/kimlic-elixir/blob/master/apps/core/lib/clients/redis.ex#L53" class="view-source" rel="help" title="View Source">
        <span class="icon-code" aria-hidden="true"></span>
        <span class="sr-only">View Source</span>
      </a>
@@ -305,7 +339,8 @@ Serializes and stores data using Erlang <code class="inline">term_to_binary</cod
     
   </div>
   <section class="docstring">
-    
+    <p>Updates entity as struct with params</p>
+
   </section>
 </div>
 <div class="detail" id="upsert/2">
@@ -320,7 +355,7 @@ Serializes and stores data using Erlang <code class="inline">term_to_binary</cod
     </a>
     <span class="signature">upsert(changeset, ttl_seconds \\ nil)</span>
     
-      <a href="https://github.com/Kimlic/kimlic-elixir/blob/master/apps/core/lib/clients/redis.ex#L33" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/Kimlic/kimlic-elixir/blob/master/apps/core/lib/clients/redis.ex#L39" class="view-source" rel="help" title="View Source">
        <span class="icon-code" aria-hidden="true"></span>
        <span class="sr-only">View Source</span>
      </a>
@@ -336,7 +371,8 @@ Serializes and stores data using Erlang <code class="inline">term_to_binary</cod
     
   </div>
   <section class="docstring">
-    
+    <p>Updates or inserts changeset which contains redis_key</p>
+
   </section>
 </div>
 

@@ -8,7 +8,7 @@
     <title>Quorum.Jobs.TransactionCreate – Kimlic v1.0.0</title>
     <link rel="stylesheet" href="dist/app-480ffdc169.css" />
     
-    <script src="dist/sidebar_items-284709b765.js"></script>
+    <script src="dist/sidebar_items-01e6fad8b1.js"></script>
     
     
     
@@ -80,6 +80,13 @@
       </h1>
 
       
+        <section id="moduledoc">
+          <p>TaskBunny Job for transaction creation in Quorum.
+Data stored in RabbitMQ queue
+Read more https://github.com/shinyscorpion/task_bunny#workers</p>
+
+        </section>
+      
 
       
         <section id="summary" class="details-list">
@@ -102,7 +109,7 @@
     <a href="#perform/1">perform(map)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Callback to process a job</p>
+    <div class="summary-synopsis"><p>Takes data from queue and create quorum transaction</p>
 </div>
   
 </div>
@@ -136,7 +143,7 @@
     </a>
     <span class="signature">perform(map)</span>
     
-      <a href="https://github.com/Kimlic/kimlic-elixir/blob/master/apps/quorum/lib/quorum/jobs/transaction_create.ex#L9" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/Kimlic/kimlic-elixir/blob/master/apps/quorum/lib/quorum/jobs/transaction_create.ex#L18" class="view-source" rel="help" title="View Source">
        <span class="icon-code" aria-hidden="true"></span>
        <span class="sr-only">View Source</span>
      </a>
@@ -151,17 +158,7 @@
     
   </div>
   <section class="docstring">
-    <p>Callback to process a job.</p>
-<p>It can take any type of argument as long as it can be serialized with Poison,
-but we recommend you to use map with string keys for a consistency.</p>
-<pre><code class="elixir">def perform(name) do
-  IO.puts name &lt;&gt; &quot;, it&#39;s not a preferred way&quot;
-end
-
-def perform(%{&quot;name&quot; =&gt; name}) do
-  IO.puts name &lt;&gt; &quot;, it&#39;s a preferred way :)&quot;
-end</code></pre>
-<p>Callback implementation for <a href="https://hexdocs.pm/task_bunny/0.3.3/TaskBunny.Job.html#c:perform/1"><code class="inline">TaskBunny.Job.perform/1</code></a>.</p>
+    <p>Takes data from queue and create quorum transaction</p>
 
   </section>
 </div>

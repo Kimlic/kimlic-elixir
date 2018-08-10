@@ -8,7 +8,7 @@
     <title>API Reference – Kimlic v1.0.0</title>
     <link rel="stylesheet" href="dist/app-480ffdc169.css" />
     
-    <script src="dist/sidebar_items-284709b765.js"></script>
+    <script src="dist/sidebar_items-01e6fad8b1.js"></script>
     
     
     
@@ -104,6 +104,21 @@ as controllers, views, channels and so on</p>
   
 </div>
 <div class="summary-row">
+  <div class="summary-signature"><a href="AttestationApi.ConnCase.html">AttestationApi.ConnCase</a></div>
+  
+    <div class="summary-synopsis"><p>This module defines the test case to be used by
+tests that require setting up a connection</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature"><a href="AttestationApi.DigitalVerificationController.html">AttestationApi.DigitalVerificationController</a></div>
+  
+    <div class="summary-synopsis"><p>Defines endpoints related to digital verification</p>
+</div>
+  
+</div>
+<div class="summary-row">
   <div class="summary-signature"><a href="AttestationApi.DigitalVerifications.html">AttestationApi.DigitalVerifications</a></div>
   
     <div class="summary-synopsis"><p>Defines business logic and DB operations with DigitalVerification entity</p>
@@ -111,9 +126,25 @@ as controllers, views, channels and so on</p>
   
 </div>
 <div class="summary-row">
+  <div class="summary-signature"><a href="AttestationApi.DigitalVerifications.DigitalVerification.html">AttestationApi.DigitalVerifications.DigitalVerification</a></div>
+  
+    <div class="summary-synopsis"><p>DigitalVerification entity
+Represents Veriff.me verification</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature"><a href="AttestationApi.DigitalVerifications.DigitalVerificationDocument.html">AttestationApi.DigitalVerifications.DigitalVerificationDocument</a></div>
+  
+    <div class="summary-synopsis"><p>DigitalVerificationDocument entity
+Stores DigitalVerification documents</p>
+</div>
+  
+</div>
+<div class="summary-row">
   <div class="summary-signature"><a href="AttestationApi.DigitalVerifications.Operations.UploadMedia.html">AttestationApi.DigitalVerifications.Operations.UploadMedia</a></div>
   
-    <div class="summary-synopsis"><p>Uploads media to Veriff, closes Veriff session</p>
+    <div class="summary-synopsis"><p>Uploads media to Veriff, changes Veriff.me session status</p>
 </div>
   
 </div>
@@ -174,6 +205,10 @@ Returns 422 error in case of invalid data</p>
   
     <div class="summary-synopsis"><p>Stores vendor documents in memory</p>
 </div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature"><a href="AttestationApiPushMock.html">AttestationApiPushMock</a></div>
   
 </div>
 <div class="summary-row">
@@ -241,6 +276,24 @@ Serializes and stores data using Erlang <code class="inline">term_to_binary</cod
   
 </div>
 <div class="summary-row">
+  <div class="summary-signature"><a href="Core.Verifications.Verification.html">Core.Verifications.Verification</a></div>
+  
+    <div class="summary-synopsis"><p>Verification entity for email and phone</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature"><a href="Log.html">Log</a></div>
+  
+    <div class="summary-synopsis"><p>Application logger with additional application metadata</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature"><a href="MessengerMock.html">MessengerMock</a></div>
+  
+</div>
+<div class="summary-row">
   <div class="summary-signature"><a href="MobileApi.html">MobileApi</a></div>
   
     <div class="summary-synopsis"><p>The entrypoint for defining your web interface, such
@@ -250,6 +303,21 @@ as controllers, views, channels and so on</p>
 </div>
 <div class="summary-row">
   <div class="summary-signature"><a href="MobileApi.Application.html">MobileApi.Application</a></div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature"><a href="MobileApi.ConfigController.html">MobileApi.ConfigController</a></div>
+  
+    <div class="summary-synopsis"><p>ConfigController</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature"><a href="MobileApi.ConnCase.html">MobileApi.ConnCase</a></div>
+  
+    <div class="summary-synopsis"><p>This module defines the test case to be used by
+tests that require setting up a connection</p>
+</div>
   
 </div>
 <div class="summary-row">
@@ -266,6 +334,9 @@ as controllers, views, channels and so on</p>
 <div class="summary-row">
   <div class="summary-signature"><a href="MobileApi.JSONRPCValidator.html">MobileApi.JSONRPCValidator</a></div>
   
+    <div class="summary-synopsis"><p>Changeset for JSON RPC request</p>
+</div>
+  
 </div>
 <div class="summary-row">
   <div class="summary-signature"><a href="MobileApi.JSONRPCValidator.Request.html">MobileApi.JSONRPCValidator.Request</a></div>
@@ -273,6 +344,35 @@ as controllers, views, channels and so on</p>
 </div>
 <div class="summary-row">
   <div class="summary-signature"><a href="MobileApi.JSONRPCValidator.RequestBatch.html">MobileApi.JSONRPCValidator.RequestBatch</a></div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature"><a href="MobileApi.Plugs.AccountAddress.html">MobileApi.Plugs.AccountAddress</a></div>
+  
+    <div class="summary-synopsis"><p>Validates request with required header <code class="inline">account-address</code></p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature"><a href="MobileApi.Plugs.NodeId.html">MobileApi.Plugs.NodeId</a></div>
+  
+    <div class="summary-synopsis"><p>Validates request with required header <code class="inline">node-id</code></p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature"><a href="MobileApi.Plugs.PhoneVerificationLimiter.html">MobileApi.Plugs.PhoneVerificationLimiter</a></div>
+  
+    <div class="summary-synopsis"><p>Rate limit for phone verification via Hummer
+Read more https://github.com/ExHammer/hammer</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature"><a href="MobileApi.Plugs.RequestValidator.html">MobileApi.Plugs.RequestValidator</a></div>
+  
+    <div class="summary-synopsis"><p>Plug that validates request by passed Changeset</p>
+</div>
   
 </div>
 <div class="summary-row">
@@ -287,21 +387,43 @@ as controllers, views, channels and so on</p>
   
 </div>
 <div class="summary-row">
+  <div class="summary-signature"><a href="MobileApi.Validators.Push.SendPushValidator.html">MobileApi.Validators.Push.SendPushValidator</a></div>
+  
+    <div class="summary-synopsis"><p>Changeset for send push request</p>
+</div>
+  
+</div>
+<div class="summary-row">
   <div class="summary-signature"><a href="MobileApi.Validators.Verification.ApproveValidator.html">MobileApi.Validators.Verification.ApproveValidator</a></div>
+  
+    <div class="summary-synopsis"><p>Changeset for code</p>
+</div>
   
 </div>
 <div class="summary-row">
   <div class="summary-signature"><a href="MobileApi.Validators.Verification.EmailValidator.html">MobileApi.Validators.Verification.EmailValidator</a></div>
   
+    <div class="summary-synopsis"><p>Changeset for email</p>
+</div>
+  
 </div>
 <div class="summary-row">
   <div class="summary-signature"><a href="MobileApi.Validators.Verification.PhoneValidator.html">MobileApi.Validators.Verification.PhoneValidator</a></div>
+  
+    <div class="summary-synopsis"><p>Changeset for phone</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature"><a href="PushSenderMock.html">PushSenderMock</a></div>
   
 </div>
 <div class="summary-row">
   <div class="summary-signature"><a href="Quorum.html">Quorum</a></div>
   
-    <div class="summary-synopsis"><p>Quorum client</p>
+    <div class="summary-synopsis"><p>Quorum client.
+Creates transaction and check transaction status.
+Works in 2 RabbitMQ queues: transaction_create and transaction_status</p>
 </div>
   
 </div>
@@ -333,6 +455,34 @@ array of data and encode that array according to the specification</p>
   
 </div>
 <div class="summary-row">
+  <div class="summary-signature"><a href="Quorum.Contract.html">Quorum.Contract</a></div>
+  
+    <div class="summary-synopsis"><p>Defines a contracts. Hash contract data</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature"><a href="Quorum.Contract.AccountStorageAdapter.html">Quorum.Contract.AccountStorageAdapter</a></div>
+  
+    <div class="summary-synopsis"><p>AccountStorageAdapter with generated functions via macros</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature"><a href="Quorum.Contract.BaseVerification.html">Quorum.Contract.BaseVerification</a></div>
+  
+    <div class="summary-synopsis"><p>BaseVerification with generated functions via macros</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature"><a href="Quorum.Contract.Behaviour.html">Quorum.Contract.Behaviour</a></div>
+  
+    <div class="summary-synopsis"><p>Behaviour for mocking Contracts</p>
+</div>
+  
+</div>
+<div class="summary-row">
   <div class="summary-signature"><a href="Quorum.Contract.Context.html">Quorum.Contract.Context</a></div>
   
     <div class="summary-synopsis"><p>Module that fetch contract adresses from KimlicContractContext contract</p>
@@ -340,7 +490,49 @@ array of data and encode that array according to the specification</p>
   
 </div>
 <div class="summary-row">
+  <div class="summary-signature"><a href="Quorum.Contract.KimlicContextStorage.html">Quorum.Contract.KimlicContextStorage</a></div>
+  
+    <div class="summary-synopsis"><p>KimlicContextStorage with generated functions via macros</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature"><a href="Quorum.Contract.KimlicContractsContext.html">Quorum.Contract.KimlicContractsContext</a></div>
+  
+    <div class="summary-synopsis"><p>KimlicContractsContext with generated functions via macros</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature"><a href="Quorum.Contract.Store.html">Quorum.Contract.Store</a></div>
+  
+    <div class="summary-synopsis"><p>ABI cache store</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature"><a href="Quorum.Contract.VerificationContractFactory.html">Quorum.Contract.VerificationContractFactory</a></div>
+  
+    <div class="summary-synopsis"><p>VerificationContractFactory with generated functions via macros</p>
+</div>
+  
+</div>
+<div class="summary-row">
   <div class="summary-signature"><a href="Quorum.Jobs.TransactionCreate.html">Quorum.Jobs.TransactionCreate</a></div>
+  
+    <div class="summary-synopsis"><p>TaskBunny Job for transaction creation in Quorum.
+Data stored in RabbitMQ queue
+Read more https://github.com/shinyscorpion/task_bunny#workers</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature"><a href="Quorum.Jobs.TransactionStatus.html">Quorum.Jobs.TransactionStatus</a></div>
+  
+    <div class="summary-synopsis"><p>TaskBunny Job for validation transaction status in Quorum.
+Data stored in RabbitMQ queue
+Read more https://github.com/shinyscorpion/task_bunny#workers</p>
+</div>
   
 </div>
 <div class="summary-row">
@@ -353,13 +545,42 @@ array of data and encode that array according to the specification</p>
 <div class="summary-row">
   <div class="summary-signature"><a href="Quorum.Proxy.html">Quorum.Proxy</a></div>
   
+    <div class="summary-synopsis"><p>Proxy module for /api/quorum proxy endpoint</p>
+</div>
+  
 </div>
 <div class="summary-row">
   <div class="summary-signature"><a href="Quorum.Proxy.Client.html">Quorum.Proxy.Client</a></div>
   
+    <div class="summary-synopsis"><p>Proxy Quorum client</p>
+</div>
+  
 </div>
 <div class="summary-row">
   <div class="summary-signature"><a href="Quorum.Proxy.ClientBehaviour.html">Quorum.Proxy.ClientBehaviour</a></div>
+  
+    <div class="summary-synopsis"><p>Behaviour for mocking Proxy Client</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature"><a href="Quorum.QueueTestHelper.html">Quorum.QueueTestHelper</a></div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature"><a href="QuorumClientMock.html">QuorumClientMock</a></div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature"><a href="QuorumClientProxyMock.html">QuorumClientProxyMock</a></div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature"><a href="QuorumContractMock.html">QuorumContractMock</a></div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature"><a href="VeriffmeMock.html">VeriffmeMock</a></div>
   
 </div>
 
