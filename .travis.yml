@@ -51,6 +51,7 @@ jobs:
         - source ./bin/ci/release/fetch-project-environment.sh
         - source ./bin/ci/release/fetch-source-version.sh
         - ./bin/mix_tests.sh || travis_terminate 1
+        - mix docs
         - ./bin/ci/release/put-source-version.sh || travis_terminate 1
         - ./bin/ci/release/build-container.sh || travis_terminate 1
         - sudo ./bin/ci/release/start-container.sh
@@ -66,6 +67,7 @@ jobs:
       - source ./bin/ci/release/fetch-project-environment.sh
       - source ./bin/ci/release/fetch-source-version.sh
       - ./bin/mix_tests.sh || travis_terminate 1
+      - mix docs
       - ./bin/ci/release/put-source-version.sh || travis_terminate 1
       - ./bin/ci/release/build-container.sh || travis_terminate 1
       - sudo ./bin/ci/release/start-container.sh

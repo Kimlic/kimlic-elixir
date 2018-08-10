@@ -17,6 +17,7 @@ REPO_URL="https://github.com/${TRAVIS_REPO_SLUG}.git";
 
 if [[ "${TRAVIS_PULL_REQUEST}" == "false" ]]; then
   git add "${PROJECT_DIR}/mix.exs";
+  git add docs
   git commit -m "Increment version [ci skip]";
 
   echo "Current branch: ${TRAVIS_BRANCH}"
