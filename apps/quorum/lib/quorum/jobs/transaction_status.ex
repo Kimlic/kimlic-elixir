@@ -1,5 +1,9 @@
 defmodule Quorum.Jobs.TransactionStatus do
-  @moduledoc false
+  @moduledoc """
+  TaskBunny Job for validation transaction status in Quorum.
+  Data stored in RabbitMQ queue
+  Read more https://github.com/shinyscorpion/task_bunny#workers
+  """
 
   use TaskBunny.Job
   alias Log
@@ -7,6 +11,9 @@ defmodule Quorum.Jobs.TransactionStatus do
 
   @quorum_client Application.get_env(:quorum, :client)
 
+  @doc """
+  Takes data from queue and check quorum transaction status
+  """
   @spec perform(map) :: :ok | :retry | {:error, term}
   def perform(%{"transaction_hash" => transaction_hash, "meta" => meta}) do
     case @quorum_client.eth_get_transaction_receipt(transaction_hash, []) do
@@ -93,9 +100,17 @@ defmodule Quorum.Jobs.TransactionStatus do
     end
   end
 
+  @doc """
+  If a job fails more than max_retry times, the payload is sent to jobs.[job_name].rejected queue.
+  Read more https://github.com/shinyscorpion/task_bunny#control-job-execution
+  """
   @spec max_retry :: integer
   def max_retry, do: 5
 
+  @doc """
+  TaskBunny retries the job automatically if the job has failed.
+  Read more https://github.com/shinyscorpion/task_bunny#control-job-execution
+  """
   @spec retry_interval(integer) :: integer
   def retry_interval(failed_count) do
     [1, 10, 20, 40, 60]

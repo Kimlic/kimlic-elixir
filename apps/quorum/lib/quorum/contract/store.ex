@@ -1,20 +1,28 @@
 defmodule Quorum.Contract.Store do
-  @moduledoc false
+  @moduledoc """
+  ABI cache store
+  """
 
   use Agent
 
+  @doc """
+  Start Agent with ABI JSON schemas
+  """
   @spec start_link :: :ok
   def start_link do
     Agent.start_link(&get_abis_content/0, name: __MODULE__)
   end
 
+  @doc """
+  Get cached ABI schema
+  """
   @spec get(atom) :: map | nil
   def get(contract_atom) when is_atom(contract_atom) do
     Agent.get(__MODULE__, & &1[contract_atom])
   end
 
   @spec get_abis_content :: map
-  def get_abis_content do
+  defp get_abis_content do
     :quorum
     |> Application.app_dir("priv/abi/*.json")
     |> Path.wildcard()

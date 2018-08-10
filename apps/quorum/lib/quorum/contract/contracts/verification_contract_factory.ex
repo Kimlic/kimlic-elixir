@@ -1,5 +1,7 @@
 defmodule Quorum.Contract.VerificationContractFactory do
-  @moduledoc false
+  @moduledoc """
+  VerificationContractFactory with generated functions via macros
+  """
 
   use Quorum.Contract, :verification_contract_factory
 

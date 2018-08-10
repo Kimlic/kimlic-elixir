@@ -1,6 +1,8 @@
 defmodule Quorum do
   @moduledoc """
-  Quorum client
+  Quorum client.
+  Creates transaction and check transaction status.
+  Works in 2 RabbitMQ queues: transaction_create and transaction_status.
   """
 
   alias Quorum.Contract.AccountStorageAdapter
@@ -66,7 +68,7 @@ defmodule Quorum do
   end
 
   @spec validate_account_field_has_no_verification(binary, binary, binary) :: :ok | {:error, atom}
-  def validate_account_field_has_no_verification(account_address, field, to) do
+  defp validate_account_field_has_no_verification(account_address, field, to) do
     {:ok, profile_sync_user_address} = unlock_profile_sync_user()
 
     result =
