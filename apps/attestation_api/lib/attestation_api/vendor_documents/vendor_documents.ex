@@ -6,9 +6,15 @@ defmodule AttestationApi.VendorDocuments do
   alias AttestationApi.DigitalVerifications.DigitalVerification
   alias AttestationApi.VendorDocuments.Store, as: VendorDocumentsStore
 
+  @doc """
+  Returns all vendor documents
+  """
   @spec all :: map
   def all, do: VendorDocumentsStore.all()
 
+  @doc """
+  Validates DigitalVerification country and context
+  """
   @spec check_context_items(DigitalVerification, map) :: :ok | {:error, binary}
   def check_context_items(%DigitalVerification{document_type: document_type}, %{
         "country" => country,
@@ -37,6 +43,9 @@ defmodule AttestationApi.VendorDocuments do
     end
   end
 
+  @doc """
+  Finds vendor contexts and countries by document type
+  """
   @spec get_document_type_data(binary) :: {:ok, list} | {:error, :not_found}
   def get_document_type_data(document_type) do
     case VendorDocumentsStore.get_by_document_type(document_type) do

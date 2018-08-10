@@ -1,5 +1,8 @@
 defmodule AttestationApi.DigitalVerifications.DigitalVerification do
-  @moduledoc false
+  @moduledoc """
+  DigitalVerification entity
+  Represents Veriff.me verification
+  """
 
   use Ecto.Schema
   import Ecto.Changeset
@@ -23,6 +26,9 @@ defmodule AttestationApi.DigitalVerifications.DigitalVerification do
   @status_failed "FAILED"
   @status_resubmission_requested "RESUBMISSION_REQUESTED"
 
+  @doc """
+  Returns one of avaiable statuses as string
+  """
   @spec status(atom) :: binary
   def status(:new), do: @status_new
   def status(:pending), do: @status_pending
@@ -48,6 +54,9 @@ defmodule AttestationApi.DigitalVerifications.DigitalVerification do
     has_many(:documents, DigitalVerificationDocument, foreign_key: :verification_id)
   end
 
+  @doc """
+  Makes entity changeset
+  """
   @spec changeset(map) :: Ecto.Changeset.t()
   def changeset(params) when is_map(params), do: changeset(%__MODULE__{}, params)
 

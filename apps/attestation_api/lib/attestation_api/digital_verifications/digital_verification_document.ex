@@ -1,5 +1,8 @@
 defmodule AttestationApi.DigitalVerifications.DigitalVerificationDocument do
-  @moduledoc false
+  @moduledoc """
+  DigitalVerificationDocument entity
+  Stores DigitalVerification documents
+  """
 
   use Ecto.Schema
   import Ecto.Changeset
@@ -14,6 +17,9 @@ defmodule AttestationApi.DigitalVerifications.DigitalVerificationDocument do
     field(:timestamp, :integer)
   end
 
+  @doc """
+  Makes entity changeset
+  """
   @spec changeset(map) :: Ecto.Changeset.t()
   def changeset(params) when is_map(params), do: changeset(%__MODULE__{}, params)
 

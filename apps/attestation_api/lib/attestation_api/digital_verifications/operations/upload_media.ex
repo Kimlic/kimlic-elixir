@@ -1,6 +1,6 @@
 defmodule AttestationApi.DigitalVerifications.Operations.UploadMedia do
   @moduledoc """
-  Uploads media to Veriff, closes Veriff session
+  Uploads media to Veriff, changes Veriff.me session status
   """
 
   import Ecto.Query, except: [update: 2]
@@ -13,6 +13,14 @@ defmodule AttestationApi.DigitalVerifications.Operations.UploadMedia do
 
   @veriffme_client Application.get_env(:attestation_api, :dependencies)[:veriffme]
 
+  @doc """
+  Upload media proccess:
+  - Validates verification contexts, documents and country
+  - Creates DigitalVerificationDocument entity
+  - Checks that all documents are loaded
+  - Uploads media to Veriff.me
+  - Changes Veriff.me session status
+  """
   @spec handle(map) :: :ok | {:error, atom | binary}
   def handle(%{"session_id" => session_id} = params) do
     with %DigitalVerification{documents: documents} = verification <- get_verification_and_documents(session_id),

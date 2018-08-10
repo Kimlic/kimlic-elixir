@@ -19,6 +19,9 @@ defmodule AttestationApi.DigitalVerifications do
   @verification_code_success 9001
   @verification_code_resubmission 9103
 
+  @doc """
+  Creates session on Veriff.me and stores verification entity in database
+  """
   @spec create_session(binary, map) :: {:ok, binary} | {:error, binary}
   def create_session(account_address, params) do
     with {:ok, session_id} <- create_session_on_veriffme(params),
@@ -54,6 +57,10 @@ defmodule AttestationApi.DigitalVerifications do
     end
   end
 
+  @doc """
+  Handles webhook from Veriff.me with verification result
+  Updates verification status, sends push notification, removes verification documents and set verification result in Quorum
+  """
   @spec handle_verification_result(map) :: :ok | {:error, atom}
   def handle_verification_result(params) do
     with {:ok, verification} <- update_status(params),
@@ -133,6 +140,9 @@ defmodule AttestationApi.DigitalVerifications do
     Quorum.set_digital_verification_result_transaction(contract_address, verification_passed?)
   end
 
+  @doc """
+  Handles Veriff.me webhook that notifies about verification submittion, updates verification veriffme_code
+  """
   @spec handle_verification_submission(map) :: :ok
   def handle_verification_submission(%{"id" => session_id, "code" => code}) do
     with %DigitalVerification{} = verification <- get_by(%{session_id: session_id}) do
@@ -149,9 +159,15 @@ defmodule AttestationApi.DigitalVerifications do
 
   ### Quering
 
+  @doc """
+  Finds single DigitalVerification entity by parameters
+  """
   @spec get_by(map) :: %DigitalVerification{} | nil
   def get_by(params), do: Repo.get_by(DigitalVerification, params)
 
+  @doc """
+  Inserts DigitalVerification with parameters
+  """
   @spec insert(map) :: {:ok, %DigitalVerification{}} | {:error, binary}
   def insert(params) when is_map(params) do
     params
@@ -159,6 +175,9 @@ defmodule AttestationApi.DigitalVerifications do
     |> Repo.insert()
   end
 
+  @doc """
+  Updates DigitalVerification entity with parameters
+  """
   @spec update(%DigitalVerification{}, map) :: {:ok, %DigitalVerification{}} | {:error, binary}
   def update(%DigitalVerification{} = entity, params) do
     entity
