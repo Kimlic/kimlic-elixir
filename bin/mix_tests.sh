@@ -54,3 +54,5 @@ if [ "${mix_test}" == "1" ]; then
   echo "finished with errors"
   exit 1;
 fi;
+
+mix docs
