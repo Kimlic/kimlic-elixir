@@ -9,6 +9,9 @@ defmodule MobileApi.QuorumController do
 
   plug(RequestValidator, validator: JSONRPCValidator, error_handler: FallbackController)
 
+  @doc """
+  Proxied response to Quorum
+  """
   @spec proxy(Conn.t(), map) :: Conn.t()
   def proxy(conn, params) do
     case Quorum.Proxy.proxy(params) do

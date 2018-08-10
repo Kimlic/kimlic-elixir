@@ -1,4 +1,7 @@
 defmodule MobileApi.JSONRPCValidator do
+  @moduledoc """
+  Changeset for JSON RPC request
+  """
   import Ecto.Changeset
 
   defmodule Request do
@@ -22,6 +25,9 @@ defmodule MobileApi.JSONRPCValidator do
 
   @required ~w(id method)a
 
+  @doc """
+  Validate batch proxy request
+  """
   @spec changeset(map) :: Changeset.t()
   def changeset(%{"_json" => _} = attrs) do
     %RequestBatch{}
@@ -32,6 +38,9 @@ defmodule MobileApi.JSONRPCValidator do
   @spec changeset(map) :: Changeset.t()
   def changeset(attrs), do: changeset(%Request{}, attrs)
 
+  @doc """
+  Validate proxy request
+  """
   @spec changeset(struct, map) :: Changeset.t()
   def changeset(schema, attrs) do
     schema

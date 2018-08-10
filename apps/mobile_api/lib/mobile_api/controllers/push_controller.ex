@@ -13,6 +13,9 @@ defmodule MobileApi.PushController do
 
   plug(RequestValidator, [validator: SendPushValidator, error_handler: FallbackController] when action == :send_push)
 
+  @doc """
+  Send push to Mobile device
+  """
   @spec send_push(Conn.t(), map) :: Conn.t()
   def send_push(conn, %{"message" => message, "device_os" => device_os, "device_token" => device_token}) do
     with :ok <- Push.enqueue(message, device_os, device_token) do

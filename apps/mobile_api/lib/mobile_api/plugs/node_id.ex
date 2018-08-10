@@ -1,5 +1,7 @@
 defmodule MobileApi.Plugs.NodeId do
-  @moduledoc false
+  @moduledoc """
+  Validates request with required header `node-id`
+  """
 
   import Plug.Conn
 
@@ -13,6 +15,9 @@ defmodule MobileApi.Plugs.NodeId do
   @spec init(Plug.opts()) :: Plug.opts()
   def init(opts), do: opts
 
+  @doc """
+  Validate request header
+  """
   @spec call(Conn.t(), Plug.opts()) :: Conn.t()
   def call(%Conn{} = conn, _opts) do
     with {:ok, node_id} <- validate_node_id_header(conn),
@@ -27,7 +32,7 @@ defmodule MobileApi.Plugs.NodeId do
   end
 
   @spec validate_node_id_header(Conn.t()) :: {:ok, binary} | {:error, binary}
-  def validate_node_id_header(conn) do
+  defp validate_node_id_header(conn) do
     case Conn.get_req_header(conn, @header) do
       [header] -> {:ok, header}
       _ -> {:error, {:unprocessable_entity, "Node-id header is required"}}
@@ -35,7 +40,7 @@ defmodule MobileApi.Plugs.NodeId do
   end
 
   @spec validate_node_id_exists(binary) :: :ok | {:error, tuple} | {:error, :atom}
-  def validate_node_id_exists(node_id) do
+  defp validate_node_id_exists(node_id) do
     with {:ok, nodes_id} <- get_all_nodes_id(),
          true <- node_id in nodes_id do
       :ok
@@ -46,7 +51,7 @@ defmodule MobileApi.Plugs.NodeId do
   end
 
   @spec get_all_nodes_id :: [binary] | {:error, tuple}
-  def get_all_nodes_id do
+  defp get_all_nodes_id do
     with {:ok, nodes_info} <- @quorum_client.request("admin_peers", %{"id" => 1}, []) do
       nodes_id = Enum.map(nodes_info, & &1["id"])
 

@@ -16,6 +16,9 @@ defmodule MobileApi.VerificationController do
   plug(RequestValidator, [validator: EmailValidator] when action == :create_email_verification)
   plug(RequestValidator, [validator: PhoneValidator] when action == :create_phone_verification)
 
+  @doc """
+  Create email verification
+  """
   @spec create_email_verification(Conn.t(), map) :: Conn.t()
   def create_email_verification(conn, params) do
     account_address = conn.assigns.account_address
@@ -28,6 +31,9 @@ defmodule MobileApi.VerificationController do
     end
   end
 
+  @doc """
+  Verify email with passed code
+  """
   @spec verify_email(Conn.t(), map) :: Conn.t()
   def verify_email(conn, params) do
     with :ok <- Verifications.verify(:email, conn.assigns.account_address, params["code"]) do
@@ -35,6 +41,9 @@ defmodule MobileApi.VerificationController do
     end
   end
 
+  @doc """
+  Create phone verification
+  """
   @spec create_phone_verification(Conn.t(), map) :: Conn.t()
   def create_phone_verification(conn, params) do
     account_address = conn.assigns.account_address
@@ -47,6 +56,9 @@ defmodule MobileApi.VerificationController do
     end
   end
 
+  @doc """
+  Verify phone with passed code
+  """
   @spec verify_phone(Conn.t(), map) :: Conn.t()
   def verify_phone(conn, params) do
     with :ok <- Verifications.verify(:phone, conn.assigns.account_address, params["code"]) do
