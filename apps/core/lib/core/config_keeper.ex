@@ -5,6 +5,9 @@ defmodule Core.ConfigKeeper do
 
   alias Quorum.Contract.Context
 
+  @doc """
+  Returnes data for config endpoint
+  """
   @spec all :: map
   def all do
     %{

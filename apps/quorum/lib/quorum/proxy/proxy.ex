@@ -1,8 +1,14 @@
 defmodule Quorum.Proxy do
+  @moduledoc """
+  Proxy module for /api/quorum proxy endpoint
+  """
   @quorum_proxy_client Application.get_env(:quorum, :proxy_client)
 
   alias HTTPoison.Response
 
+  @doc """
+  Proxied batch request to quorum
+  """
   @spec proxy(map) :: {:ok, map} | {:error, map}
   def proxy(%{"_json" => batch_methods}) when is_list(batch_methods) do
     with :ok <- validate_rpc_method(batch_methods) do
@@ -10,6 +16,9 @@ defmodule Quorum.Proxy do
     end
   end
 
+  @doc """
+  Proxied request to quorum
+  """
   def proxy(%{"method" => method, "id" => id} = payload) do
     with :ok <- validate_rpc_method(method, id) do
       @quorum_proxy_client.call_rpc(payload)

@@ -1,7 +1,7 @@
 defmodule MobileApi.Mixfile do
   use Mix.Project
 
-  @version "0.60.14"
+  @version "0.61.1"
 
   def project do
     [

@@ -13,6 +13,9 @@ defmodule Core.Clients.Messenger do
   @spec send(binary, binary) :: send_response_t
   def send(to, message), do: send(message_from(), to, message)
 
+  @doc """
+  Sends sms
+  """
   @spec send(binary, binary, binary) :: send_response_t
   def send(from, to, message) do
     case Message.create(from: from, to: to, body: message) do
