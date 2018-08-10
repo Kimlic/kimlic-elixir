@@ -9,6 +9,9 @@ defmodule Core.Clients.Redis do
   alias Ecto.Changeset
   alias Log
 
+  @doc """
+  Returns value by key
+  """
   @spec get(binary) :: {:ok, term} | {:error, binary}
   def get(key) when is_binary(key) do
     with {:ok, encoded_value} <- Redix.command(:redix, ["GET", key]) do
@@ -29,6 +32,9 @@ defmodule Core.Clients.Redis do
     end
   end
 
+  @doc """
+  Updates or inserts changeset which contains redis_key
+  """
   @spec upsert(Changeset.t(), pos_integer | nil) :: {:ok, term} | {:error, binary}
   def upsert(%Changeset{} = changeset, ttl_seconds \\ nil) do
     {_, key} = fetch_field(changeset, :redis_key)
@@ -40,6 +46,9 @@ defmodule Core.Clients.Redis do
     end
   end
 
+  @doc """
+  Updates entity as struct with params
+  """
   @spec update(struct, map | %{}, pos_integer | nil) :: {:ok, term} | {:error, binary}
   def update(entity, params \\ %{}, ttl_seconds \\ nil) when is_map(entity) and is_map(params) do
     entity
@@ -49,6 +58,9 @@ defmodule Core.Clients.Redis do
     |> upsert(ttl_seconds)
   end
 
+  @doc """
+  Sets key-value pair
+  """
   @spec set(binary, term, pos_integer | nil) :: :ok | {:error, atom}
   def set(key, value, ttl_seconds \\ nil)
 
@@ -70,6 +82,11 @@ defmodule Core.Clients.Redis do
     end
   end
 
+  @doc """
+  Removes key-value pair by key as:
+    - map that contains redis_key
+    - string
+  """
   @spec delete(map) :: {:ok, non_neg_integer} | {:error, binary}
   def delete(%{redis_key: key}), do: delete(key)
 
@@ -82,6 +99,9 @@ defmodule Core.Clients.Redis do
     end
   end
 
+  @doc """
+  Removes all data
+  """
   @spec flush :: :ok | {:error, binary}
   def flush do
     case Redix.command(:redix, ["FLUSHDB"]) do

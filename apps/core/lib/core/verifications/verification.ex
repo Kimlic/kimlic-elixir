@@ -1,5 +1,7 @@
 defmodule Core.Verifications.Verification do
-  @moduledoc false
+  @moduledoc """
+  Verification entity for email and phone
+  """
 
   use Ecto.Schema
   import Ecto.Changeset
@@ -16,10 +18,16 @@ defmodule Core.Verifications.Verification do
   @required_fields ~w(account_address entity_type token status)a
   @optional_fileds ~w(contract_address)a
 
+  @doc """
+  Returns entity type as string
+  """
   @spec entity_type(atom) :: binary
   def entity_type(:phone), do: @entity_type_phone
   def entity_type(:email), do: @entity_type_email
 
+  @doc """
+  Returns entity status as string
+  """
   @spec status(atom) :: binary
   def status(:new), do: @status_new
   def status(:passed), do: @status_passed
@@ -37,6 +45,9 @@ defmodule Core.Verifications.Verification do
     field(:contract_address, :string)
   end
 
+  @doc """
+  Makes entity changeset
+  """
   @spec changeset(map) :: Ecto.Changeset.t()
   def changeset(params) do
     %__MODULE__{}
@@ -46,6 +57,9 @@ defmodule Core.Verifications.Verification do
     |> put_redis_key()
   end
 
+  @doc """
+  Sets redis key to entity changeset
+  """
   @spec put_redis_key(Ecto.Changeset.t()) :: Ecto.Changeset.t()
   def put_redis_key(%Changeset{valid?: true} = changeset) do
     {_, type} = fetch_field(changeset, :entity_type)
@@ -55,6 +69,9 @@ defmodule Core.Verifications.Verification do
 
   def put_redis_key(changeset), do: changeset
 
+  @doc """
+  Returns redis key formed by entity_type and account_address
+  """
   @spec redis_key(binary, binary) :: binary
   def redis_key(type, account_address) when is_binary(type) do
     type

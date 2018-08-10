@@ -17,6 +17,9 @@ defmodule Core.Verifications do
 
   ### Business
 
+  @doc """
+  Creates email verification and verification contract
+  """
   @spec create_email_verification(binary, binary) :: create_verification_t
   def create_email_verification(email, account_address) do
     with {:ok, verification} <- create_verification(account_address, :email),
@@ -34,6 +37,9 @@ defmodule Core.Verifications do
     end
   end
 
+  @doc """
+  Creates phone verification and verification contract
+  """
   @spec create_phone_verification(binary, binary) :: create_verification_t
   def create_phone_verification(phone, account_address) do
     with {:ok, %Verification{} = verification} <- create_verification(account_address, :phone),
@@ -51,6 +57,9 @@ defmodule Core.Verifications do
     end
   end
 
+  @doc """
+  Creates and inserts verification to database
+  """
   @spec create_verification(binary, atom) :: create_verification_t
   def create_verification(account_address, type) when allowed_type_atom(type) do
     %{
@@ -62,6 +71,9 @@ defmodule Core.Verifications do
     |> insert_verification(verification_ttl(type))
   end
 
+  @doc """
+  Generates token for verificaiton
+  """
   @spec generate_token(:email | :phone) :: binary
   def generate_token(:phone), do: "#{Enum.random(1000..9999)}"
   def generate_token(:email), do: "#{Enum.random(1000..9999)}"
@@ -75,6 +87,13 @@ defmodule Core.Verifications do
     )
   end
 
+  @doc """
+  Verifies verification with next steps:
+  - Receives it from database
+  - Checks access
+  - Sets verification result in Qourum
+  - Removes verification
+  """
   @spec verify(atom, binary, binary) :: :ok | {:error, term}
   def verify(verification_type, account_address, token) when allowed_type_atom(verification_type) do
     with {:ok, %Verification{} = verification} <- Verifications.get(verification_type, account_address),
@@ -106,7 +125,9 @@ defmodule Core.Verifications do
 
   ### Callbacks (do not remove)
 
-  # Callback data is serialized when passed to rabbitmq, so `verification_type` becomes string instead of atom
+  @doc """
+  Updates verification contract address, sends email or sms depending on verification
+  """
   @spec update_verification_contract_address(binary, binary, binary, map, {:ok, binary} | {:error, binary}) :: term
   def update_verification_contract_address(
         account_address,
@@ -115,6 +136,8 @@ defmodule Core.Verifications do
         _transaction_status,
         {:ok, contract_address}
       ) do
+    # Callback data is serialized when passed to rabbitmq, so `verification_type` becomes string instead of atom
+
     verification_type = String.to_atom(verification_type)
     update_data = %{contract_address: contract_address}
 
@@ -142,6 +165,9 @@ defmodule Core.Verifications do
     end
   end
 
+  @doc """
+  Finds verification by entity_type and user account address
+  """
   @spec get(binary, atom) :: {:ok, %Verification{}} | {:error, term}
   def get(type, account_address) do
     type
@@ -149,6 +175,9 @@ defmodule Core.Verifications do
     |> Redis.get()
   end
 
+  @doc """
+  Removes verification
+  """
   @spec delete(%Verification{} | term) :: {:ok, non_neg_integer} | {:error, term}
   def delete(%Verification{} = verification), do: Redis.delete(verification)
 end
