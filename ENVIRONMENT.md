@@ -39,8 +39,8 @@ Mobile API and Core application
 | VAR_NAME               | Default Value        | Description  |
 | ---------------------- | -------------------- | ------------ |
 | MESSENGER_MESSAGE_FROM | `Kimlic`             | Sender name. |
-| RATE_LIMIT_CREATE_PHONE_VERIFICATION_TIMEOUT  | `604800000` week in ms | Timeout for phone verification (in ms). |
-| RATE_LIMIT_CREATE_PHONE_VERIFICATION_ATTEMPTS | `5`                    | Max attempts for phone verification.    |
+| RATE_LIMIT_CREATE_PHONE_VERIFICATION_TIMEOUT  | `604800000` week in ms     | Timeout for phone verification (in ms). |
+| RATE_LIMIT_CREATE_PHONE_VERIFICATION_ATTEMPTS | `5`                        | Max attempts for phone verification.    |
 | TWILIO_ACCOUNT_SID     | not set              | Twilio account secret id.  |
 | TWILIO_AUTH_TOKEN      | not set              | Twilio account auth token. |
 | VERIFICATION_PHONE_TTL | `86400`       | Time to live for phone verification (in seconds). |
