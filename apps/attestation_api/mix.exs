@@ -1,7 +1,7 @@
 defmodule AttestationApi.Mixfile do
   use Mix.Project
 
-  @version "0.3.4"
+  @version "1.0.0"
 
   def project do
     [
