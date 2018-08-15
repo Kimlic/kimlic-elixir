@@ -26,7 +26,7 @@ defmodule AttestationApi.Validators.CreateSessionValidator do
     |> validate_required(fields)
     |> validate_format(:lang, ~r/^\w{2}$/)
     |> validate_inclusion(:device_os, ~w(ios android))
-    |> validate_inclusion(:document_type, ~w(PASSPORT ID_CARD DRIVERS_LICENSE RESIDENCE_PERMIT))
+    |> validate_inclusion(:document_type, ~w(PASSPORT ID_CARD DRIVERS_LICENSE RESIDENCE_PERMIT_CARD))
     |> VeriffValidator.validate_timestamp(:timestamp)
   end
 end
