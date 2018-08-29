@@ -1,7 +1,7 @@
 use Mix.Config
 
 config :quorum,
-  client: Ethereumex.HttpClient,
+  client: Quorum.Ethereumex.HttpClient,
   proxy_client: Quorum.Proxy.Client,
   contract_client: Quorum.Contract,
   context_storage_address: "",

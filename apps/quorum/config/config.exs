@@ -1,9 +1,10 @@
 use Mix.Config
 
-alias Quorum.Jobs.{TransactionCreate, TransactionStatus}
+alias Quorum.Jobs.TransactionCreate
+alias Quorum.Jobs.TransactionStatus
 
 config :quorum,
-  client: Ethereumex.HttpClient,
+  client: Quorum.Ethereumex.HttpClient,
   proxy_client: Quorum.Proxy.Client,
   contract_client: Quorum.Contract,
   context_storage_address: {:system, "CONTEXT_STORAGE_ADDRESS"},
@@ -28,6 +29,9 @@ config :quorum,
      ]}
 
 config :ethereumex, url: "http://localhost:22000"
+
+config :ethereumex,
+  http_options: [ssl: [{:versions, [:"tlsv1.2"]}], recv_timeout: 30_000, timeout: 30_000]
 
 config :task_bunny,
   hosts: [

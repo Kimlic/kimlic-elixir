@@ -5,7 +5,8 @@ defmodule Quorum.Integration.DirectQuorumTest do
   alias Quorum.Contract.Context
   alias Quorum.Contract.AccountStorageAdapter
   alias Quorum.Contract.BaseVerification
-  alias Ethereumex.HttpClient, as: QuorumHttpClient
+
+  @quorum_client Application.get_env(:quorum, :client)
 
   @hashed_true "0x0000000000000000000000000000000000000000000000000000000000000001"
   @hashed_false "0x0000000000000000000000000000000000000000000000000000000000000000"
@@ -17,8 +18,8 @@ defmodule Quorum.Integration.DirectQuorumTest do
     kimlic_ap_password = Confex.fetch_env!(:quorum, :kimlic_ap_password)
     verification_contract_factory_address = Context.get_verification_contract_factory_address()
 
-    assert {:ok, _} = QuorumHttpClient.request("personal_unlockAccount", [account_address, "p@ssW0rd"], [])
-    assert {:ok, _} = QuorumHttpClient.request("personal_unlockAccount", [kimlic_ap_address, kimlic_ap_password], [])
+    assert {:ok, _} = @quorum_client.request("personal_unlockAccount", [account_address, "p@ssW0rd"], [])
+    assert {:ok, _} = @quorum_client.request("personal_unlockAccount", [kimlic_ap_address, kimlic_ap_password], [])
 
     # create Base verification contract form email
     #
@@ -37,10 +38,10 @@ defmodule Quorum.Integration.DirectQuorumTest do
       gas: Quorum.gas()
     }
 
-    assert {:ok, transaction_hash} = QuorumHttpClient.eth_send_transaction(tx_data)
+    assert {:ok, transaction_hash} = @quorum_client.eth_send_transaction(tx_data)
 
     :timer.sleep(70)
-    assert {:ok, map} = QuorumHttpClient.eth_get_transaction_receipt(transaction_hash, [])
+    assert {:ok, map} = @quorum_client.eth_get_transaction_receipt(transaction_hash, [])
     assert is_map(map), "Expected map from Quorum.eth_get_transaction_receipt, get: #{inspect(map)}"
     msg = "Invalid transaction status. Expected \"0x1\", get: #{map["status"]}"
     assert "0x1" == map["status"], msg
@@ -51,7 +52,7 @@ defmodule Quorum.Integration.DirectQuorumTest do
 
     :timer.sleep(50)
 
-    assert {:ok, contract_address} = QuorumHttpClient.eth_call(%{data: data, to: verification_contract_factory_address})
+    assert {:ok, contract_address} = @quorum_client.eth_call(%{data: data, to: verification_contract_factory_address})
     msg = "Expected address from Quorum.getVerificationContract, get: #{inspect(contract_address)}"
     assert is_binary(contract_address), msg
     refute @hashed_false == contract_address
@@ -70,10 +71,10 @@ defmodule Quorum.Integration.DirectQuorumTest do
       gas: Quorum.gas()
     }
 
-    assert {:ok, transaction_hash} = QuorumHttpClient.eth_send_transaction(tx_data)
+    assert {:ok, transaction_hash} = @quorum_client.eth_send_transaction(tx_data)
 
     :timer.sleep(70)
-    assert {:ok, map} = QuorumHttpClient.eth_get_transaction_receipt(transaction_hash, [])
+    assert {:ok, map} = @quorum_client.eth_get_transaction_receipt(transaction_hash, [])
     assert is_map(map), "Expected map from Quorum.eth_get_transaction_receipt, get: #{inspect(map)}"
     msg = "Invalid transaction status. Expected \"0x1\", get: #{map["status"]}"
     assert "0x1" == map["status"], msg
@@ -86,8 +87,8 @@ defmodule Quorum.Integration.DirectQuorumTest do
     kimlic_ap_password = Confex.fetch_env!(:quorum, :kimlic_ap_password)
     verification_contract_factory_address = Context.get_verification_contract_factory_address()
 
-    assert {:ok, _} = QuorumHttpClient.request("personal_unlockAccount", [account_address, "p@ssW0rd"], [])
-    assert {:ok, _} = QuorumHttpClient.request("personal_unlockAccount", [kimlic_ap_address, kimlic_ap_password], [])
+    assert {:ok, _} = @quorum_client.request("personal_unlockAccount", [account_address, "p@ssW0rd"], [])
+    assert {:ok, _} = @quorum_client.request("personal_unlockAccount", [kimlic_ap_address, kimlic_ap_password], [])
 
     # create Base verification contract form email
     #
@@ -106,10 +107,10 @@ defmodule Quorum.Integration.DirectQuorumTest do
       gas: Quorum.gas()
     }
 
-    assert {:ok, transaction_hash} = QuorumHttpClient.eth_send_transaction(tx_data)
+    assert {:ok, transaction_hash} = @quorum_client.eth_send_transaction(tx_data)
 
     :timer.sleep(70)
-    assert {:ok, map} = QuorumHttpClient.eth_get_transaction_receipt(transaction_hash, [])
+    assert {:ok, map} = @quorum_client.eth_get_transaction_receipt(transaction_hash, [])
     assert is_map(map), "Expected map from Quorum.eth_get_transaction_receipt, get: #{inspect(map)}}"
     msg = "Invalid transaction status. Expected \"0x1\", get: #{map["status"]}"
     assert "0x1" == map["status"], msg
@@ -120,7 +121,7 @@ defmodule Quorum.Integration.DirectQuorumTest do
 
     :timer.sleep(50)
 
-    assert {:ok, contract_address} = QuorumHttpClient.eth_call(%{data: data, to: verification_contract_factory_address})
+    assert {:ok, contract_address} = @quorum_client.eth_call(%{data: data, to: verification_contract_factory_address})
     msg = "Expected address from Quorum.getVerificationContract, get: #{inspect(contract_address)}"
     assert is_binary(contract_address), msg
     refute @hashed_false == contract_address
@@ -131,13 +132,13 @@ defmodule Quorum.Integration.DirectQuorumTest do
     #
     user_address = Confex.fetch_env!(:quorum, :profile_sync_user_address)
     password = Confex.fetch_env!(:quorum, :profile_sync_user_password)
-    assert {:ok, _} = QuorumHttpClient.request("personal_unlockAccount", [user_address, password], [])
+    assert {:ok, _} = @quorum_client.request("personal_unlockAccount", [user_address, password], [])
 
     # get tokensUnlockAt from contract
     data = Contract.hash_data(:base_verification, "tokensUnlockAt", [])
     params = %{data: data, from: user_address, to: contract_address}
 
-    assert {:ok, _hashed_time} = QuorumHttpClient.eth_call(params)
+    assert {:ok, _hashed_time} = @quorum_client.eth_call(params)
 
     assert {:ok, time} = BaseVerification.tokens_unlock_at(%{from: user_address, to: contract_address})
     assert is_integer(time)
@@ -148,20 +149,20 @@ defmodule Quorum.Integration.DirectQuorumTest do
 
   @tag :pending
   test "check that account field email not set" do
-    assert {:ok, account_address} = QuorumHttpClient.request("personal_newAccount", ["p@ssW0rd"], [])
+    assert {:ok, account_address} = @quorum_client.request("personal_newAccount", ["p@ssW0rd"], [])
 
     params = %{
       to: Context.get_account_storage_adapter_address(),
       data: Contract.hash_data(:account_storage_adapter, "getFieldHistoryLength", [{account_address, "email"}])
     }
 
-    assert {:ok, @hashed_false} = QuorumHttpClient.eth_call(params)
+    assert {:ok, @hashed_false} = @quorum_client.eth_call(params)
   end
 
   @tag :pending
   test "check that account field email set" do
     account_address = init_quorum_user()
-    assert {:ok, _} = QuorumHttpClient.request("personal_unlockAccount", [account_address, "p@ssW0rd"], [])
+    assert {:ok, _} = @quorum_client.request("personal_unlockAccount", [account_address, "p@ssW0rd"], [])
 
     assert {:ok, @hashed_true} =
              AccountStorageAdapter.get_field_history_length(
@@ -172,8 +173,8 @@ defmodule Quorum.Integration.DirectQuorumTest do
   end
 
   defp init_quorum_user do
-    assert {:ok, account_address} = QuorumHttpClient.request("personal_newAccount", ["p@ssW0rd"], [])
-    assert {:ok, _} = QuorumHttpClient.request("personal_unlockAccount", [account_address, "p@ssW0rd"], [])
+    assert {:ok, account_address} = @quorum_client.request("personal_newAccount", ["p@ssW0rd"], [])
+    assert {:ok, _} = @quorum_client.request("personal_unlockAccount", [account_address, "p@ssW0rd"], [])
 
     transaction_data = %{
       from: account_address,
@@ -186,10 +187,10 @@ defmodule Quorum.Integration.DirectQuorumTest do
       gas: Quorum.gas()
     }
 
-    {:ok, transaction_hash} = QuorumHttpClient.eth_send_transaction(transaction_data, [])
+    {:ok, transaction_hash} = @quorum_client.eth_send_transaction(transaction_data, [])
     :timer.sleep(75)
 
-    {:ok, %{"status" => "0x1"}} = QuorumHttpClient.eth_get_transaction_receipt(transaction_hash, [])
+    {:ok, %{"status" => "0x1"}} = @quorum_client.eth_get_transaction_receipt(transaction_hash, [])
     :timer.sleep(75)
 
     account_address
