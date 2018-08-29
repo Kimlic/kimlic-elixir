@@ -10,7 +10,8 @@ defmodule Core.Integration.VerificationsTest do
   alias Core.Verifications
   alias Quorum.Contract
   alias Quorum.Contract.Context
-  alias Ethereumex.HttpClient, as: QuorumHttpClient
+
+  @quorum_client Application.get_env(:quorum, :client)
 
   setup :set_mox_global
 
@@ -84,7 +85,7 @@ defmodule Core.Integration.VerificationsTest do
     :timer.sleep(sleep)
     data = Contract.hash_data(:base_verification, "getStatus", [{}])
 
-    case QuorumHttpClient.eth_call(%{to: contract_address, data: data}, "latest", []) do
+    case @quorum_client.eth_call(%{to: contract_address, data: data}, "latest", []) do
       # Verified status
       {:ok, "0x0000000000000000000000000000000000000000000000000000000000000002"} ->
         :ok
@@ -98,8 +99,8 @@ defmodule Core.Integration.VerificationsTest do
   end
 
   defp init_quorum_user(doc_type) do
-    assert {:ok, account_address} = QuorumHttpClient.request("personal_newAccount", ["p@ssW0rd"], [])
-    assert {:ok, _} = QuorumHttpClient.request("personal_unlockAccount", [account_address, "p@ssW0rd"], [])
+    assert {:ok, account_address} = @quorum_client.request("personal_newAccount", ["p@ssW0rd"], [])
+    assert {:ok, _} = @quorum_client.request("personal_unlockAccount", [account_address, "p@ssW0rd"], [])
 
     transaction_data = %{
       from: account_address,
@@ -112,10 +113,10 @@ defmodule Core.Integration.VerificationsTest do
       gasPrice: "0x0"
     }
 
-    {:ok, transaction_hash} = QuorumHttpClient.eth_send_transaction(transaction_data, [])
+    {:ok, transaction_hash} = @quorum_client.eth_send_transaction(transaction_data, [])
     :timer.sleep(150)
 
-    {:ok, %{"status" => "0x1"}} = QuorumHttpClient.eth_get_transaction_receipt(transaction_hash, [])
+    {:ok, %{"status" => "0x1"}} = @quorum_client.eth_get_transaction_receipt(transaction_hash, [])
     :timer.sleep(150)
 
     account_address
