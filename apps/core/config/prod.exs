@@ -3,7 +3,8 @@ use Mix.Config
 # Do not print debug messages in production
 config :logger, level: :info
 
-config :core, Redix, "${REDIS_URI}"
+# config :core, Redix, "${REDIS_URI}"
+config :core, Redix, "redis://seLjCUSJ72naqfwYQvBg1jbORvjtsRKVnAY6RrAUEmA=@kimcore.redis.cache.windows.net:6379/1"
 
 config :core, Core.Clients.Mailer,
   adapter: Swoosh.Adapters.AmazonSES,
@@ -14,11 +15,12 @@ config :core, Core.Clients.Mailer,
 config :task_bunny,
   hosts: [
     default: [
-      connect_options: [
-        host: "${RABBITMQ_HOST}",
-        username: "${RABBITMQ_USERNAME}",
-        password: "${RABBITMQ_PASSWORD}"
-      ]
+      connect_options: "amqp://kimlic:v2re3X7tMP@51.140.244.242:5672?heartbeat=30"
+      # connect_options: [
+      #   host: "${RABBITMQ_HOST}",
+      #   username: "${RABBITMQ_USERNAME}",
+      #   password: "${RABBITMQ_PASSWORD}"
+      # ]
     ]
   ]
 

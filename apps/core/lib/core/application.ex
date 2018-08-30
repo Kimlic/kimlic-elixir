@@ -7,7 +7,8 @@ defmodule Core.Application do
   @spec start(Application.start_type(), list) :: Supervisor.on_start()
   def start(_type, _args) do
     children = [
-      worker(Redix, [Application.get_env(:core, Redix), [name: :redix]])
+      # worker(Redix, [Application.get_env(:core, Redix), [name: :redix]])
+      worker(Redix, [[host: "kimcore.redis.cache.windows.net", port: 6379, password: "seLjCUSJ72naqfwYQvBg1jbORvjtsRKVnAY6RrAUEmA="], [name: :redix]])
     ]
 
     opts = [strategy: :one_for_one, name: Core.Supervisor]
