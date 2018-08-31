@@ -12,5 +12,4 @@ config :task_bunny,
     ]
   ]
 
-# config :ethereumex, url: "${QUORUM_URI}"
-config :ethereumex, url: "http://51.141.120.215:22000"
+config :ethereumex, url: "${QUORUM_URI}"
