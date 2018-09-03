@@ -12,12 +12,12 @@ config :attestation_api, AttestationApi.Endpoint,
   code_reloader: false
 
 config :attestation_api, AttestationApi.Repo,
-  username: "${DB_USER}",
-  password: "${DB_PASSWORD}",
-  database: "${DB_NAME}",
-  hostname: "${DB_HOST}",
-  port: "${DB_PORT}",
-  pool_size: "${DB_POOL_SIZE}",
+  username: "kimlic@kimcore-attestation",
+  password: "LU6dME4NzQ",
+  database: "ap_server",
+  hostname: "kimcore-attestation.postgres.database.azure.com",
+  port: "5432",
+  pool_size: 10,
   timeout: 15_000,
   pool_timeout: 15_000,
   loggers: [{Ecto.LoggerJSON, :log, [:info]}]
