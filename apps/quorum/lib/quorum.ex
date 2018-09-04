@@ -160,7 +160,7 @@ defmodule Quorum do
 
     @quorum_client.request("personal_unlockAccount", [veriff_ap_address, veriff_ap_password], [])
 
-    BaseVerification.finalize_verification(true, %{from: veriff_ap_address, to: contract_address})
+    BaseVerification.finalize_verification(status, %{from: veriff_ap_address, to: contract_address})
   end
 
   @doc """
